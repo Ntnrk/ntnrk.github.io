@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #111827, #1f2937);
+  color: white;
+}
+
+.container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 12px;
+}
+
+.hero p {
+  color: #d1d5db;
+  font-size: 1.1rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 28px;
+  border-radius: 22px;
+  min-height: 210px;
+  transition: 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.card h2 {
+  font-size: 1.7rem;
+  margin-bottom: 12px;
+}
+
+.card p {
+  color: #d1d5db;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.card span {
+  font-weight: bold;
+}
+
+.card.master {
+  border-color: #facc15;
+}
+
+.card.viewer {
+  border-color: #38bdf8;
+}
+
+.card.player {
+  border-color: #34d399;
+}
+
+.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 35px;
+  color: #d1d5db;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: white;
+}
