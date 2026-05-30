@@ -48,6 +48,18 @@
             <option value="Georgia, serif">Georgia</option>
           </select>
         </div>
+        <div class="mini-card">
+          <label>Tema do Viewer</label>
+          <select id="viewerTheme">
+            <option value="neon">Neon</option>
+            <option value="tvshow">TV Show</option>
+            <option value="arcade">Arcade</option>
+            <option value="space">Espaço</option>
+            <option value="aero">Frutiger Aero</option>
+            <option value="clean">Clean</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
       </div>
 
       <button id="saveDesignBtn" class="big-action">Salvar design</button>
@@ -218,7 +230,8 @@
         design: {
           primaryColor: '#7c3aed',
           backgroundColor: '#100f1f',
-          fontFamily: 'Arial, Helvetica, sans-serif'
+          fontFamily: 'Arial, Helvetica, sans-serif',
+          viewerTheme: 'neon'
         },
         players: {},
         currentQuestion: null,
@@ -238,7 +251,8 @@
         design: {
           primaryColor: $('primaryColor').value,
           backgroundColor: $('backgroundColor').value,
-          fontFamily: $('fontFamily').value
+          fontFamily: $('fontFamily').value,
+          viewerTheme: $('viewerTheme').value
         }
       });
 

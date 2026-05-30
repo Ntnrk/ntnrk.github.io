@@ -62,6 +62,12 @@
       if (design.primaryColor) document.documentElement.style.setProperty('--primary', design.primaryColor);
       if (design.backgroundColor) document.documentElement.style.setProperty('--bg', design.backgroundColor);
       if (design.fontFamily) document.body.style.fontFamily = design.fontFamily;
+
+      const theme = design.viewerTheme || design.theme || 'neon';
+      [...document.body.classList].forEach(className => {
+        if (className.startsWith('theme-')) document.body.classList.remove(className);
+      });
+      document.body.classList.add(`theme-${theme}`);
     }
 
     function render(room) {
