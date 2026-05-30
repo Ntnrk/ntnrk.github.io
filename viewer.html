@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="viewer-html">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Viewer</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="viewer-page">
   <main class="container">
     <section id="joinPanel" class="panel">
       <h2>Viewer</h2>
@@ -33,6 +33,7 @@
     if (roomCode) $('roomCode').value = roomCode;
 
     const roomRef = () => ref(db, `rooms/${roomCode}`);
+    window.addEventListener('resize', () => requestAnimationFrame(fitViewerToScreen));
 
     $('joinBtn').onclick = async () => {
       roomCode = $('roomCode').value.trim().toUpperCase();
@@ -53,6 +54,7 @@
         if (!room) return;
         applyDesign(room.design);
         render(room);
+        requestAnimationFrame(fitViewerToScreen);
       });
     }
 
@@ -81,17 +83,19 @@
 
       if (q && q.visibleToViewer && room.status === 'answering') {
         content.innerHTML = `
-          <p class="muted">${escapeHtml(room.title || '')} • sala ${roomCode}</p>
-          <h1 class="question">${escapeHtml(q.text)}</h1>
+          <p class="viewer-meta">${escapeHtml(room.title || '')} • sala ${roomCode}</p>
+          <h1 class="question ${q.text.length > 90 ? 'long-question' : ''}">${escapeHtml(q.text)}</h1>
         `;
         return;
       }
 
       content.innerHTML = `
-        <p class="muted">Código da sala</p>
-        <div class="big-code">${roomCode}</div>
-        <h2>Aguardando o Master...</h2>
-        ${scoreboard(room.players)}
+        <div class="waiting-view">
+          <p class="viewer-meta">Código da sala</p>
+          <div class="big-code">${roomCode}</div>
+          <h2>Aguardando o Master...</h2>
+          ${scoreboard(room.players)}
+        </div>
       `;
     }
 
@@ -99,9 +103,9 @@
       const entries = Object.values(players).sort((a, b) => (b.score || 0) - (a.score || 0));
       if (!entries.length) return '<p class="muted">Aguardando jogadores...</p>';
       return `
-        <div class="panel scoreboard" style="margin-top:28px; text-align:left;">
+        <div class="panel scoreboard viewer-scoreboard">
           <h2>Pontuação</h2>
-          <div class="list">
+          <div class="list viewer-score-list">
             ${entries.map(p => `<div class="item"><strong>${escapeHtml(p.name)}</strong><span>${p.score || 0} pts</span></div>`).join('')}
           </div>
         </div>
@@ -124,11 +128,13 @@
       const max = nums.length ? Math.max(...nums) : '---';
 
       return `
-        <div>
+        <div class="result-layout">
           <h1 class="result-title">Resultado</h1>
-          <h2>${escapeHtml(q.text)}</h2>
-          ${view.showAverage ? `<div class="panel"><h2>Média</h2><div class="big-code">${avg}</div></div>` : ''}
-          ${view.showHighest ? `<div class="panel"><h2>Maior número</h2><div class="big-code">${max}</div></div>` : ''}
+          <h2 class="result-question">${escapeHtml(q.text)}</h2>
+          <div class="result-grid">
+            ${view.showAverage ? `<div class="panel result-panel"><h2>Média</h2><div class="big-code">${avg}</div></div>` : ''}
+            ${view.showHighest ? `<div class="panel result-panel"><h2>Maior número</h2><div class="big-code">${max}</div></div>` : ''}
+          </div>
           ${view.showEachAnswer ? eachAnswer(answers) : ''}
           ${scoreboard(players)}
         </div>
@@ -151,21 +157,23 @@
       }).join(', ');
 
       return `
-        <div>
+        <div class="result-layout">
           <h1 class="result-title">Resultado</h1>
-          <h2>${escapeHtml(q.text)}</h2>
-          ${view.showBarChart ? `
-            <div class="panel" style="text-align:left;">
-              <h2>Gráfico de barras</h2>
-              ${Object.entries(counts).map(([opt, count]) => `
-                <div class="bar-wrap">
-                  <strong>${escapeHtml(opt)}</strong> — ${count}
-                  <div class="bar" style="width:${Math.max(5, (count / max) * 100)}%"></div>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-          ${view.showPieChart ? `<div class="panel"><h2>Pizza simples</h2><div class="pie" style="background: conic-gradient(${conic});"></div></div>` : ''}
+          <h2 class="result-question">${escapeHtml(q.text)}</h2>
+          <div class="result-grid">
+            ${view.showBarChart ? `
+              <div class="panel result-panel bar-panel">
+                <h2>Gráfico de barras</h2>
+                ${Object.entries(counts).map(([opt, count]) => `
+                  <div class="bar-wrap">
+                    <strong>${escapeHtml(opt)}</strong> — ${count}
+                    <div class="bar" style="width:${Math.max(5, (count / max) * 100)}%"></div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            ${view.showPieChart ? `<div class="panel result-panel"><h2>Pizza simples</h2><div class="pie" style="background: conic-gradient(${conic});"></div></div>` : ''}
+          </div>
           ${view.showEachAnswer ? eachAnswer(answers) : ''}
           ${scoreboard(players)}
         </div>
@@ -174,9 +182,9 @@
 
     function renderTextResults(q, answers, view, players) {
       return `
-        <div>
+        <div class="result-layout">
           <h1 class="result-title">Respostas</h1>
-          <h2>${escapeHtml(q.text)}</h2>
+          <h2 class="result-question">${escapeHtml(q.text)}</h2>
           ${eachAnswer(answers)}
           ${scoreboard(players)}
         </div>
@@ -187,13 +195,30 @@
       const entries = Object.values(answers);
       if (!entries.length) return '<p>Nenhuma resposta ainda.</p>';
       return `
-        <div class="panel" style="margin-top:18px; text-align:left;">
+        <div class="panel viewer-answer-panel">
           <h2>Respostas dos jogadores</h2>
-          <div class="list">
+          <div class="list viewer-answer-list">
             ${entries.map(a => `<div class="item"><strong>${escapeHtml(a.name)}</strong><br>${escapeHtml(a.answer)}</div>`).join('')}
           </div>
         </div>
       `;
+    }
+
+
+    function fitViewerToScreen() {
+      const panel = $('viewerPanel');
+      const content = $('viewerContent');
+      if (!panel || !content || panel.classList.contains('hidden')) return;
+
+      content.style.transform = 'scale(1)';
+      content.style.maxHeight = 'none';
+
+      const availableW = Math.max(320, panel.clientWidth - 48);
+      const availableH = Math.max(240, panel.clientHeight - 48);
+      const rect = content.getBoundingClientRect();
+
+      const scale = Math.min(1, availableW / rect.width, availableH / rect.height);
+      content.style.transform = `scale(${Math.max(0.22, scale)})`;
     }
 
     function escapeHtml(text) {
