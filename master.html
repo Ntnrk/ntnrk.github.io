@@ -6,32 +6,39 @@
   <title>Master</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <main class="container">
-    <section class="hero">
-      <h1>Master</h1>
-      <p>Controle da sala e do jogo.</p>
-    </section>
+<body class="master-body">
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="ghost-link" href="games.html">← Voltar</a>
+      <div class="brand-pill">MASTER</div>
+    </header>
 
-    <section id="stepCreate" class="panel">
-      <h2>1. Criar sala</h2>
+    <section id="stageCreate" class="stage-card active-stage">
+      <div class="step-pill">Etapa 1 de 6</div>
+      <h1>Criar sala</h1>
+      <p class="muted">Primeiro crie a sala. Nada de design ou perguntas aparece antes disso.</p>
+
       <label>Título da sala</label>
       <input id="roomTitle" placeholder="Ex: Noite dos amigos" />
-      <button id="createRoomBtn">Criar sala</button>
+
+      <button id="createRoomBtn" class="big-action">Criar sala</button>
     </section>
 
-    <section id="stepDesign" class="panel hidden">
-      <h2>2. Design da sala</h2>
-      <div class="grid">
-        <div>
+    <section id="stageDesign" class="stage-card">
+      <div class="step-pill">Etapa 2 de 6</div>
+      <h1>Design da sala</h1>
+      <p class="muted">Escolha o visual usado no Viewer e nos Players.</p>
+
+      <div class="grid compact-grid">
+        <div class="mini-card">
           <label>Cor principal</label>
-          <input type="color" id="primaryColor" value="#38bdf8" />
+          <input type="color" id="primaryColor" value="#7c3aed" />
         </div>
-        <div>
+        <div class="mini-card">
           <label>Cor de fundo</label>
-          <input type="color" id="backgroundColor" value="#111827" />
+          <input type="color" id="backgroundColor" value="#100f1f" />
         </div>
-        <div>
+        <div class="mini-card">
           <label>Fonte</label>
           <select id="fontFamily">
             <option value="Arial, Helvetica, sans-serif">Arial</option>
@@ -42,30 +49,34 @@
           </select>
         </div>
       </div>
-      <button id="saveDesignBtn">Salvar design</button>
+
+      <button id="saveDesignBtn" class="big-action">Salvar design</button>
     </section>
 
-    <section id="stepPanel" class="hidden">
-      <div class="panel">
-        <h2>3. Sala criada</h2>
-        <p>Código da sala:</p>
-        <div id="roomCodeDisplay" class="big-code">------</div>
-        <p class="small">Use este código no Viewer e nos Players.</p>
-        <div class="row">
-          <a id="openViewer" class="btn secondary" target="_blank">Abrir Viewer</a>
-          <a id="openPlayer" class="btn secondary" target="_blank">Abrir Player</a>
-        </div>
+    <section id="stageSetup" class="stage-card wide-stage">
+      <div class="step-pill">Etapa 3 de 6</div>
+      <h1>Sala, configurações e pergunta</h1>
+
+      <div class="room-code-box">
+        <span>Código da sala</span>
+        <strong id="roomCodeDisplay">------</strong>
       </div>
 
-      <div class="grid" style="margin-top:18px;">
-        <section class="panel">
-          <h2>Jogadores</h2>
+      <div class="row center-row">
+        <a id="openViewer" class="btn secondary" target="_blank">Abrir Viewer</a>
+        <a id="openPlayer" class="btn secondary" target="_blank">Abrir Player</a>
+      </div>
+
+      <div class="grid setup-grid">
+        <section class="mini-card">
+          <h2>Jogadores conectados</h2>
           <div id="playersList" class="list"></div>
         </section>
 
-        <section class="panel">
+        <section class="mini-card">
           <h2>Criar pergunta</h2>
-          <label>Tipo</label>
+
+          <label>Tipo de pergunta</label>
           <select id="questionType">
             <option value="number">Resposta em números</option>
             <option value="fixed">Resposta fixa</option>
@@ -76,55 +87,95 @@
           <textarea id="questionText" placeholder="Digite a pergunta"></textarea>
 
           <div id="fixedOptionsBox" class="hidden">
-            <label>Opções de resposta fixa, uma por linha</label>
+            <label>Opções, uma por linha</label>
             <textarea id="fixedOptions" placeholder="Opção A&#10;Opção B&#10;Opção C"></textarea>
           </div>
 
-          <button id="createQuestionBtn">Criar pergunta</button>
+          <button id="createQuestionBtn" class="big-action">Criar pergunta</button>
         </section>
       </div>
-
-      <section id="visibilityPanel" class="panel hidden" style="margin-top:18px;">
-        <h2>4. Mostrar pergunta</h2>
-        <label><input type="checkbox" id="showToViewer" /> Mostrar pergunta no Viewer</label><br><br>
-        <label><input type="radio" name="playerVisibility" value="all" checked /> Mostrar para todos os jogadores</label><br><br>
-        <label><input type="radio" name="playerVisibility" value="selected" /> Mostrar apenas para jogadores escolhidos</label>
-        <div id="selectedPlayersBox" class="list" style="margin-top:12px;"></div>
-        <button id="sendQuestionBtn" class="success">Enviar pergunta</button>
-      </section>
-
-      <section class="panel" style="margin-top:18px;">
-        <h2>5. Respostas recebidas</h2>
-        <div id="answersList" class="list"></div>
-      </section>
-
-      <section id="resultPanel" class="panel hidden" style="margin-top:18px;">
-        <h2>Escolher visualização das respostas</h2>
-        <div id="resultOptions"></div>
-        <button id="showResultsBtn">Mostrar resultado no Viewer</button>
-      </section>
-
-      <section class="panel" style="margin-top:18px;">
-        <h2>6. Pontuação</h2>
-        <div id="scoreControls" class="list"></div>
-        <div class="row" style="margin-top:16px;">
-          <button id="nextRoundBtn" class="success">Próxima rodada</button>
-          <button id="endGameBtn" class="danger">Encerrar jogo</button>
-        </div>
-      </section>
     </section>
 
-    <a class="back-link" href="games.html">← Voltar</a>
+    <section id="stageVisibility" class="stage-card wide-stage">
+      <div class="step-pill">Etapa 4 de 6</div>
+      <h1>Escolher quem vê a pergunta</h1>
+      <p id="questionPreview" class="question-preview"></p>
+
+      <div class="choice-box">
+        <label class="choice-line">
+          <input type="checkbox" id="showToViewer" />
+          <span>Mostrar pergunta no Viewer</span>
+        </label>
+      </div>
+
+      <div class="choice-box">
+        <label class="choice-line">
+          <input type="radio" name="playerVisibility" value="all" checked />
+          <span>Mostrar para todos os jogadores</span>
+        </label>
+        <label class="choice-line">
+          <input type="radio" name="playerVisibility" value="selected" />
+          <span>Mostrar apenas para jogadores escolhidos</span>
+        </label>
+      </div>
+
+      <div id="selectedPlayersBox" class="list selected-box"></div>
+
+      <div class="row">
+        <button id="sendQuestionBtn" class="big-action">Enviar pergunta</button>
+        <button id="backToSetupBtn" class="secondary">Editar pergunta</button>
+      </div>
+    </section>
+
+    <section id="stageResults" class="stage-card wide-stage">
+      <div class="step-pill">Etapa 5 de 6</div>
+      <h1>Visualizar respostas</h1>
+      <p class="muted">Escolha como o resultado será mostrado no Viewer.</p>
+
+      <div class="grid setup-grid">
+        <section class="mini-card">
+          <h2>Respostas recebidas</h2>
+          <div id="answersList" class="list"></div>
+        </section>
+
+        <section class="mini-card">
+          <h2>Modo de visualização</h2>
+          <div id="resultOptions"></div>
+          <button id="showResultsBtn" class="big-action">Mostrar resultado no Viewer</button>
+        </section>
+      </div>
+    </section>
+
+    <section id="stageScore" class="stage-card wide-stage">
+      <div class="step-pill">Etapa 6 de 6</div>
+      <h1>Pontuação e próxima rodada</h1>
+      <p class="muted">Atribua pontos e escolha se continua ou encerra o jogo.</p>
+
+      <div id="scoreControls" class="list score-list"></div>
+
+      <div class="row center-row">
+        <button id="nextRoundBtn" class="success">Próxima rodada</button>
+        <button id="endGameBtn" class="danger">Encerrar jogo</button>
+      </div>
+    </section>
   </main>
 
   <script type="module">
-    import { db, ref, set, update, remove, onValue, serverTimestamp } from './firebase.js';
+    import { db, ref, set, update, onValue, serverTimestamp } from './firebase.js';
 
-    let roomCode = localStorage.getItem('masterRoomCode') || '';
+    let roomCode = '';
     let players = {};
     let currentQuestion = null;
+    let unsubscribeStarted = false;
 
     const $ = (id) => document.getElementById(id);
+    const stages = ['stageCreate', 'stageDesign', 'stageSetup', 'stageVisibility', 'stageResults', 'stageScore'];
+
+    function goTo(stageId) {
+      stages.forEach(id => $(id).classList.remove('active-stage'));
+      $(stageId).classList.add('active-stage');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     function generateCode() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -137,31 +188,36 @@
       return ref(db, `rooms/${roomCode}${path ? '/' + path : ''}`);
     }
 
-    function show(el) { el.classList.remove('hidden'); }
-    function hide(el) { el.classList.add('hidden'); }
+    function escapeHtml(text) {
+      return String(text ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
 
-    function enterPanel() {
-      hide($('stepCreate'));
-      hide($('stepDesign'));
-      show($('stepPanel'));
-      $('roomCodeDisplay').textContent = roomCode;
-      $('openViewer').href = `viewer.html?room=${roomCode}`;
-      $('openPlayer').href = `player.html?room=${roomCode}`;
-      listenRoom();
+    function applyMasterDesign() {
+      document.documentElement.style.setProperty('--primary', $('primaryColor').value);
+      document.documentElement.style.setProperty('--bg', $('backgroundColor').value);
+      document.body.style.fontFamily = $('fontFamily').value;
     }
 
     $('createRoomBtn').onclick = async () => {
-      const title = $('roomTitle').value.trim() || 'Sala sem título';
+      const title = $('roomTitle').value.trim();
+      if (!title) return alert('Digite um título para a sala.');
+
       roomCode = generateCode();
       localStorage.setItem('masterRoomCode', roomCode);
 
       await set(roomRef(), {
         title,
         status: 'design',
+        masterStep: 2,
         createdAt: serverTimestamp(),
         design: {
-          primaryColor: '#38bdf8',
-          backgroundColor: '#111827',
+          primaryColor: '#7c3aed',
+          backgroundColor: '#100f1f',
           fontFamily: 'Arial, Helvetica, sans-serif'
         },
         players: {},
@@ -171,24 +227,30 @@
         round: 0
       });
 
-      hide($('stepCreate'));
-      show($('stepDesign'));
+      goTo('stageDesign');
     };
 
     $('saveDesignBtn').onclick = async () => {
+      applyMasterDesign();
       await update(roomRef(), {
         status: 'lobby',
+        masterStep: 3,
         design: {
           primaryColor: $('primaryColor').value,
           backgroundColor: $('backgroundColor').value,
           fontFamily: $('fontFamily').value
         }
       });
-      enterPanel();
+
+      $('roomCodeDisplay').textContent = roomCode;
+      $('openViewer').href = `viewer.html?room=${roomCode}`;
+      $('openPlayer').href = `player.html?room=${roomCode}`;
+      listenRoom();
+      goTo('stageSetup');
     };
 
     $('questionType').onchange = () => {
-      $('questionType').value === 'fixed' ? show($('fixedOptionsBox')) : hide($('fixedOptionsBox'));
+      $('fixedOptionsBox').classList.toggle('hidden', $('questionType').value !== 'fixed');
     };
 
     $('createQuestionBtn').onclick = async () => {
@@ -216,14 +278,17 @@
         currentQuestion,
         answers: {},
         resultView: {},
-        status: 'question_created'
+        status: 'question_created',
+        masterStep: 4
       });
 
+      $('questionPreview').innerHTML = `<strong>Pergunta criada:</strong><br>${escapeHtml(text)}`;
       renderSelectedPlayers();
       renderResultOptions(type);
-      show($('visibilityPanel'));
-      show($('resultPanel'));
+      goTo('stageVisibility');
     };
+
+    $('backToSetupBtn').onclick = () => goTo('stageSetup');
 
     document.querySelectorAll('input[name="playerVisibility"]').forEach(r => {
       r.onchange = renderSelectedPlayers;
@@ -235,11 +300,17 @@
       box.innerHTML = '';
       if (mode !== 'selected') return;
 
-      Object.entries(players).forEach(([id, p]) => {
-        const div = document.createElement('label');
-        div.className = 'item';
-        div.innerHTML = `<input type="checkbox" class="selectedPlayer" value="${id}" /> ${p.name}`;
-        box.appendChild(div);
+      const entries = Object.entries(players);
+      if (!entries.length) {
+        box.innerHTML = '<p class="muted">Nenhum jogador conectado ainda.</p>';
+        return;
+      }
+
+      entries.forEach(([id, p]) => {
+        const label = document.createElement('label');
+        label.className = 'choice-line player-choice';
+        label.innerHTML = `<input type="checkbox" class="selectedPlayer" value="${id}" /> <span>${escapeHtml(p.name)}</span>`;
+        box.appendChild(label);
       });
     }
 
@@ -248,6 +319,10 @@
       const mode = document.querySelector('input[name="playerVisibility"]:checked').value;
       const selectedPlayers = [...document.querySelectorAll('.selectedPlayer:checked')].map(x => x.value);
 
+      if (mode === 'selected' && selectedPlayers.length === 0) {
+        return alert('Escolha pelo menos um jogador ou marque todos os jogadores.');
+      }
+
       const updatedQuestion = {
         ...currentQuestion,
         visibleToViewer: $('showToViewer').checked,
@@ -255,35 +330,41 @@
         selectedPlayers
       };
 
+      currentQuestion = updatedQuestion;
+
       await update(roomRef(), {
         currentQuestion: updatedQuestion,
-        status: 'answering'
+        status: 'answering',
+        masterStep: 5
       });
+
+      renderResultOptions(updatedQuestion.type);
+      goTo('stageResults');
     };
 
     function renderResultOptions(type) {
       const box = $('resultOptions');
       if (type === 'number') {
         box.innerHTML = `
-          <label><input type="checkbox" id="showAverage" checked /> Mostrar média</label><br><br>
-          <label><input type="checkbox" id="showHighest" checked /> Mostrar maior número</label><br><br>
-          <label><input type="checkbox" id="showEachAnswer" checked /> Mostrar resposta de cada jogador</label>
+          <label class="choice-line"><input type="checkbox" id="showAverage" checked /> <span>Mostrar média</span></label>
+          <label class="choice-line"><input type="checkbox" id="showHighest" checked /> <span>Mostrar maior número</span></label>
+          <label class="choice-line"><input type="checkbox" id="showEachAnswer" checked /> <span>Mostrar resposta de cada jogador</span></label>
         `;
       } else if (type === 'fixed') {
         box.innerHTML = `
-          <label><input type="checkbox" id="showBarChart" checked /> Mostrar gráfico de barras</label><br><br>
-          <label><input type="checkbox" id="showPieChart" /> Mostrar gráfico de pizza simples</label><br><br>
-          <label><input type="checkbox" id="showEachAnswer" checked /> Mostrar resposta de cada jogador</label>
+          <label class="choice-line"><input type="checkbox" id="showBarChart" checked /> <span>Mostrar gráfico de barras</span></label>
+          <label class="choice-line"><input type="checkbox" id="showPieChart" /> <span>Mostrar gráfico de pizza simples</span></label>
+          <label class="choice-line"><input type="checkbox" id="showEachAnswer" checked /> <span>Mostrar resposta de cada jogador</span></label>
         `;
       } else {
         box.innerHTML = `
-          <label><input type="checkbox" id="showEachAnswer" checked /> Mostrar resposta de cada jogador</label>
+          <label class="choice-line"><input type="checkbox" id="showEachAnswer" checked /> <span>Mostrar resposta de cada jogador</span></label>
         `;
       }
     }
 
     $('showResultsBtn').onclick = async () => {
-      const type = currentQuestion?.type;
+      if (!currentQuestion) return;
       const resultView = {
         showAverage: !!$('showAverage')?.checked,
         showHighest: !!$('showHighest')?.checked,
@@ -291,12 +372,21 @@
         showBarChart: !!$('showBarChart')?.checked,
         showPieChart: !!$('showPieChart')?.checked
       };
-      await update(roomRef(), { resultView, status: 'showing_results' });
+
+      await update(roomRef(), {
+        resultView,
+        status: 'showing_results',
+        masterStep: 6
+      });
+
+      goTo('stageScore');
     };
 
     async function addScore(playerId, amount) {
+      const value = Number(amount);
+      if (Number.isNaN(value)) return;
       const current = players[playerId]?.score || 0;
-      await update(roomRef(`players/${playerId}`), { score: current + amount });
+      await update(roomRef(`players/${playerId}`), { score: current + value });
     }
 
     window.addScore = addScore;
@@ -304,31 +394,52 @@
     $('nextRoundBtn').onclick = async () => {
       await update(roomRef(), {
         status: 'lobby',
+        masterStep: 3,
         currentQuestion: null,
         answers: {},
         resultView: {}
       });
+
       currentQuestion = null;
       $('questionText').value = '';
       $('fixedOptions').value = '';
-      hide($('visibilityPanel'));
-      hide($('resultPanel'));
+      $('showToViewer').checked = false;
+      document.querySelector('input[name="playerVisibility"][value="all"]').checked = true;
+      goTo('stageSetup');
     };
 
     $('endGameBtn').onclick = async () => {
-      await update(roomRef(), { status: 'ended', currentQuestion: null, answers: {}, resultView: {} });
+      await update(roomRef(), {
+        status: 'ended',
+        masterStep: 6,
+        currentQuestion: null,
+        answers: {},
+        resultView: {}
+      });
+      alert('Jogo encerrado. O Viewer e os Players serão avisados.');
     };
 
     function listenRoom() {
+      if (unsubscribeStarted) return;
+      unsubscribeStarted = true;
+
       onValue(roomRef(), (snap) => {
         const room = snap.val();
         if (!room) return;
+
         players = room.players || {};
         currentQuestion = room.currentQuestion || currentQuestion;
+
+        if (room.design) {
+          if (room.design.primaryColor) document.documentElement.style.setProperty('--primary', room.design.primaryColor);
+          if (room.design.backgroundColor) document.documentElement.style.setProperty('--bg', room.design.backgroundColor);
+          if (room.design.fontFamily) document.body.style.fontFamily = room.design.fontFamily;
+        }
+
         renderPlayers();
+        renderSelectedPlayers();
         renderAnswers(room.answers || {});
         renderScores();
-        if (currentQuestion) renderResultOptions(currentQuestion.type);
       });
     }
 
@@ -337,15 +448,18 @@
       box.innerHTML = '';
       const entries = Object.entries(players);
       if (!entries.length) {
-        box.innerHTML = '<p>Nenhum jogador conectado ainda.</p>';
+        box.innerHTML = '<p class="muted">Nenhum jogador conectado ainda.</p>';
         return;
       }
-      entries.forEach(([id, p]) => {
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.textContent = `${p.name} — ${p.score || 0} pts`;
-        box.appendChild(div);
-      });
+
+      entries
+        .sort((a, b) => (b[1].score || 0) - (a[1].score || 0))
+        .forEach(([id, p]) => {
+          const div = document.createElement('div');
+          div.className = 'item player-row';
+          div.innerHTML = `<strong>${escapeHtml(p.name)}</strong><span>${p.score || 0} pts</span>`;
+          box.appendChild(div);
+        });
     }
 
     function renderAnswers(answers) {
@@ -353,13 +467,14 @@
       box.innerHTML = '';
       const entries = Object.entries(answers);
       if (!entries.length) {
-        box.innerHTML = '<p>Aguardando respostas...</p>';
+        box.innerHTML = '<p class="muted">Aguardando respostas...</p>';
         return;
       }
+
       entries.forEach(([id, a]) => {
         const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `<strong>${a.name}</strong><br>${a.answer}`;
+        div.className = 'item answer-card';
+        div.innerHTML = `<strong>${escapeHtml(a.name)}</strong><p>${escapeHtml(a.answer)}</p>`;
         box.appendChild(div);
       });
     }
@@ -369,26 +484,31 @@
       box.innerHTML = '';
       const entries = Object.entries(players);
       if (!entries.length) {
-        box.innerHTML = '<p>Nenhum jogador para pontuar.</p>';
+        box.innerHTML = '<p class="muted">Nenhum jogador para pontuar.</p>';
         return;
       }
-      entries.forEach(([id, p]) => {
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <strong>${p.name}</strong> — ${p.score || 0} pts<br>
-          <button onclick="addScore('${id}', 1)">+1</button>
-          <button onclick="addScore('${id}', 5)">+5</button>
-          <button onclick="addScore('${id}', -1)" class="secondary">-1</button>
-          <input type="number" placeholder="pontos manuais" id="manual_${id}" />
-          <button onclick="addScore('${id}', Number(document.getElementById('manual_${id}').value || 0))">Aplicar</button>
-        `;
-        box.appendChild(div);
-      });
-    }
 
-    if (roomCode) {
-      enterPanel();
+      entries
+        .sort((a, b) => (b[1].score || 0) - (a[1].score || 0))
+        .forEach(([id, p]) => {
+          const safeId = id.replaceAll('-', '_');
+          const div = document.createElement('div');
+          div.className = 'score-card';
+          div.innerHTML = `
+            <div>
+              <strong>${escapeHtml(p.name)}</strong>
+              <span>${p.score || 0} pts</span>
+            </div>
+            <div class="score-actions">
+              <button onclick="addScore('${id}', 1)">+1</button>
+              <button onclick="addScore('${id}', 5)">+5</button>
+              <button onclick="addScore('${id}', -1)" class="secondary">-1</button>
+              <input type="number" placeholder="manual" id="manual_${safeId}" />
+              <button onclick="addScore('${id}', document.getElementById('manual_${safeId}').value)">Aplicar</button>
+            </div>
+          `;
+          box.appendChild(div);
+        });
     }
   </script>
 </body>
