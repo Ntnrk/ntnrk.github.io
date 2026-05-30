@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Player</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Player</h1>
+      <p>Entre na sala e responda quando aparecer a pergunta.</p>
+    </section>
+
+    <section id="joinPanel" class="panel">
+      <h2>Entrar na sala</h2>
+      <label>Seu nome</label>
+      <input id="playerName" placeholder="Ex: João" />
+      <label>Código da sala</label>
+      <input id="roomCode" placeholder="Ex: ABCD12" maxlength="6" />
+      <button id="joinBtn">Entrar</button>
+    </section>
+
+    <section id="gamePanel" class="panel hidden">
+      <h2 id="roomTitle">Sala</h2>
+      <p id="playerInfo"></p>
+      <div id="content"></div>
+    </section>
+
+    <a class="back-link" href="games.html">← Voltar</a>
+  </main>
+
+  <script type="module">
+    import { db, ref, set, get, update, onValue, serverTimestamp } from './firebase.js';
+
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    if (params.get('room')) $('roomCode').value = params.get('room');
+
+    let roomCode = localStorage.getItem('playerRoomCode') || params.get('room') || '';
+    let playerId = localStorage.getItem('playerId') || crypto.randomUUID();
+    let playerName = localStorage.getItem('playerName') || '';
+    let lastQuestionId = '';
+    let answeredQuestionId = localStorage.getItem('answeredQuestionId') || '';
+
+    if (roomCode) $('roomCode').value = roomCode;
+    if (playerName) $('playerName').value = playerName;
+
+    const roomRef = (path = '') => ref(db, `rooms/${roomCode}${path ? '/' + path : ''}`);
+
+    $('joinBtn').onclick = async () => {
+      roomCode = $('roomCode').value.trim().toUpperCase();
+      playerName = $('playerName').value.trim();
+      if (!playerName || !roomCode) return alert('Digite nome e código da sala.');
+
+      const snap = await get(roomRef());
+      if (!snap.exists()) return alert('Sala não encontrada.');
+
+      localStorage.setItem('playerRoomCode', roomCode);
+      localStorage.setItem('playerName', playerName);
+      localStorage.setItem('playerId', playerId);
+
+      await update(roomRef(`players/${playerId}`), {
+        name: playerName,
+        score: snap.val()?.players?.[playerId]?.score || 0,
+        joinedAt: serverTimestamp()
+      });
+
+      $('joinPanel').classList.add('hidden');
+      $('gamePanel').classList.remove('hidden');
+      listenRoom();
+    };
+
+    function listenRoom() {
+      onValue(roomRef(), (snap) => {
+        const room = snap.val();
+        if (!room) return;
+        applyDesign(room.design);
+        $('roomTitle').textContent = room.title || 'Sala';
+        $('playerInfo').textContent = `${playerName} — ${room.players?.[playerId]?.score || 0} pts`;
+        render(room);
+      });
+    }
+
+    function applyDesign(design = {}) {
+      if (design.primaryColor) document.documentElement.style.setProperty('--primary', design.primaryColor);
+      if (design.backgroundColor) document.documentElement.style.setProperty('--bg', design.backgroundColor);
+      if (design.fontFamily) document.body.style.fontFamily = design.fontFamily;
+    }
+
+    function canSeeQuestion(question) {
+      if (!question) return false;
+      if (question.visibleToAllPlayers) return true;
+      return Array.isArray(question.selectedPlayers) && question.selectedPlayers.includes(playerId);
+    }
+
+    function render(room) {
+      const content = $('content');
+      const q = room.currentQuestion;
+
+      if (room.status === 'ended') {
+        content.innerHTML = '<h2>Jogo encerrado.</h2><p>Obrigado por jogar.</p>';
+        return;
+      }
+
+      if (!q || !canSeeQuestion(q)) {
+        content.innerHTML = '<h2>Aguardando pergunta do Master...</h2>';
+        return;
+      }
+
+      if (q.id !== lastQuestionId) {
+        lastQuestionId = q.id;
+      }
+
+      const alreadyAnswered = room.answers && room.answers[playerId];
+      if (alreadyAnswered) {
+        content.innerHTML = '<h2>Resposta enviada.</h2><p>Aguardando a próxima rodada...</p>';
+        return;
+      }
+
+      if (q.type === 'number') renderNumberQuestion(q);
+      if (q.type === 'fixed') renderFixedQuestion(q);
+      if (q.type === 'text') renderTextQuestion(q);
+    }
+
+    function questionHeader(q) {
+      return `<h2>${q.text}</h2>`;
+    }
+
+    function renderNumberQuestion(q) {
+      $('content').innerHTML = `
+        ${questionHeader(q)}
+        <label>Digite um número</label>
+        <input id="answerInput" type="number" placeholder="Sua resposta" />
+        <button id="sendAnswerBtn">Enviar resposta</button>
+      `;
+      $('sendAnswerBtn').onclick = () => sendAnswer($('answerInput').value.trim());
+    }
+
+    function renderFixedQuestion(q) {
+      const buttons = q.options.map(opt => `<button class="option-button" data-answer="${escapeHtml(opt)}">${escapeHtml(opt)}</button>`).join('');
+      $('content').innerHTML = `${questionHeader(q)}<div>${buttons}</div>`;
+      document.querySelectorAll('.option-button').forEach(btn => {
+        btn.onclick = () => sendAnswer(btn.dataset.answer);
+      });
+    }
+
+    function renderTextQuestion(q) {
+      $('content').innerHTML = `
+        ${questionHeader(q)}
+        <label>Escreva sua resposta</label>
+        <textarea id="answerInput" placeholder="Sua resposta"></textarea>
+        <button id="sendAnswerBtn">Enviar resposta</button>
+      `;
+      $('sendAnswerBtn').onclick = () => sendAnswer($('answerInput').value.trim());
+    }
+
+    async function sendAnswer(answer) {
+      if (!answer) return alert('Digite uma resposta.');
+      await set(roomRef(`answers/${playerId}`), {
+        name: playerName,
+        answer,
+        sentAt: serverTimestamp()
+      });
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+  </script>
+</body>
+</html>

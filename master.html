@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Master</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Master</h1>
+      <p>Controle da sala e do jogo.</p>
+    </section>
+
+    <section id="stepCreate" class="panel">
+      <h2>1. Criar sala</h2>
+      <label>Título da sala</label>
+      <input id="roomTitle" placeholder="Ex: Noite dos amigos" />
+      <button id="createRoomBtn">Criar sala</button>
+    </section>
+
+    <section id="stepDesign" class="panel hidden">
+      <h2>2. Design da sala</h2>
+      <div class="grid">
+        <div>
+          <label>Cor principal</label>
+          <input type="color" id="primaryColor" value="#38bdf8" />
+        </div>
+        <div>
+          <label>Cor de fundo</label>
+          <input type="color" id="backgroundColor" value="#111827" />
+        </div>
+        <div>
+          <label>Fonte</label>
+          <select id="fontFamily">
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
+            <option value="Verdana, Geneva, sans-serif">Verdana</option>
+            <option value="'Courier New', monospace">Monospace</option>
+            <option value="Impact, Charcoal, sans-serif">Impact</option>
+            <option value="Georgia, serif">Georgia</option>
+          </select>
+        </div>
+      </div>
+      <button id="saveDesignBtn">Salvar design</button>
+    </section>
+
+    <section id="stepPanel" class="hidden">
+      <div class="panel">
+        <h2>3. Sala criada</h2>
+        <p>Código da sala:</p>
+        <div id="roomCodeDisplay" class="big-code">------</div>
+        <p class="small">Use este código no Viewer e nos Players.</p>
+        <div class="row">
+          <a id="openViewer" class="btn secondary" target="_blank">Abrir Viewer</a>
+          <a id="openPlayer" class="btn secondary" target="_blank">Abrir Player</a>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:18px;">
+        <section class="panel">
+          <h2>Jogadores</h2>
+          <div id="playersList" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Criar pergunta</h2>
+          <label>Tipo</label>
+          <select id="questionType">
+            <option value="number">Resposta em números</option>
+            <option value="fixed">Resposta fixa</option>
+            <option value="text">Resposta em texto</option>
+          </select>
+
+          <label>Pergunta</label>
+          <textarea id="questionText" placeholder="Digite a pergunta"></textarea>
+
+          <div id="fixedOptionsBox" class="hidden">
+            <label>Opções de resposta fixa, uma por linha</label>
+            <textarea id="fixedOptions" placeholder="Opção A&#10;Opção B&#10;Opção C"></textarea>
+          </div>
+
+          <button id="createQuestionBtn">Criar pergunta</button>
+        </section>
+      </div>
+
+      <section id="visibilityPanel" class="panel hidden" style="margin-top:18px;">
+        <h2>4. Mostrar pergunta</h2>
+        <label><input type="checkbox" id="showToViewer" /> Mostrar pergunta no Viewer</label><br><br>
+        <label><input type="radio" name="playerVisibility" value="all" checked /> Mostrar para todos os jogadores</label><br><br>
+        <label><input type="radio" name="playerVisibility" value="selected" /> Mostrar apenas para jogadores escolhidos</label>
+        <div id="selectedPlayersBox" class="list" style="margin-top:12px;"></div>
+        <button id="sendQuestionBtn" class="success">Enviar pergunta</button>
+      </section>
+
+      <section class="panel" style="margin-top:18px;">
+        <h2>5. Respostas recebidas</h2>
+        <div id="answersList" class="list"></div>
+      </section>
+
+      <section id="resultPanel" class="panel hidden" style="margin-top:18px;">
+        <h2>Escolher visualização das respostas</h2>
+        <div id="resultOptions"></div>
+        <button id="showResultsBtn">Mostrar resultado no Viewer</button>
+      </section>
+
+      <section class="panel" style="margin-top:18px;">
+        <h2>6. Pontuação</h2>
+        <div id="scoreControls" class="list"></div>
+        <div class="row" style="margin-top:16px;">
+          <button id="nextRoundBtn" class="success">Próxima rodada</button>
+          <button id="endGameBtn" class="danger">Encerrar jogo</button>
+        </div>
+      </section>
+    </section>
+
+    <a class="back-link" href="games.html">← Voltar</a>
+  </main>
+
+  <script type="module">
+    import { db, ref, set, update, remove, onValue, serverTimestamp } from './firebase.js';
+
+    let roomCode = localStorage.getItem('masterRoomCode') || '';
+    let players = {};
+    let currentQuestion = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function generateCode() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
+    }
+
+    function roomRef(path = '') {
+      return ref(db, `rooms/${roomCode}${path ? '/' + path : ''}`);
+    }
+
+    function show(el) { el.classList.remove('hidden'); }
+    function hide(el) { el.classList.add('hidden'); }
+
+    function enterPanel() {
+      hide($('stepCreate'));
+      hide($('stepDesign'));
+      show($('stepPanel'));
+      $('roomCodeDisplay').textContent = roomCode;
+      $('openViewer').href = `viewer.html?room=${roomCode}`;
+      $('openPlayer').href = `player.html?room=${roomCode}`;
+      listenRoom();
+    }
+
+    $('createRoomBtn').onclick = async () => {
+      const title = $('roomTitle').value.trim() || 'Sala sem título';
+      roomCode = generateCode();
+      localStorage.setItem('masterRoomCode', roomCode);
+
+      await set(roomRef(), {
+        title,
+        status: 'design',
+        createdAt: serverTimestamp(),
+        design: {
+          primaryColor: '#38bdf8',
+          backgroundColor: '#111827',
+          fontFamily: 'Arial, Helvetica, sans-serif'
+        },
+        players: {},
+        currentQuestion: null,
+        answers: {},
+        resultView: {},
+        round: 0
+      });
+
+      hide($('stepCreate'));
+      show($('stepDesign'));
+    };
+
+    $('saveDesignBtn').onclick = async () => {
+      await update(roomRef(), {
+        status: 'lobby',
+        design: {
+          primaryColor: $('primaryColor').value,
+          backgroundColor: $('backgroundColor').value,
+          fontFamily: $('fontFamily').value
+        }
+      });
+      enterPanel();
+    };
+
+    $('questionType').onchange = () => {
+      $('questionType').value === 'fixed' ? show($('fixedOptionsBox')) : hide($('fixedOptionsBox'));
+    };
+
+    $('createQuestionBtn').onclick = async () => {
+      const type = $('questionType').value;
+      const text = $('questionText').value.trim();
+      if (!text) return alert('Digite a pergunta.');
+
+      let options = [];
+      if (type === 'fixed') {
+        options = $('fixedOptions').value.split('\n').map(x => x.trim()).filter(Boolean);
+        if (options.length < 2) return alert('Digite pelo menos 2 opções.');
+      }
+
+      currentQuestion = {
+        id: Date.now().toString(),
+        type,
+        text,
+        options,
+        visibleToViewer: false,
+        visibleToAllPlayers: false,
+        selectedPlayers: []
+      };
+
+      await update(roomRef(), {
+        currentQuestion,
+        answers: {},
+        resultView: {},
+        status: 'question_created'
+      });
+
+      renderSelectedPlayers();
+      renderResultOptions(type);
+      show($('visibilityPanel'));
+      show($('resultPanel'));
+    };
+
+    document.querySelectorAll('input[name="playerVisibility"]').forEach(r => {
+      r.onchange = renderSelectedPlayers;
+    });
+
+    function renderSelectedPlayers() {
+      const mode = document.querySelector('input[name="playerVisibility"]:checked').value;
+      const box = $('selectedPlayersBox');
+      box.innerHTML = '';
+      if (mode !== 'selected') return;
+
+      Object.entries(players).forEach(([id, p]) => {
+        const div = document.createElement('label');
+        div.className = 'item';
+        div.innerHTML = `<input type="checkbox" class="selectedPlayer" value="${id}" /> ${p.name}`;
+        box.appendChild(div);
+      });
+    }
+
+    $('sendQuestionBtn').onclick = async () => {
+      if (!currentQuestion) return;
+      const mode = document.querySelector('input[name="playerVisibility"]:checked').value;
+      const selectedPlayers = [...document.querySelectorAll('.selectedPlayer:checked')].map(x => x.value);
+
+      const updatedQuestion = {
+        ...currentQuestion,
+        visibleToViewer: $('showToViewer').checked,
+        visibleToAllPlayers: mode === 'all',
+        selectedPlayers
+      };
+
+      await update(roomRef(), {
+        currentQuestion: updatedQuestion,
+        status: 'answering'
+      });
+    };
+
+    function renderResultOptions(type) {
+      const box = $('resultOptions');
+      if (type === 'number') {
+        box.innerHTML = `
+          <label><input type="checkbox" id="showAverage" checked /> Mostrar média</label><br><br>
+          <label><input type="checkbox" id="showHighest" checked /> Mostrar maior número</label><br><br>
+          <label><input type="checkbox" id="showEachAnswer" checked /> Mostrar resposta de cada jogador</label>
+        `;
+      } else if (type === 'fixed') {
+        box.innerHTML = `
+          <label><input type="checkbox" id="showBarChart" checked /> Mostrar gráfico de barras</label><br><br>
+          <label><input type="checkbox" id="showPieChart" /> Mostrar gráfico de pizza simples</label><br><br>
+          <label><input type="checkbox" id="showEachAnswer" checked /> Mostrar resposta de cada jogador</label>
+        `;
+      } else {
+        box.innerHTML = `
+          <label><input type="checkbox" id="showEachAnswer" checked /> Mostrar resposta de cada jogador</label>
+        `;
+      }
+    }
+
+    $('showResultsBtn').onclick = async () => {
+      const type = currentQuestion?.type;
+      const resultView = {
+        showAverage: !!$('showAverage')?.checked,
+        showHighest: !!$('showHighest')?.checked,
+        showEachAnswer: !!$('showEachAnswer')?.checked,
+        showBarChart: !!$('showBarChart')?.checked,
+        showPieChart: !!$('showPieChart')?.checked
+      };
+      await update(roomRef(), { resultView, status: 'showing_results' });
+    };
+
+    async function addScore(playerId, amount) {
+      const current = players[playerId]?.score || 0;
+      await update(roomRef(`players/${playerId}`), { score: current + amount });
+    }
+
+    window.addScore = addScore;
+
+    $('nextRoundBtn').onclick = async () => {
+      await update(roomRef(), {
+        status: 'lobby',
+        currentQuestion: null,
+        answers: {},
+        resultView: {}
+      });
+      currentQuestion = null;
+      $('questionText').value = '';
+      $('fixedOptions').value = '';
+      hide($('visibilityPanel'));
+      hide($('resultPanel'));
+    };
+
+    $('endGameBtn').onclick = async () => {
+      await update(roomRef(), { status: 'ended', currentQuestion: null, answers: {}, resultView: {} });
+    };
+
+    function listenRoom() {
+      onValue(roomRef(), (snap) => {
+        const room = snap.val();
+        if (!room) return;
+        players = room.players || {};
+        currentQuestion = room.currentQuestion || currentQuestion;
+        renderPlayers();
+        renderAnswers(room.answers || {});
+        renderScores();
+        if (currentQuestion) renderResultOptions(currentQuestion.type);
+      });
+    }
+
+    function renderPlayers() {
+      const box = $('playersList');
+      box.innerHTML = '';
+      const entries = Object.entries(players);
+      if (!entries.length) {
+        box.innerHTML = '<p>Nenhum jogador conectado ainda.</p>';
+        return;
+      }
+      entries.forEach(([id, p]) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.textContent = `${p.name} — ${p.score || 0} pts`;
+        box.appendChild(div);
+      });
+    }
+
+    function renderAnswers(answers) {
+      const box = $('answersList');
+      box.innerHTML = '';
+      const entries = Object.entries(answers);
+      if (!entries.length) {
+        box.innerHTML = '<p>Aguardando respostas...</p>';
+        return;
+      }
+      entries.forEach(([id, a]) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<strong>${a.name}</strong><br>${a.answer}`;
+        box.appendChild(div);
+      });
+    }
+
+    function renderScores() {
+      const box = $('scoreControls');
+      box.innerHTML = '';
+      const entries = Object.entries(players);
+      if (!entries.length) {
+        box.innerHTML = '<p>Nenhum jogador para pontuar.</p>';
+        return;
+      }
+      entries.forEach(([id, p]) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <strong>${p.name}</strong> — ${p.score || 0} pts<br>
+          <button onclick="addScore('${id}', 1)">+1</button>
+          <button onclick="addScore('${id}', 5)">+5</button>
+          <button onclick="addScore('${id}', -1)" class="secondary">-1</button>
+          <input type="number" placeholder="pontos manuais" id="manual_${id}" />
+          <button onclick="addScore('${id}', Number(document.getElementById('manual_${id}').value || 0))">Aplicar</button>
+        `;
+        box.appendChild(div);
+      });
+    }
+
+    if (roomCode) {
+      enterPanel();
+    }
+  </script>
+</body>
+</html>
