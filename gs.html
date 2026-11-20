@@ -333,7 +333,7 @@ const MODES = [
   {id:"coin",title:"Cara ou coroa",tag:"MOEDA",sub:"Uma escolha, duas possibilidades.",desc:"Escolha um lado e lance a moeda.",bonus:"+25% se acertar"},
   {id:"dice",title:"Maior, menor ou igual",tag:"2 DADOS",sub:"Compare a soma de dois dados com o alvo.",desc:"Um alvo aleatório e três possíveis resultados.",bonus:"Bônus pela probabilidade"},
   {id:"yatzy",title:"Yatzy",tag:"5 DADOS",sub:"Guarde dados e tente superar o bot.",desc:"Você tem até três lançamentos por rodada.",bonus:"Até +300%"},
-  {id:"blackjack",title:"21",tag:"CARTAS",sub:"Chegue perto de 21 sem ultrapassar.",desc:"Comprar ou passar? O bot compra até 17.",bonus:"Até +150%"},
+  {id:"blackjack",title:"21",tag:"CARTAS",sub:"Chegue perto de 21 sem ultrapassar.",desc:"Comprar ou passar? O bot compra até 17.",bonus:"Bônus variável até +150%"},
   {id:"poker",title:"Pôquer fechado",tag:"5 CARTAS",sub:"Troque cartas e forme a melhor mão.",desc:"Até duas trocas de cartas. Mãos são comparadas no final.",bonus:"Até +900%"}
 ];
 const PIP_POS = {
@@ -433,12 +433,16 @@ function bonusGuide(){
     ["Vencer com qualquer outra combinação","+100%"]
   ];
   else if(state.mode==="blackjack")rows=[
-    ["Vencer com 21 natural (2 cartas)","+150%"],
-    ["Vencer com 21 (3 ou mais cartas)","+120%"],
-    ["Vencer com menos de 21","+100%"]
+    ["Vencer sem ultrapassar 21", "Variável"],
+    ["Ambos ultrapassam 21: vence a menor soma", "Variável"],
+    ["Vencer com 21 natural (2 cartas)", "Fórmula + 15 p.p."]
   ];
   else rows=POKER_NAMES.map((name,i)=>["Vitória com "+name.toLowerCase(),"+"+POKER_BONUSES[i]+"%"]);
-  const bonusFormula = state.mode==="dice" ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = (36 ÷ N − 1) × 100</code><small>N é a quantidade de combinações favoráveis para a sua previsão. Os dois dados têm 36 resultados possíveis, e o bônus varia conforme o número de referência e a opção escolhida.</small></div>` : "";
+  const bonusFormula = state.mode==="dice"
+    ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = (36 ÷ N − 1) × 100</code><small>N é a quantidade de combinações favoráveis para a sua previsão. Os dois dados têm 36 resultados possíveis, e o bônus varia conforme o número de referência e a opção escolhida.</small></div>`
+    : state.mode==="blackjack"
+    ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = mín(150; 25 + 4 × |J − B| + 2 × J + N)</code><small>J = soma dos valores das cartas do jogador (ás vale 1 ou 11); B = soma das cartas do bot; |J − B| = diferença absoluta entre as mãos; N = 15 para 21 natural vencedor, ou 0 nos outros casos. O bônus máximo é +150% e só é pago em caso de vitória.</small></div>`
+    : "";
   return `<section class="panel bonus-panel" aria-label="Tabela de bônus"><span class="eyebrow">PREMIAÇÃO</span><h2>Bônus por resultado</h2><p>Esses bônus são pagos <strong>somente em caso de vitória</strong>, além da devolução dos créditos apostados.</p>
     <div class="bonus-list">${rows.map(([condition,bonus])=>`<div class="bonus-row"><span>${condition}</span><strong class="${bonus==="—"?"unavailable":""}">${bonus}</strong></div>`).join("")}</div>
     ${bonusFormula}
@@ -450,7 +454,7 @@ function sideRules(){
     coin:[['1','Escolha cara ou coroa.'],['2','A moeda tem 50% de chance para cada lado.'],['3','Confira o resultado do lançamento.']],
     dice:[['1','O alvo é sorteado entre 2 e 12.'],['2','Preveja se a soma dos dois dados será maior, menor ou igual ao alvo.'],['3','As chances consideram os 36 resultados possíveis dos dados.']],
     yatzy:[['1','Você começa lançando cinco dados.'],['2','Toque nos dados que deseja manter e role os outros; são até três lançamentos no total.'],['3','Sua pontuação é a soma dos dados mais o bônus de combinação. O bot também joga até três vezes.']],
-    blackjack:[['1','Você e o bot recebem duas cartas.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Passar de 21 causa derrota.']],
+    blackjack:[['1','Você e o bot recebem duas cartas. Se houver 21 natural, toque em Revelar resultado para conferir as mãos.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Se ambos ultrapassarem 21, vence a menor soma; se apenas um ultrapassar, perde.']],
     poker:[['1','Você e o bot começam com cinco cartas.'],['2','Selecione as cartas para substituir. Você tem duas oportunidades de troca, podendo ficar antes.'],['3','O bot também pode trocar até duas vezes. Você pode ficar para comparar ou correr e desistir da rodada.']]
   };
   return `<section class="panel panel-side" aria-labelledby="howto-title"><span class="eyebrow">INSTRUÇÕES</span><h2 id="howto-title">Como jogar</h2>${examples[state.mode].map(([i,s])=>`<div class="rule"><i>${i}</i><div>${s}</div></div>`).join("")}<hr class="separator"><p class="notice">Saldo único para todos os modos. Os créditos não possuem valor monetário, não podem ser comprados ou resgatados.</p></section>`;
@@ -527,6 +531,13 @@ function blackjackValue(hand){
   while(points>21&&aces>0){points-=10;aces--;}
   return points;
 }
+function blackjackBonus(player,bot){
+  const J=blackjackValue(player),B=blackjackValue(bot);
+  const difference=Math.abs(J-B);
+  const natural=J===21&&player.length===2?15:0;
+  const raw=25+4*difference+2*J+natural;
+  return {bonus:Math.min(150,raw),difference,natural,J,B,raw};
+}
 function rankPoker(hand){
   const values=hand.map(c=>c.value).sort((a,b)=>b-a);
   const count=new Map();for(const v of values)count.set(v,(count.get(v)||0)+1);
@@ -594,10 +605,15 @@ function renderPlaying(){
   }
   if(state.mode==="blackjack"){
     const d=state.data;
-    return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="game-intro"><div><span class="eyebrow">CARTAS • 21</span><h1>Comprar ou passar?</h1><p>Chegue perto de 21 sem passar. O bot está com uma carta escondida.</p></div></section>
+    const initialNatural=d.naturalReady;
+    const heading=initialNatural&&blackjackValue(d.player)===21?"21 natural!":initialNatural?"Hora de revelar": "Comprar ou passar?";
+    const description=initialNatural?"As cartas iniciais já definiram esta rodada. Confira suas cartas e revele o resultado.":"Chegue perto de 21 sem passar. O bot está com uma carta escondida.";
+    return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="game-intro"><div><span class="eyebrow">CARTAS • 21</span><h1>${heading}</h1><p>${description}</p></div></section>
     <section class="panel center">${handArea("Cartas do bot",[d.bot[0],null],"Carta oculta")}${handArea("Suas cartas",d.player,`${blackjackValue(d.player)} pontos`)}
-    <div class="actions"><button type="button" class="primary" data-action="hit">+ Comprar carta</button><button type="button" class="secondary" data-action="stand">Passar / ficar</button></div>
-    <p class="notice">Ás vale 1 ou 11. Figuras valem 10. O bot compra até ter pelo menos 17 pontos.</p></section>`;
+    <div class="actions">${initialNatural
+      ? `<button type="button" class="primary" data-action="reveal-21">Revelar resultado →</button>`
+      : `<button type="button" class="primary" data-action="hit">+ Comprar carta</button><button type="button" class="secondary" data-action="stand">Passar / ficar</button>`}</div>
+    <p class="notice">${initialNatural?"21 natural é uma mão inicial de duas cartas. Revele o resultado quando quiser.":"Ás vale 1 ou 11. Figuras valem 10. O bot compra até ter pelo menos 17 pontos. Se ambos passarem de 21, vence a menor soma."}</p></section>`;
   }
   const d=state.data;
   const swapsLeft=2-d.swaps;
@@ -664,8 +680,8 @@ function beginBet(){
     state.data={values:[0,0,0,0,0],held:[false,false,false,false,false],rolls:0};render();
   }else if(state.mode==="blackjack"){
     const deck=makeDeck();const player=[deck.pop()],bot=[deck.pop()];player.push(deck.pop());bot.push(deck.pop());
-    state.data={deck,player,bot};
-    if(blackjackValue(player)===21 || blackjackValue(bot)===21)settle21();else render();
+    state.data={deck,player,bot,naturalReady: blackjackValue(player)===21 || blackjackValue(bot)===21};
+    render();
   }else{
     const deck=makeDeck();const player=Array.from({length:5},()=>deck.pop());const bot=Array.from({length:5},()=>deck.pop());
     state.data={deck,player,bot,selected:[false,false,false,false,false],swaps:0};render();
@@ -699,23 +715,31 @@ function handDice(label,values,score){
   return `<div class="hand-area"><div class="hand-name">${label}</div><div class="dice-field">${values.map(dieSvg).join("")}</div><div class="hand-value">${score.total} pontos • ${score.name} (${score.base} + ${score.bonus})</div></div>`;
 }
 function settle21(){
+  if(state.phase!=="playing"||state.mode!=="blackjack")return;
   const d=state.data;
-  if(blackjackValue(d.player)<=21 && blackjackValue(d.player)!==21 && blackjackValue(d.bot)!==21){
+  // Mesmo que o jogador ultrapasse 21, o bot termina a mão: ambos podem estourar.
+  // Não compra novas cartas quando uma mão inicial já tem 21 natural.
+  if(!d.naturalReady){
     while(blackjackValue(d.bot)<17)d.bot.push(d.deck.pop());
   }
   const p=blackjackValue(d.player),b=blackjackValue(d.bot);
-  let outcome;
-  if(p>21)outcome="lose";
-  else if(b>21)outcome="win";
-  else if(p>b)outcome="win";
-  else if(p<b)outcome="lose";
-  else outcome="tie";
-  const bonus=p===21?(d.player.length===2?150:120):100;
-  const details=handArea("Suas cartas",d.player,`${p} pontos`)+handArea("Cartas do bot",d.bot,`${b} pontos`);
-  finish(outcome,bonus,p>21?"Você ultrapassou 21.":b>21?"O bot ultrapassou 21.":outcome==="win"?"Sua mão ficou mais perto de 21.":outcome==="tie"?"Vocês terminaram com a mesma pontuação.":"O bot ficou mais perto de 21.",details);
+  let outcome,description;
+  if(p>21&&b>21){
+    outcome=p<b?"win":p>b?"lose":"tie";
+    description=outcome==="tie"?"Os dois ultrapassaram 21 com a mesma soma.":"Os dois ultrapassaram 21: venceu a menor soma.";
+  }else if(p>21){outcome="lose";description="Você ultrapassou 21, mas o bot não.";}
+  else if(b>21){outcome="win";description="O bot ultrapassou 21, mas você não.";}
+  else if(p>b){outcome="win";description="Sua mão ficou mais perto de 21.";}
+  else if(p<b){outcome="lose";description="O bot ficou mais perto de 21.";}
+  else {outcome="tie";description="Vocês terminaram com a mesma pontuação.";}
+  const calc=blackjackBonus(d.player,d.bot);
+  const formula=`25 + 4 × |${p} − ${b}| + 2 × ${p}${calc.natural?" + 15 (natural)":""} = ${calc.raw}%${calc.raw>150?" → limite de 150%":""}`;
+  const details=handArea("Suas cartas",d.player,`${p} pontos`)+handArea("Cartas do bot",d.bot,`${b} pontos`)+
+    `<div class="bonus-formula"><strong>Cálculo do bônus desta mão</strong><code>${formula}</code><small>Diferença: ${calc.difference} pontos. Bônus calculado: ${percent(calc.bonus)}${outcome!=="win"?" (não pago: não houve vitória)":""}.</small></div>`;
+  finish(outcome,calc.bonus,description,details);
 }
 function hit21(){
-  if(state.phase!=="playing")return;
+  if(state.phase!=="playing"||state.mode!=="blackjack"||state.data.naturalReady)return;
   const d=state.data;d.player.push(d.deck.pop());
   if(blackjackValue(d.player)>=21)settle21();else render();
 }
@@ -774,7 +798,8 @@ document.addEventListener("click",event=>{
   else if(action==="roll"&&state.phase==="playing"&&state.mode==="yatzy")yatzyRoll();
   else if(action==="end-yatzy"&&state.phase==="playing"&&state.mode==="yatzy")endYatzy();
   else if(action==="hit"&&state.phase==="playing"&&state.mode==="blackjack")hit21();
-  else if(action==="stand"&&state.phase==="playing"&&state.mode==="blackjack")settle21();
+  else if(action==="stand"&&state.phase==="playing"&&state.mode==="blackjack"&&!state.data.naturalReady)settle21();
+  else if(action==="reveal-21"&&state.phase==="playing"&&state.mode==="blackjack"&&state.data.naturalReady)settle21();
   else if(action==="swap"&&state.phase==="playing"&&state.mode==="poker")swapPoker();
   else if(action==="stand-poker"&&state.phase==="playing"&&state.mode==="poker")settlePoker();
   else if(action==="fold"&&state.phase==="playing"&&state.mode==="poker")settlePoker(true);
