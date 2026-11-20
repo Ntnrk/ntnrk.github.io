@@ -63,6 +63,65 @@
     @media(max-width:900px){.mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-layout{grid-template-columns:1fr}.panel-side{order:2}.game-intro .art{display:none}}
     @media(max-width:540px){.shell{width:calc(100% - 26px)}.header{padding:16px 0 20px}.brand small{font-size:.62rem}.brand strong{font-size:.85rem}.wallet{gap:7px;padding:8px 10px}.wallet strong{font-size:.97rem}.wallet-icon{display:none}.hero{padding:16px 0}.hero h1{font-size:2.55rem}.overview{gap:7px;margin-bottom:28px}.stat{padding:11px 9px;border-radius:11px}.stat strong{font-size:1.3rem}.stat span{font-size:.66rem}.mode-grid{grid-template-columns:1fr;gap:11px}.mode-card{min-height:177px;padding:17px}.mode-card .art{height:61px;margin-bottom:7px}.mode-card .artcoin{width:52px;height:52px;font-size:1.5rem}.mode-card .tiny-card{width:44px;height:61px}.mode-card .die-svg{width:47px;height:47px}.mode-card .minidice.multiple .die-svg{width:31px;height:31px}.mode-card .minidice.multiple{width:114px}.mode-card p{margin-bottom:11px}.game-intro h1{font-size:2.3rem}.panel{padding:17px}.choices.three{gap:6px}.choices.three .choice{padding:10px 4px}.choices.three .choice strong{font-size:.92rem}.choices.three .choice small{font-size:.65rem}.bet-presets{gap:6px}.playing-card{width:54px;height:79px;padding:5px}.playing-card .suit{font-size:1.6rem}.die-svg{width:57px;height:57px}.die-toggle{padding:8px 4px;min-width:55px}.dice-field{gap:4px}.footer{flex-direction:column;align-items:flex-start;padding-top:30px}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+    /* Ajustes de layout: preservam regras, conteúdos e cores existentes. */
+    #app {flex: 1 0 auto; min-width: 0; width: 100%;}
+    .bet-flow {width: 100%; min-width: 0;}
+    .panel, .mode-card, .score-box, .hand-area {min-width: 0;}
+    .section-heading {flex-wrap: wrap;}
+    .bonus-row {align-items: flex-start; min-width: 0;}
+    .bonus-row span {flex: 1 1 auto; min-width: 0; overflow-wrap: break-word;}
+    .bonus-row strong {flex: 0 0 auto; max-width: 47%; text-align: right; white-space: normal; overflow-wrap: anywhere;}
+    .bonus-formula {margin-top: 14px; padding: 15px; border: 1px solid #38544c; border-radius: 13px; background: #101a1b;}
+    .bonus-formula > strong {display: block; color: var(--accent); font-size: .85rem; margin-bottom: 9px;}
+    .bonus-formula code {display: block; padding: 12px; background: #0b1418; border: 1px solid var(--border); border-radius: 9px; color: var(--text); font: 600 .91rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; white-space: normal;}
+    .bonus-formula small {display: block; color: var(--muted); font-size: .77rem; line-height: 1.55; margin-top: 9px;}
+    .playing-cards {display: grid; grid-template-columns: repeat(5, minmax(0, 76px)); justify-content: center; gap: 8px; width: 100%; max-width: 460px; margin: 16px auto;}
+    .playing-card {min-width: 0; width: 100%; height: auto; aspect-ratio: 76 / 105;}
+    .playing-card .corner {white-space: nowrap;}
+    .dice-field:has(.die-toggle) {display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); justify-content: center; gap: 8px; max-width: 515px;}
+    .die-toggle {width: 100%; min-width: 0;}
+    .die-toggle .die-svg {width: 100%; height: auto; max-width: 70px;}
+    .hand-area .dice-field {display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; max-width: 440px; gap: 8px;}
+    .hand-area .dice-field > .die-svg {width: 100%; height: auto; max-width: 70px;}
+    .score-box strong {overflow-wrap: anywhere;}
+    @media (max-width: 540px) {
+      .game-intro {gap: 12px;}
+      .panel {width: 100%;}
+      .bonus-row {gap: 8px; padding: 11px 10px;}
+      .bonus-row span {font-size: .8rem;}
+      .bonus-row strong {font-size: .88rem;}
+      .bonus-formula {padding: 12px;}
+      .bonus-formula code {font-size: .81rem; padding: 10px;}
+      .hand-area {padding: 11px 6px 14px;}
+      .playing-cards {grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; max-width: 420px;}
+      .playing-card {min-width: 0; width: 100%; height: auto; aspect-ratio: 54 / 79; padding: 4px; border-radius: 7px;}
+      .playing-card .corner {font-size: clamp(.72rem, 3vw, .91rem);}
+      .playing-card .corner small {font-size: clamp(.72rem, 3vw, .91rem); margin-top: 3px;}
+      .playing-card .suit {font-size: clamp(1.16rem, 5vw, 1.6rem);}
+      .playing-card.back-card {border-width: 3px; font-size: .75rem;}
+      .dice-field:has(.die-toggle) {gap: 4px; margin: 16px auto;}
+      .die-toggle {min-width: 0; padding: 7px 2px; border-radius: 10px;}
+      .die-toggle .die-svg {width: 100%; height: auto; max-width: 57px;}
+      .die-toggle small {font-size: clamp(.57rem, 2.3vw, .72rem);}
+      .hand-area .dice-field {gap: 4px; margin: 14px auto;}
+      .hand-area .dice-field > .die-svg {max-width: 57px;}
+      .summary-row {flex-wrap: wrap;}
+      .summary-row strong {overflow-wrap: anywhere;}
+    }
+    @media (max-width: 350px) {
+      .header {gap: 7px;}
+      .wallet {padding: 7px 8px;}
+      .wallet strong {font-size: .86rem;}
+      .brand {gap: 8px;}
+      .brand strong {font-size: .76rem;}
+      .brand small {font-size: .58rem;}
+      .logo {width: 39px; height: 39px;}
+      .choices.three {gap: 5px;}
+      .choices.three .choice {padding: 9px 3px;}
+      .choices.three .choice strong {font-size: .82rem;}
+      .choices.three .choice small {font-size: .61rem;}
+    }
   </style>
 </head>
 <body>
@@ -189,8 +248,10 @@ function bonusGuide(){
     ["Vencer com menos de 21","+100%"]
   ];
   else rows=POKER_NAMES.map((name,i)=>["Vitória com "+name.toLowerCase(),"+"+POKER_BONUSES[i]+"%"]);
+  const bonusFormula = state.mode==="dice" ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = (36 ÷ N − 1) × 100</code><small>N é a quantidade de combinações favoráveis para a sua previsão. Os dois dados têm 36 resultados possíveis, e o bônus varia conforme o número de referência e a opção escolhida.</small></div>` : "";
   return `<section class="panel bonus-panel" aria-label="Tabela de bônus"><span class="eyebrow">PREMIAÇÃO</span><h2>Bônus por resultado</h2><p>Esses bônus são pagos <strong>somente em caso de vitória</strong>, além da devolução dos créditos apostados.</p>
     <div class="bonus-list">${rows.map(([condition,bonus])=>`<div class="bonus-row"><span>${condition}</span><strong class="${bonus==="—"?"unavailable":""}">${bonus}</strong></div>`).join("")}</div>
+    ${bonusFormula}
     <p class="notice">Em caso de empate, a aposta é devolvida sem bônus. Em caso de derrota ou desistência, a aposta é perdida. Todos os créditos são fictícios.</p>
   </section>`;
 }
