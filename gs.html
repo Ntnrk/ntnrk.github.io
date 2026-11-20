@@ -502,6 +502,44 @@
       .mode-card .minidice.multiple .die-svg {width:24px;height:24px}
     }
     @media (prefers-reduced-motion:reduce){.overlay,.lobby-heading {animation:none}}
+
+
+    /* GS SHOP — painel compacto, cores sólidas, animações mantidas */
+    .shop-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:39px;padding:8px 12px;border:1px solid #5b566b;border-radius:9px;background:#292638;color:#cab9f3;font-weight:800;font-size:.82rem;white-space:nowrap;transition:background .18s,transform .18s}
+    .shop-button:hover{background:#38334b;transform:translateY(-2px)}
+    .shop-button .shop-mark{font-size:1.1rem;line-height:1}
+    .shop-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px}
+    .shop-heading p{margin:0;color:var(--muted);font-size:.82rem;max-width:660px}
+    .shop-wallet{background:#24322e;border:1px solid #416c5b;border-radius:9px;padding:9px 13px;color:var(--accent);font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .shop-category{margin:17px 0 9px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--text);font-size:.96rem}
+    .shop-category small{font-size:.7rem;color:var(--muted);font-weight:500}
+    .shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .shop-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0;transition:border-color .2s,transform .2s}
+    .shop-card:hover{border-color:#6b607c;transform:translateY(-2px)}
+    .shop-card-top{display:flex;gap:10px;align-items:center;min-width:0}
+    .shop-symbol{flex-shrink:0;width:39px;height:39px;display:grid;place-items:center;border-radius:9px;background:#29353d;color:#b1ceeb;font-size:1.15rem;font-weight:900}
+    .shop-card:nth-child(2n) .shop-symbol{background:#2b3230;color:#b9d9b5}
+    .shop-card:nth-child(3n) .shop-symbol{background:#352d3a;color:#e1b7dc}
+    .shop-card-title{min-width:0}
+    .shop-card-title strong{display:block;font-size:.92rem;line-height:1.2}
+    .shop-card-title span{display:block;color:var(--muted);font-size:.72rem}
+    .shop-card p{font-size:.78rem;line-height:1.42;margin:0;color:#b9c3d2}
+    .shop-formula{font-size:.7rem;color:#9daec4;background:#101721;padding:8px 9px;border:1px solid #263140;border-radius:8px;line-height:1.35;overflow-wrap:anywhere}
+    .shop-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
+    .shop-level{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:.71rem}
+    .shop-level b{color:var(--gold);font-size:.88rem}
+    .shop-buy{border:1px solid #5a7365;background:#254135;border-radius:8px;color:#c8f3da;min-height:37px;min-width:140px;padding:7px 11px;font-weight:800;font-size:.79rem;transition:transform .15s,background .15s}
+    .shop-buy:hover:not(:disabled){background:#315541;transform:translateY(-1px)}
+    .shop-buy:disabled{background:#222934;color:#83909f;border-color:#374250}
+    .shop-empty{padding:15px;color:var(--muted);font-size:.8rem}
+    .shop-extra{font-size:.74rem;color:var(--muted);margin:14px 0 0}
+    .luck-preview{font-size:.74rem;line-height:1.4;color:#bad8c8;margin:8px 0 0}
+    .upgrade-result{border:1px solid #374d45;border-radius:9px;background:#17251f;padding:8px 10px;margin:10px 0;color:#bfe8ce;font-size:.77rem;line-height:1.45;text-align:left}
+    .upgrade-result strong{color:var(--accent)}
+    @media(max-width:720px){.shop-grid{grid-template-columns:1fr}.shop-card{padding:11px}.shop-card p{font-size:.74rem}.shop-heading{align-items:flex-start}.shop-wallet{font-size:.8rem;padding:7px 9px}.shop-button{padding:7px 10px}}
+    @media(max-width:540px){.shop-button .shop-label{display:none}.shop-button{min-width:36px;min-height:36px;padding:6px}.header-actions{gap:4px}}
+    @media(max-width:380px){.brand>strong{display:none}.wallet{padding:5px 7px}.header-actions{gap:3px}.stats-button{min-width:36px;padding:5px}.stats-short{font-size:.7rem}}
+    @media(prefers-reduced-motion:reduce){.shop-button,.shop-card,.shop-buy{transition:none;transform:none!important}}
   </style>
 </head>
 <body>
@@ -509,7 +547,7 @@
   <header class="header">
     <a class="brand" href="index.html" aria-label="Voltar ao site NTNRK"><span class="logo">GS</span><strong>GAMBLER SIMULATOR</strong></a>
     <div class="header-actions"><div class="wallet" aria-label="Saldo compartilhado de créditos fictícios"><span><small>SALDO</small><strong id="wallet">1.000 cr</strong></span></div>
-    <button type="button" class="stats-button" data-action="stats" aria-label="Abrir estatísticas"><span class="stats-icon" aria-hidden="true">▥</span><span class="stats-label">Estatísticas</span><span class="stats-short">Estat.</span></button></div>
+    <button type="button" class="stats-button" data-action="stats" aria-label="Abrir estatísticas"><span class="stats-icon" aria-hidden="true">▥</span><span class="stats-label">Estatísticas</span><span class="stats-short">Estat.</span></button><button type="button" class="shop-button" data-action="shop" aria-label="Abrir loja de aprimoramentos"><span class="shop-mark" aria-hidden="true">◇</span><span class="shop-label">Loja</span></button></div>
   </header>
   <main id="app"></main>
   <!-- Créditos fictícios, sem compras e sem recompensas reais. -->
@@ -529,6 +567,123 @@ const MODES = [
   {id:"blackjack",title:"21",tag:"CARTAS",sub:"Chegue perto de 21 sem ultrapassar.",desc:"Comprar ou passar? O bot compra até 17.",bonus:"Bônus variável até +150%"},
   {id:"poker",title:"Pôquer fechado",tag:"5 CARTAS",sub:"Troque cartas e forme a melhor mão.",desc:"Até duas trocas de cartas. Mãos são comparadas no final.",bonus:"Até +900%"}
 ];
+
+const SHOP_ITEMS=[
+ {id:"luck",name:"Sorte",symbol:"✦",type:"chance",cost:130,growth:1.75,
+  desc:"Quanto maior a aposta em relação ao saldo, maior a chance de um resultado favorável.",formula:"S (p.p.) = nível × aposta ÷ saldo antes da aposta"},
+ {id:"exponent",name:"Exponente estatístico",symbol:"∑",type:"reward",cost:170,growth:1.85,
+  desc:"Resultados que você já acertou mais vezes dão bônus maiores. Cara e coroa evoluem separadamente.",formula:"Extra (p.p.) = nível × vitórias anteriores no mesmo resultado"},
+ {id:"current",name:"Correnteza",symbol:"↝",type:"reward",cost:210,growth:1.9,
+  desc:"Bônus de vitórias consecutivas crescem geometricamente; qualquer derrota zera a sequência.",formula:"Multiplicador = (1 + 0,10 × nível) ^ vitórias seguidas"},
+ {id:"impulse",name:"Impulso",symbol:"＋",type:"reward",cost:85,growth:1.6,
+  desc:"Adiciona bônus fixo a toda vitória, independentemente do jogo.",formula:"Bônus extra = 5 × nível pontos percentuais"},
+ {id:"relic",name:"Relíquia",symbol:"◆",type:"reward",cost:180,growth:1.75,
+  desc:"Recompensa conquistas raras: igualdade nos dados, combinações altas, 21 natural e mãos fortes.",formula:"Extra raro = 20 × nível pontos percentuais"},
+ {id:"shield",name:"Escudo",symbol:"◈",type:"reward",cost:140,growth:1.7,
+  desc:"Quando perde, recupera parte da aposta. O limite total de recuperação é 80%.",formula:"Devolução na derrota = aposta × mín(80%; 5% × nível)"},
+ {id:"affinity",name:"Afinidade",symbol:"◎",type:"reward",cost:120,growth:1.7,
+  desc:"Repetir o mesmo modo da última rodada acrescenta bônus quando você vence.",formula:"Extra ao repetir modo = 5 × nível pontos percentuais"}
+];
+function prepareShop(){
+  if(!saved.shop||typeof saved.shop!=="object")saved.shop={};
+  const shop=saved.shop;
+  if(!shop.levels||typeof shop.levels!=="object")shop.levels={};
+  for(const item of SHOP_ITEMS){const n=shop.levels[item.id];shop.levels[item.id]=Number.isSafeInteger(n)&&n>=0?Math.min(100,n):0;}
+  if(!shop.events||typeof shop.events!=="object")shop.events={};
+  for(const k of Object.keys(shop.events))if(!Number.isSafeInteger(shop.events[k])||shop.events[k]<0)delete shop.events[k];
+  if(!Number.isSafeInteger(shop.streak)||shop.streak<0)shop.streak=0;
+  if(![null,...MODES.map(m=>m.id)].includes(shop.lastMode))shop.lastMode=null;
+}
+function level(id){return saved.shop.levels[id]||0;}
+function upgradePrice(item){const v=Math.ceil(item.cost*Math.pow(item.growth,level(item.id)));return Number.isSafeInteger(v)?v:Infinity;}
+function chanceLuck(stake,originalBalance){return Math.min(100,level("luck")*stake/Math.max(1,originalBalance));}
+function isRareOutcome(){
+ if(state.mode==="dice")return countSums(state.data.target,state.choice)<=6;
+ if(state.mode==="yatzy")return scoreYatzy(state.data.values).bonus>=25;
+ if(state.mode==="blackjack")return blackjackValue(state.data.player)===21&&state.data.player.length===2;
+ if(state.mode==="poker")return rankPoker(state.data.player).rank>=5;
+ return false;
+}
+function currentEventKey(){
+ if(state.mode==="coin"||state.mode==="dice")return state.mode+":"+state.choice;
+ if(state.mode==="yatzy")return "yatzy:"+scoreYatzy(state.data.values).name;
+ if(state.mode==="blackjack"){
+  const v=blackjackValue(state.data.player);
+  return "blackjack:"+(v===21&&state.data.player.length===2?"natural":v>21?"acima21":v===21?"21":"normal");
+ }
+ if(state.mode==="poker")return "poker:"+rankPoker(state.data.player).name;
+ return "";
+}
+function victoryUpgrades(baseBonus){
+ const key=currentEventKey(),previous=saved.shop.events[key]||0;
+ const exp=level("exponent")*previous;
+ const impulse=5*level("impulse");
+ const rare=isRareOutcome()?20*level("relic"):0;
+ const affinity=state.mode===saved.shop.lastMode?5*level("affinity"):0;
+ const multiplier=Math.pow(1+.10*level("current"),Math.min(100,saved.shop.streak));
+ const bonus=Math.min(1000000,(baseBonus+exp+impulse+rare+affinity)*multiplier);
+ const lines=[];
+ if(exp)lines.push(`Exponente: +${percent(exp)} (${previous} acertos anteriores)`);
+ if(impulse)lines.push(`Impulso: +${percent(impulse)}`);
+ if(rare)lines.push(`Relíquia: +${percent(rare)}`);
+ if(affinity)lines.push(`Afinidade: +${percent(affinity)}`);
+ if(multiplier!==1)lines.push(`Correnteza: ×${multiplier.toLocaleString("pt-BR",{maximumFractionDigits:3})} (${saved.shop.streak} vitórias anteriores)`);
+ return {bonus,key,lines};
+}
+function drawLucky21(deck,hand){
+ const first=deck.pop();
+ if(Math.random()>=state.luckExtra/100||deck.length<1)return first;
+ const other=deck.pop();
+ const valA=blackjackValue([...hand,first]),valB=blackjackValue([...hand,other]);
+ if(valA<=21&&valB>21)return first;
+ if(valB<=21&&valA>21)return other;
+ return valA<=21&&valB<=21?(valB>valA?other:first):(valB<valA?other:first);
+}
+function drawLuckyPoker(hand,deck){
+ if(Math.random()>=state.luckExtra/100||deck.length<5)return hand;
+ const alternative=Array.from({length:5},()=>deck.pop());
+ return comparePoker(alternative,hand)>0?alternative:hand;
+}
+function renderShop(){
+ return `<div class="shop-heading"><p>Compre melhorias permanentes com créditos fictícios. Os preços aumentam a cada nível.</p><div class="shop-wallet">${money(saved.balance)}</div></div>
+ ${[["Probabilidades","chance"],["Bônus e proteção","reward"]].map(([name,group])=>`<h3 class="shop-category">${name}<small>${group==="chance"?"Alteram os sorteios":"Alteram créditos recebidos"}</small></h3>
+ <div class="shop-grid">${SHOP_ITEMS.filter(i=>i.type===group).map(item=>{const n=level(item.id),price=upgradePrice(item),disabled=state.phase==="playing"||!Number.isFinite(price)||saved.balance<price;
+ return `<article class="shop-card" data-shop-card="${item.id}"><div class="shop-card-top"><span class="shop-symbol" aria-hidden="true">${item.symbol}</span><div class="shop-card-title"><strong>${item.name}</strong><span>Nível ${n} → ${n+1}</span></div></div><p>${item.desc}</p><div class="shop-formula">${item.formula}</div><div class="shop-card-bottom"><span class="shop-level">Nível <b>${n}</b></span><button type="button" class="shop-buy" data-buy="${item.id}" ${disabled?"disabled":""}>${!Number.isFinite(price)?"Limite atingido":state.phase==="playing"?"Rodada em curso":saved.balance<price?`Faltam ${money(price-saved.balance)}`:`Comprar · ${money(price)}`}</button></div></article>`;}).join("")}</div>`).join("")}
+ <p class="shop-extra">Sorte usa a aposta e o saldo antes do desconto. Empates não quebram a Correnteza; derrotas quebram. Compras e níveis ficam salvos neste navegador. Créditos não têm valor real.</p>`;
+}
+function buyUpgrade(id){
+ const item=SHOP_ITEMS.find(x=>x.id===id);
+ if(!item||state.phase==="playing")return;
+ const price=upgradePrice(item);
+ if(!Number.isSafeInteger(price)||saved.balance<price){toast("Créditos insuficientes para a melhoria.");return;}
+ const balanceBefore=saved.balance;
+ saved.balance-=price;
+ saved.shop.levels[id]++;
+ save();
+ document.getElementById("wallet").textContent=money(saved.balance);
+ const overlay=document.getElementById("overlay"),scroll=overlay.querySelector(".overlay-scroll");
+ if(overlay.dataset.type==="shop"&&scroll){
+  const top=scroll.scrollTop;scroll.innerHTML=renderShop();scroll.scrollTop=top;
+  scroll.querySelector(`[data-buy="${id}"]`)?.focus({preventScroll:true});
+ }
+ if(state.phase==="bet"){
+  const input=document.getElementById("bet-input"),value=Number(input?.value)||25;
+  render();const updated=document.getElementById("bet-input");if(updated)updated.value=Math.max(0,Math.min(value,saved.balance));
+  updateLuckPreview();
+ }
+ toast(`${item.name} melhorado para nível ${level(id)} · −${money(balanceBefore-saved.balance)}`);
+}
+function updateLuckPreview(){
+ const el=document.getElementById("luck-preview"),input=document.getElementById("bet-input");
+ if(!el||!input)return;
+ const amount=Math.min(saved.balance,Math.max(0,Number(input.value)||0));
+ const luck=chanceLuck(amount,saved.balance);
+ let text=`Sorte nível ${level("luck")}: +${percent(luck)} na chance de um evento favorável`;
+ if(state.mode==="coin")text+=` · sua chance: ${percent(Math.min(100,50+luck))}`;
+ if(state.mode==="dice")text+=` · sua chance: ${percent(Math.min(100,100*countSums(state.data.target,state.choice)/36+luck))}`;
+ el.textContent=text+".";
+}
+
 const PIP_POS = {
   1:[[36,36]],2:[[19,19],[53,53]],3:[[19,19],[36,36],[53,53]],
   4:[[19,19],[53,19],[19,53],[53,53]],
@@ -575,6 +730,7 @@ function prepareStats(){
   }
 }
 prepareStats();
+prepareShop();
 function trackRound(outcome,payout){
   const data=saved.detail.byMode[state.mode];
   if(!data)return;
@@ -585,7 +741,7 @@ function trackRound(outcome,payout){
   data.staked+=state.bet;
   data.paid+=payout;
 }
-let state={mode:null,phase:"lobby",bet:0,data:null,choice:"cara",result:null,animation:false,token:0};
+let state={mode:null,phase:"lobby",bet:0,data:null,choice:"cara",result:null,animation:false,token:0,luckExtra:0};
 let toastTimer;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(saved));}catch{}}
 function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600)}
@@ -680,7 +836,7 @@ function renderBet(){
   const recommended=Math.min(saved.balance,25);
   return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">${mode().tag}</span><h1>${mode().title}</h1></div></section>
   <div class="bet-flow"><section class="panel bet-panel">${chooseMarkup()}<div class="stake-section"><label class="panel-title" for="bet-input">APOSTA · CRÉDITOS FICTÍCIOS</label>
-  <div class="bet-line"><input id="bet-input" inputmode="numeric" pattern="[0-9]*" type="number" min="1" step="1" max="${saved.balance}" value="${recommended}" aria-label="Valor da aposta"><span class="currency-label">cr</span></div>
+  <div class="bet-line"><input id="bet-input" inputmode="numeric" pattern="[0-9]*" type="number" min="1" step="1" max="${saved.balance}" value="${recommended}" aria-label="Valor da aposta"><span class="currency-label">cr</span></div><div class="luck-preview" id="luck-preview" aria-live="polite"></div>
   <div class="bet-presets">${[10,25,50,100].map(n=>`<button class="preset" type="button" data-stake="${n}" ${saved.balance<n?"disabled":""}>${n}</button>`).join("")}</div></div>
   <button type="button" class="primary block" data-action="start" ${saved.balance===0?"disabled":""}>${saved.balance===0?"Sem créditos":"Iniciar rodada →"}</button>
   ${saved.balance===0?'<button class="secondary" style="width:100%;margin-top:8px" data-action="reset">Reiniciar créditos</button>':''}</section></div>`;
@@ -846,8 +1002,8 @@ function renderResult(){
   const amount=(r.delta>0?"+":"")+money(r.delta);
   return `${gameToolbar()}<section class="panel result-panel ${r.outcome}">
     <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${titles[r.outcome]}</h1><p>${r.description}</p>
-    <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":"A aposta da rodada foi perdida."}</p>
-    <div class="result-details">${r.details}
+    <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`Escudo recuperou ${money(r.payout)} da aposta.`:"A aposta da rodada foi perdida."}</p>
+    <div class="result-details">${r.details}${r.upgradeNote||""}
       <div class="result-money"><div><span>Aposta</span><strong>${money(state.bet)}</strong></div><div><span>Recebido</span><strong>${money(r.payout)}</strong></div></div>
     </div><div class="actions"><button type="button" class="primary" data-action="again">Nova rodada</button><button type="button" class="secondary" data-action="back">Outros jogos</button></div>
     ${saved.balance===0?'<button type="button" class="secondary" style="margin-top:15px" data-action="reset">Reiniciar créditos</button>':''}
@@ -876,12 +1032,12 @@ function renderStats(){
 }
 function showOverlay(type){
   const overlay=document.getElementById("overlay");
-  const info=type==="info";
+  const info=type==="info",shop=type==="shop";
   if(info && !state.mode)return;
-  const heading=info?`Informações · ${mode().title}`:"Estatísticas";
+  const heading=info?`Informações · ${mode().title}`:shop?"Loja de aprimoramentos":"Estatísticas";
   overlay.innerHTML=`<div class="overlay-page" role="dialog" aria-modal="true" aria-label="${heading}">
-    <div class="overlay-top"><div><span class="eyebrow">${info?"GS · GUIA DO JOGO":"GS · SEU DESEMPENHO"}</span><h2>${heading}</h2></div><button type="button" class="close-button" data-action="close-overlay" aria-label="Fechar">✕ <span>Fechar</span></button></div>
-    <div class="overlay-scroll">${info?`<div class="info-layout">${bonusGuide()}${sideRules()}</div>`:renderStats()}</div>
+    <div class="overlay-top"><div><span class="eyebrow">${info?"GS · GUIA DO JOGO":shop?"GS · MELHORIAS":"GS · SEU DESEMPENHO"}</span><h2>${heading}</h2></div><button type="button" class="close-button" data-action="close-overlay" aria-label="Fechar">✕ <span>Fechar</span></button></div>
+    <div class="overlay-scroll">${info?`<div class="info-layout">${bonusGuide()}${sideRules()}</div>`:shop?renderShop():renderStats()}</div>
     </div>`;
   overlay.hidden=false;
   overlay.dataset.type=type;
@@ -913,6 +1069,7 @@ function render(){
   document.getElementById("wallet").textContent=money(saved.balance);
   document.getElementById("app").innerHTML=`<div class="screen ${state.phase==='lobby'?'screen-lobby':'screen-game'}">${state.phase==="lobby"?renderLobby():state.phase==="bet"?renderBet():state.phase==="playing"?renderPlaying():renderResult()}</div>`;
   fitScreen();
+  if(state.phase==="bet")updateLuckPreview();
 }
 function selectMode(id){
   if(!MODES.some(m=>m.id===id))return;
@@ -928,6 +1085,7 @@ function beginBet(){
   if(raw===""||!Number.isSafeInteger(stake)||stake<1){toast("Digite uma aposta inteira maior que zero.");return;}
   if(stake>saved.balance){toast("Você não tem créditos suficientes.");return;}
   if(state.mode==="dice"&&!countSums(state.data.target,state.choice)){toast("Esta opção não é possível para o alvo atual.");return;}
+  state.luckExtra=chanceLuck(stake,saved.balance);
   saved.balance-=stake;save();state.bet=stake;state.phase="playing";state.result=null;state.token++;
   if(state.mode==="coin" || state.mode==="dice"){
     state.animation=true;render();const token=state.token;
@@ -935,14 +1093,21 @@ function beginBet(){
       if(state.token!==token||state.phase!=="playing")return;
       state.animation=false;
       if(state.mode==="coin"){
-        const side=rand(2)?"cara":"coroa";
+        const side=Math.random()<Math.min(1,.5+state.luckExtra/100)?state.choice:(state.choice==="cara"?"coroa":"cara");
         const won=side===state.choice;
         const content=`<div class="bigcoin"><span>${side==="cara"?"★":"♛"}</span><strong>${side}</strong></div><div class="summary-row"><span>Sua escolha</span><strong>${state.choice==="cara"?"Cara":"Coroa"}</strong></div><div class="summary-row"><span>Resultado</span><strong>${side==="cara"?"Cara":"Coroa"}</strong></div>`;
         finish(won?"win":"lose",COIN_BONUS,won?"Você acertou o lado da moeda.":"O lado sorteado foi diferente da sua escolha.",content);
       }else{
-        const a=dice(),b=dice(),total=a+b,target=state.data.target;
-        const won=state.choice==="higher"?total>target:state.choice==="lower"?total<target:total===target;
-        const prob=countSums(target,state.choice)/36;
+        const target=state.data.target;
+        const good=[],bad=[];
+        for(let x=1;x<=6;x++)for(let y=1;y<=6;y++){
+          const total=x+y,isGood=state.choice==="higher"?total>target:state.choice==="lower"?total<target:total===target;
+          (isGood?good:bad).push([x,y]);
+        }
+        const prob=good.length/36;
+        const won=Math.random()<Math.min(1,prob+state.luckExtra/100);
+        const pool=won?good:bad;
+        const [a,b]=pool[rand(pool.length)],total=a+b;
         const bonus=(1/prob-1)*100;
         const content=`<div class="dice-field">${dieSvg(a)}${dieSvg(b)}</div><div class="summary-row"><span>Soma dos dados</span><strong>${a} + ${b} = ${total}</strong></div><div class="summary-row"><span>Número de referência</span><strong>${target}</strong></div><div class="summary-row"><span>Sua previsão</span><strong>${({higher:"Maior",lower:"Menor",equal:"Igual"})[state.choice]}</strong></div>`;
         finish(won?"win":"lose",bonus,won?"Sua previsão da soma estava certa.":"A soma não correspondeu à previsão.",content);
@@ -951,17 +1116,35 @@ function beginBet(){
   }else if(state.mode==="yatzy"){
     state.data={values:[0,0,0,0,0],held:[false,false,false,false,false],rolls:0};render();
   }else if(state.mode==="blackjack"){
-    const deck=makeDeck();const player=[deck.pop()],bot=[deck.pop()];player.push(deck.pop());bot.push(deck.pop());
+    const deck=makeDeck();const player=[drawLucky21(deck,[])],bot=[deck.pop()];player.push(drawLucky21(deck,player));bot.push(deck.pop());
     state.data={deck,player,bot,naturalReady: blackjackValue(player)===21 || blackjackValue(bot)===21};
     render();
   }else{
-    const deck=makeDeck();const player=Array.from({length:5},()=>deck.pop());const bot=Array.from({length:5},()=>deck.pop());
+    const deck=makeDeck();const bot=Array.from({length:5},()=>deck.pop());const player=drawLuckyPoker(Array.from({length:5},()=>deck.pop()),deck);
     state.data={deck,player,bot,selected:[false,false,false,false,false],swaps:0};render();
   }
 }
-function finish(outcome,bonus,description,details){
+function finish(outcome,baseBonus,description,details){
   if(state.phase!=="playing")return;
-  const payout=outcome==="win"?Math.round(state.bet*(1+bonus/100)):outcome==="tie"?state.bet:0;
+  let bonus=baseBonus,payout=0,note="";
+  if(outcome==="win"){
+    const upgrades=victoryUpgrades(baseBonus);
+    bonus=upgrades.bonus;
+    const maxPayout=Math.max(0,Number.MAX_SAFE_INTEGER-saved.balance);
+    payout=Math.min(maxPayout,Math.round(state.bet*(1+bonus/100)));
+    const extras=upgrades.lines.length?upgrades.lines.join(" · "):"Nenhum aprimoramento de bônus aplicado";
+    note=`<div class="upgrade-result"><strong>Aprimoramentos</strong><div>Bônus original: +${percent(baseBonus)} · bônus final: +${percent(bonus)}</div><div>${extras}</div></div>`;
+    saved.shop.events[upgrades.key]=(saved.shop.events[upgrades.key]||0)+1;
+    saved.shop.streak++;
+  }else if(outcome==="tie"){
+    payout=state.bet;
+  }else{
+    const shield=Math.min(.8,.05*level("shield"));
+    payout=Math.round(state.bet*shield);
+    if(payout>0)note=`<div class="upgrade-result"><strong>Escudo</strong><div>+${percent(shield*100)} da aposta recuperada: ${money(payout)}</div></div>`;
+    saved.shop.streak=0;
+  }
+  saved.shop.lastMode=state.mode;
   saved.balance+=payout;
   saved.stats.rounds++;
   trackRound(outcome,payout);
@@ -969,11 +1152,15 @@ function finish(outcome,bonus,description,details){
   else if(outcome==="lose")saved.stats.losses++;
   else saved.stats.ties++;
   save();state.phase="result";state.animation=false;
-  state.result={outcome,bonus,description,details,payout,delta:payout-state.bet};render();
+  state.result={outcome,bonus,description,details,payout,upgradeNote:note,delta:payout-state.bet};render();
 }
+
 function yatzyRoll(){
   const d=state.data;if(state.phase!=="playing"||state.mode!=="yatzy"||d.rolls>=3)return;
-  d.values=d.values.map((v,i)=>d.rolls===0||!d.held[i]?dice():v);d.rolls++;
+  const roll=()=>d.values.map((v,i)=>d.rolls===0||!d.held[i]?dice():v);
+  let candidate=roll();
+  if(Math.random()<state.luckExtra/100){const alternative=roll();if(scoreYatzy(alternative).total>scoreYatzy(candidate).total)candidate=alternative;}
+  d.values=candidate;d.rolls++;
   if(d.rolls===3)endYatzy();else render();
 }
 function endYatzy(){
@@ -1013,13 +1200,18 @@ function settle21(){
 }
 function hit21(){
   if(state.phase!=="playing"||state.mode!=="blackjack"||state.data.naturalReady)return;
-  const d=state.data;d.player.push(d.deck.pop());
+  const d=state.data;d.player.push(drawLucky21(d.deck,d.player));
   if(blackjackValue(d.player)>=21)settle21();else render();
 }
 function swapPoker(){
   const d=state.data;if(d.swaps>=2)return;
   if(!d.selected.some(Boolean)){toast("Selecione pelo menos uma carta para trocar.");return;}
-  d.player=d.player.map((c,i)=>d.selected[i]?d.deck.pop():c);d.selected.fill(false);d.swaps++;render();
+  const option=()=>d.player.map((c,i)=>d.selected[i]?d.deck.pop():c);
+  let best=option();
+  if(Math.random()<state.luckExtra/100 && d.deck.length>=d.selected.filter(Boolean).length){
+    const other=option();if(comparePoker(other,best)>0)best=other;
+  }
+  d.player=best;d.selected.fill(false);d.swaps++;render();
 }
 function settlePoker(fold=false){
   const d=state.data;
@@ -1034,27 +1226,29 @@ function settlePoker(fold=false){
 function abandonAndBack(){
   if(state.phase==="playing"){
     if(!window.confirm("Rodada em andamento. Sair agora perde os créditos apostados. Deseja sair?"))return;
-    saved.stats.rounds++;saved.stats.losses++;trackRound("lose",0);save();
+    saved.stats.rounds++;saved.stats.losses++;trackRound("lose",0);saved.shop.streak=0;saved.shop.lastMode=state.mode;save();
   }
   state.token++;state.mode=null;state.phase="lobby";state.data=null;state.result=null;closeOverlay();render();
 }
 function resetAll(){
   if(!window.confirm("Reiniciar o saldo para 1.000 créditos e zerar todas as estatísticas?"))return;
-  state.token++;saved={balance:INITIAL,stats:{rounds:0,wins:0,losses:0,ties:0}};prepareStats();save();state.phase="lobby";state.mode=null;state.data=null;closeOverlay();render();toast("Créditos e estatísticas reiniciados.");
+  state.token++;saved={balance:INITIAL,stats:{rounds:0,wins:0,losses:0,ties:0}};prepareStats();prepareShop();save();state.phase="lobby";state.mode=null;state.data=null;closeOverlay();render();toast("Créditos e estatísticas reiniciados.");
 }
 document.addEventListener("click",event=>{
   const btn0=event.target.closest("[data-action]");
   if(btn0?.dataset.action==="close-overlay"){closeOverlay();return;}
   if(btn0?.dataset.action==="stats"){showOverlay("stats");return;}
+  if(btn0?.dataset.action==="shop"){showOverlay("shop");return;}
   if(btn0?.dataset.action==="info"){showOverlay("info");return;}
   if(!document.getElementById("overlay").hidden){
+    const buy=event.target.closest("[data-buy]");if(buy){buyUpgrade(buy.dataset.buy);return;}
     if(btn0?.dataset.action==="reset")resetAll();
     return;
   }
   const modeButton=event.target.closest("[data-mode]");
   if(modeButton&&state.phase==="lobby"){selectMode(modeButton.dataset.mode);return;}
   const stakeButton=event.target.closest("[data-stake]");
-  if(stakeButton&&state.phase==="bet"){document.getElementById("bet-input").value=stakeButton.dataset.stake;return;}
+  if(stakeButton&&state.phase==="bet"){document.getElementById("bet-input").value=stakeButton.dataset.stake;updateLuckPreview();return;}
   const choiceButton=event.target.closest("[data-choice]");
   if(choiceButton&&state.phase==="bet"){state.choice=choiceButton.dataset.choice;render();return;}
   const holdButton=event.target.closest("[data-hold]");
@@ -1087,6 +1281,7 @@ document.addEventListener("click",event=>{
 });
 window.addEventListener("resize",()=>requestAnimationFrame(fitScreen));
 window.visualViewport?.addEventListener("resize",()=>requestAnimationFrame(fitScreen));
+document.addEventListener("input",event=>{if(event.target.id==="bet-input")updateLuckPreview();});
 document.addEventListener("keydown",event=>{if(event.key==="Escape")closeOverlay();});
 render();
 </script>
