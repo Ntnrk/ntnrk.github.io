@@ -597,7 +597,7 @@
       .mode-grid:has(.mode-card:nth-child(7)) .mode-card .artcards .tiny-card{transform:none}
       .mode-grid:has(.mode-card:nth-child(7)) .mode-card .artcoin{width:30px;height:30px;font-size:.9rem;border-width:3px}
     }
-    @media(prefers-reduced-motion:reduce){.plinko-board animateMotion{display:none}}
+    .texas-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.texas-actions>*{min-width:0;width:100%;font-size:clamp(.73rem,2vw,.9rem);padding:10px 8px}.texas-redeal-note{font-size:.69rem;color:var(--muted);margin:8px 0 0}.plinko-board #plinko-ball{filter:drop-shadow(0 2px 3px #0b1017)}@media(max-width:380px){.texas-actions{gap:5px}.texas-actions>*{font-size:.71rem;padding:9px 5px}}
   </style>
 </head>
 <body>
@@ -624,8 +624,8 @@ const MODES = [
   {id:"yatzy",title:"Yatzy",tag:"5 DADOS",sub:"Guarde dados e tente superar o bot.",desc:"Você tem até três lançamentos por rodada.",bonus:"Até +300%"},
   {id:"blackjack",title:"21",tag:"CARTAS",sub:"Chegue perto de 21 sem ultrapassar.",desc:"Comprar ou passar? O bot compra até 17.",bonus:"Bônus variável até +150%"},
   {id:"poker",title:"Pôquer fechado",tag:"5 CARTAS",sub:"Troque cartas e forme a melhor mão.",desc:"Até duas trocas de cartas. Mãos são comparadas no final.",bonus:"Até +900%"},
-  {id:"texas",title:"Texas Hold'em",tag:"PÔQUER TEXAS",sub:"Duas cartas próprias e cinco públicas.",desc:"Revele flop, turn e river. Vence a melhor combinação de cinco cartas entre as sete disponíveis.",bonus:"Bônus pela mão"},
-  {id:"plinko",title:"Plinko",tag:"11 CESTAS",sub:"Solte a bola e tente a cesta premiada.",desc:"Escolha uma das onze cestas. As três centrais perdem; acertar exatamente uma cesta premiada dá bônus extra.",bonus:"Bônus até +875%"}
+  {id:"texas",title:"Texas Hold'em",tag:"PÔQUER TEXAS",sub:"Duas cartas próprias e cinco públicas.",desc:"Revele flop, turn e river. Você pode redistribuir todas as cartas até três vezes.",bonus:"Bônus pela mão"},
+  {id:"plinko",title:"Plinko",tag:"11 CESTAS",sub:"Solte a bola e tente a cesta premiada.",desc:"Cestas 5 e 7 recuperam metade; acertar a cesta central escolhida devolve a aposta.",bonus:"Bônus até +875%"}
 ];
 
 const SHOP_ITEMS=[
@@ -764,6 +764,8 @@ const TEXAS_BONUSES = [20,35,55,85,125,175,220,350,550,1000];
 // Índices 4, 5 e 6 são cestas perdedoras. Os bônus positivos dobram a cada faixa externa.
 const PLINKO_BONUSES = [800,400,200,100,0,0,0,100,200,400,800];
 const PLINKO_EXACT_BONUS = 75;
+const TEXAS_REDEALS = 3;
+const PLINKO_ANIMATION_MS = 3180;
 const PLINKO_WEIGHTS = [1,10,45,120,210,252,210,120,45,10,1];
 const money = n => Math.round(n).toLocaleString("pt-BR") + " cr";
 const percent = n => n.toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
@@ -859,8 +861,8 @@ function chooseMarkup(){
   }
   if(state.mode==="yatzy")return `<div class="ready-label"><span>⚄</span><strong>Yatzy</strong><small>5 dados · 3 lançamentos</small></div>`;
   if(state.mode==="blackjack")return `<div class="ready-label"><span>♠</span><strong>21</strong><small>Você × bot</small></div>`;
-  if(state.mode==="texas")return `<div class="ready-label"><span>♠</span><strong>Texas Hold'em</strong><small>2 próprias · 5 públicas</small></div>`;
-  if(state.mode==="plinko")return `<h2>Escolha uma cesta</h2><div class="plinko-picks" aria-label="Escolha a cesta exata">${PLINKO_BONUSES.map((v,i)=>`<button type="button" class="plinko-pick ${Number(state.choice)===i?'active':''} ${v===0?'risk':''}" data-basket="${i}" aria-pressed="${Number(state.choice)===i}"><strong>${i+1}</strong><small>${v?`+${v}%`:'−'}</small></button>`).join('')}</div><p class="plinko-hint">As cestas 5, 6 e 7 perdem. Acertar a cesta escolhida dá +${PLINKO_EXACT_BONUS}% se ela for premiada.</p>`;
+  if(state.mode==="texas")return `<div class="ready-label"><span>♠</span><strong>Texas Hold'em</strong><small>2 próprias · 5 públicas · 3 redistribuições</small></div>`;
+  if(state.mode==="plinko")return `<h2>Escolha uma cesta</h2><div class="plinko-picks" aria-label="Escolha a cesta exata">${PLINKO_BONUSES.map((v,i)=>`<button type="button" class="plinko-pick ${Number(state.choice)===i?'active':''} ${v===0?'risk':''}" data-basket="${i}" aria-pressed="${Number(state.choice)===i}"><strong>${i+1}</strong><small>${v?`+${v}%`:i===4||i===6?'½':'−'}</small></button>`).join('')}</div><p class="plinko-hint">5 e 7: devolvem metade. 6: perde. Se acertar uma cesta central escolhida, recupera toda a aposta. Cesta externa escolhida: +${PLINKO_EXACT_BONUS}%.</p>`;
   return `<div class="ready-label"><span>♥</span><strong>Pôquer fechado</strong><small>5 cartas · 2 trocas</small></div>`;
 }
 function bonusGuide(){
@@ -891,8 +893,10 @@ function bonusGuide(){
     ["Cestas 2 ou 10","+400%"],
     ["Cestas 3 ou 9","+200%"],
     ["Cestas 4 ou 8","+100%"],
-    ["Cestas 5, 6 ou 7","Perda da aposta"],
-    ["Acertar a cesta escolhida e premiada",`+${PLINKO_EXACT_BONUS} p.p. extras`]
+    ["Cestas 5 ou 7 (sem acerto exato)","Devolução de 50%"],
+    ["Cesta 6 (sem acerto exato)","Perda da aposta"],
+    ["Acertar a cesta escolhida 5, 6 ou 7","Devolução de 100%"],
+    ["Acertar cesta externa escolhida",`+${PLINKO_EXACT_BONUS} p.p. extras`]
   ];
   else rows=POKER_NAMES.map((name,i)=>["Vitória com "+name.toLowerCase(),"+"+POKER_BONUSES[i]+"%"]);
   const bonusFormula = state.mode==="dice"
@@ -900,7 +904,7 @@ function bonusGuide(){
     : state.mode==="blackjack"
     ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = mín(150; 25 + 4 × |J − B| + 2 × J + N)</code><small>J = soma dos valores das cartas do jogador (ás vale 1 ou 11); B = soma das cartas do bot; |J − B| = diferença absoluta entre as mãos; N = 15 para 21 natural vencedor, ou 0 nos outros casos. O bônus máximo é +150% e só é pago em caso de vitória.</small></div>`
     : state.mode==="plinko"
-    ? `<div class="bonus-formula"><strong>Como os bônus são calculados</strong><code>Bônus (%) = 100 × 2^(|P − 6| − 2), para cestas premiadas</code><small>P é o número da cesta (1 a 11); |P − 6| é a distância até a cesta central. Faixas premiadas: de 4 ou 8 (+100%) até 1 ou 11 (+800%). As três cestas centrais são perdas. Se a bola cair exatamente na cesta escolhida e ela for premiada, acrescente ${PLINKO_EXACT_BONUS} pontos percentuais. A distribuição inicial segue 10 desvios de 50%/50%; a Sorte pode aumentar a chance de cair em alguma cesta premiada.</small></div>`
+    ? `<div class="bonus-formula"><strong>Como os bônus são calculados</strong><code>Bônus (%) = 100 × 2^(|P − 6| − 2), para cestas premiadas</code><small>P é o número da cesta (1 a 11); |P − 6| é a distância até a cesta central. Faixas premiadas: de 4 ou 8 (+100%) até 1 ou 11 (+800%). Cestas 5 e 7 sempre recuperam ao menos 50% da aposta; a cesta 6 perde a aposta se não for escolhida. Se acertar exatamente a cesta central selecionada (5, 6 ou 7), recupera 100% do valor, sem bônus. Se acertar uma cesta externa selecionada, acrescente ${PLINKO_EXACT_BONUS} pontos percentuais. O sorteio usa dez desvios, com a Sorte podendo favorecer cestas premiadas.</small></div>`
     : "";
   return `<section class="panel bonus-panel" aria-label="Tabela de bônus"><span class="eyebrow">PREMIAÇÃO</span><h2>Bônus por resultado</h2><p>Esses bônus são pagos <strong>somente em caso de vitória</strong>, além da devolução dos créditos apostados.</p>
     <div class="bonus-list">${rows.map(([condition,bonus])=>`<div class="bonus-row"><span>${condition}</span><strong class="${bonus==="—"?"unavailable":""}">${bonus}</strong></div>`).join("")}</div>
@@ -915,8 +919,8 @@ function sideRules(){
     yatzy:[['1','Você começa lançando cinco dados.'],['2','Toque nos dados que deseja manter e role os outros; são até três lançamentos no total.'],['3','Sua pontuação é a soma dos dados mais o bônus de combinação. O bot também joga até três vezes.']],
     blackjack:[['1','Você e o bot recebem duas cartas. Se houver 21 natural, toque em Revelar resultado para conferir as mãos.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Se ambos ultrapassarem 21, vence a menor soma; se apenas um ultrapassar, perde.']],
     poker:[['1','Você e o bot começam com cinco cartas.'],['2','Selecione as cartas para substituir. Você tem duas oportunidades de troca, podendo ficar antes.'],['3','O bot também pode trocar até duas vezes. Você pode ficar para comparar ou correr e desistir da rodada.']],
-    texas:[['1','Você recebe duas cartas próprias. O bot recebe outras duas, escondidas.'],['2','Revele as cinco cartas comunitárias em etapas: flop (3), turn (1) e river (1).'],['3','A melhor combinação de cinco cartas dentre suas duas e as cinco públicas é comparada à melhor do bot. Empate devolve a aposta.']],
-    plinko:[['1','Escolha antes da partida qual das 11 cestas deseja acertar.'],['2','A bola passa por 10 fileiras de pinos, cada uma com desvio para a esquerda ou direita; as cestas centrais (5, 6 e 7) perdem.'],['3','Os ganhos dobram em cada faixa na direção das extremidades. Acertar a cesta escolhida e premiada acrescenta 75 pontos percentuais.']]
+    texas:[['1','Você recebe duas cartas próprias; o bot recebe duas escondidas. Cinco cartas públicas são distribuídas.'],['2','Você pode correr (redistribuir) até três vezes: todas as cartas são embaralhadas e entregues novamente, sem nova aposta. Isso reinicia o flop, turn e river.'],['3','Revele flop, turn e river; a melhor mão de cinco cartas entre as sete vence. Empate devolve a aposta.']],
+    plinko:[['1','Escolha a cesta desejada antes de lançar a bola.'],['2','A bola desvia entre dez fileiras de pinos. As cestas 5 e 7 devolvem pelo menos metade; a 6 normalmente não paga.'],['3','Acertar a cesta central escolhida devolve toda a aposta; se acertar uma cesta externa escolhida, soma 75 pontos percentuais ao bônus.']]
   };
   return `<section class="panel panel-side" aria-labelledby="howto-title"><span class="eyebrow">INSTRUÇÕES</span><h2 id="howto-title">Como jogar</h2>${examples[state.mode].map(([i,s])=>`<div class="rule"><i>${i}</i><div>${s}</div></div>`).join("")}<hr class="separator"><p class="notice">Saldo único para todos os modos. Os créditos não possuem valor monetário, não podem ser comprados ou resgatados.</p></section>`;
 }
@@ -1075,6 +1079,14 @@ function drawTexas(){
  }
  return hand;
 }
+function texasRedeal(){
+ if(state.phase!=="playing"||state.mode!=="texas")return;
+ const used=state.data.redeals||0;
+ if(used>=TEXAS_REDEALS)return;
+ // Usa a mesma aposta: apenas redistribui um novo baralho e reinicia as cartas públicas.
+ state.data={...drawTexas(),redeals:used+1};
+ render();
+}
 function texasReveal(){
  if(state.phase!=="playing"||state.mode!=="texas")return;
  const d=state.data;
@@ -1111,27 +1123,71 @@ function plinkoBoard(data){
  }
  const bins=PLINKO_BONUSES.map((v,i)=>{
    const x=32+i*29.6;
-   const fill=v>0?"#1f544a":"#653440";
+   const fill=v>0?"#1f544a":i===4||i===6?"#594a33":"#653440";
    const highlight=i===data.target;
-   return `<rect x="${(x-13.4).toFixed(1)}" y="317" width="26.8" height="35" rx="4" fill="${fill}" stroke="${highlight?'#e4cd7b':'#394452'}" stroke-width="${highlight?2.6:1}"/><text x="${x.toFixed(1)}" y="337" text-anchor="middle" font-weight="800" font-size="12" fill="#f3f5f6">${i+1}</text><text x="${x.toFixed(1)}" y="347" text-anchor="middle" font-size="7.6" fill="#bddccf">${v?'+'+v+'%':'−'}</text>`;
+   const caption=v?`+${v}%`:i===4||i===6?'50%':'0%';
+   return `<rect x="${(x-13.4).toFixed(1)}" y="317" width="26.8" height="35" rx="4" fill="${fill}" stroke="${highlight?'#e4cd7b':'#394452'}" stroke-width="${highlight?2.6:1}"/><text x="${x.toFixed(1)}" y="337" text-anchor="middle" font-weight="800" font-size="12" fill="#f3f5f6">${i+1}</text><text x="${x.toFixed(1)}" y="347" text-anchor="middle" font-size="7.6" fill="#bddccf">${caption}</text>`;
  }).join("");
- let path=`M ${center} 13`,right=0;
- if(data.steps){
-  for(let i=0;i<data.steps.length;i++){
-   right+=data.steps[i];
-   path+=` L ${(center+(2*right-i-1)*dx).toFixed(1)} ${(56+i*26).toFixed(1)}`;
-  }
-  path+=` L ${(32+data.slot*29.6).toFixed(1)} 313`;
+ return `<div class="plinko-board"><svg viewBox="0 0 360 360" role="img" aria-label="Tabuleiro Plinko com 11 cestas; cesta escolhida: ${data.target+1}"><path d="M180 4 L16 315 L344 315 Z" fill="none" stroke="#4a5b6a" stroke-width="1.5"/>${pegs.join("")}${bins}<circle id="plinko-ball" cx="180" cy="13" r="7.5" fill="#e4cd7b" stroke="#f5e7ad" stroke-width="1.5"/></svg></div>`;
+}
+// Animação em quadros: queda acelerada, desvios suaves e pequeno ressalto após cada pino.
+// O trajeto segue os dez desvios já sorteados, garantindo que a bola entre na cesta correta.
+function animatePlinko(token){
+ const ball=document.getElementById("plinko-ball"),d=state.data;
+ if(!ball||!d||!d.steps)return;
+ const reduced=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+ if(reduced){ball.setAttribute("cx",String(32+d.slot*29.6));ball.setAttribute("cy","312");settlePlinko();return;}
+ const dx=14.8;
+ let rights=0;
+ const segments=[];
+ let x=180,y=13;
+ for(let i=0;i<10;i++){
+   const direction=d.steps[i]?1:-1;
+   rights+=d.steps[i];
+   const tx=180+(2*rights-i-1)*dx;
+   const ty=56+i*26;
+   segments.push({fromX:x,fromY:y,toX:tx,toY:ty,direction});
+   x=tx;y=ty;
  }
- return `<div class="plinko-board"><svg viewBox="0 0 360 360" role="img" aria-label="Tabuleiro do Plinko com 11 cestas; cesta escolhida: ${data.target+1}"><path d="M180 4 L16 315 L344 315 Z" fill="none" stroke="#4a5b6a" stroke-width="1.5"/>${pegs.join('')}${bins}${data.steps?`<circle r="7.5" cx="0" cy="0" fill="#e4cd7b" stroke="#f5e7ad" stroke-width="1.5"><animateMotion dur="2.3s" path="${path}" fill="freeze" calcMode="linear"/></circle>`:'<circle cx="180" cy="13" r="7" fill="#e4cd7b"/>'}</svg></div>`;
+ segments.push({fromX:x,fromY:y,toX:32+d.slot*29.6,toY:312,direction:0});
+ const started=performance.now();
+ // Ritmo ligeiramente acelerado conforme a bola desce.
+ const weights=[1.35,1.18,1.12,1.06,1,.98,.96,.94,.92,.9,1.05];
+ const total=weights.reduce((a,b)=>a+b,0);
+ const borders=[0];for(const w of weights)borders.push(borders[borders.length-1]+w/total);
+ function frame(now){
+   if(state.token!==token||state.phase!=="playing"||state.mode!=="plinko"||!state.animation)return;
+   const elapsed=Math.min(1,(now-started)/PLINKO_ANIMATION_MS);
+   let index=borders.length-2;
+   for(let i=0;i<borders.length-1;i++)if(elapsed<=borders[i+1]){index=i;break;}
+   const seg=segments[index];
+   const t=Math.max(0,Math.min(1,(elapsed-borders[index])/(borders[index+1]-borders[index])));
+   // Movimento lateral com suavização; queda com aceleração e pequeno ressalto.
+   const lateral=(1-Math.cos(Math.PI*t))/2;
+   const drop=t*t*(2-t);
+   const bounce=index<10?3.8*Math.sin(Math.PI*t):0;
+   const cx=seg.fromX+(seg.toX-seg.fromX)*lateral;
+   const cy=seg.fromY+(seg.toY-seg.fromY)*drop-bounce;
+   ball.setAttribute("cx",cx.toFixed(2));
+   ball.setAttribute("cy",cy.toFixed(2));
+   if(elapsed>=1){settlePlinko();return;}
+   requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
 }
 function settlePlinko(){
  if(state.phase!=="playing"||state.mode!=="plinko"||state.animation!==true)return;
  state.animation=false;
- const d=state.data,base=PLINKO_BONUSES[d.slot],exact=d.target===d.slot&&base>0;
- const bonus=base+(exact?PLINKO_EXACT_BONUS:0);
- const details=`<div class="plinko-result-basket"><span>Cesta alcançada</span><strong>${d.slot+1}</strong><span>Cesta escolhida: ${d.target+1}</span></div><div class="summary-row"><span>Prêmio da cesta</span><strong>${base?'+'+percent(base):'Perda da aposta'}</strong></div><div class="summary-row"><span>Bônus pela cesta exata</span><strong>${exact?'+'+percent(PLINKO_EXACT_BONUS):'Não aplicado'}</strong></div>`;
- finish(base>0?"win":"lose",bonus,base>0?(exact?"Você acertou exatamente a cesta escolhida!":"A bola caiu em uma cesta premiada."):"A bola caiu em uma das três cestas centrais.",details);
+ const d=state.data,base=PLINKO_BONUSES[d.slot];
+ const exact=d.target===d.slot,central=base===0,outerExact=exact&&!central;
+ const bonus=base+(outerExact?PLINKO_EXACT_BONUS:0);
+ const halfBasket=d.slot===4||d.slot===6;
+ const refundRatio=exact&&central?1:halfBasket?.5:0;
+ const outcome=central?(exact?"tie":"lose"):"win";
+ const payment=central?(exact?"100% da aposta devolvida":halfBasket?"50% da aposta devolvida":"Perda da aposta"):`+${percent(base)}`;
+ const details=`<div class="plinko-result-basket"><span>Cesta alcançada</span><strong>${d.slot+1}</strong><span>Cesta escolhida: ${d.target+1}</span></div><div class="summary-row"><span>Prêmio da cesta</span><strong>${payment}</strong></div><div class="summary-row"><span>Bônus por cesta exata</span><strong>${outerExact?'+'+percent(PLINKO_EXACT_BONUS):exact?'Aposta devolvida':'Não aplicado'}</strong></div>`;
+ const description=central?(exact?"Você acertou a cesta central escolhida e recuperou toda a aposta.":halfBasket?"A cesta devolveu metade da aposta.":"A bola caiu na cesta 6 sem acerto exato."):(outerExact?"Você acertou exatamente a cesta escolhida!":"A bola caiu em uma cesta premiada.");
+ finish(outcome,bonus,description,details,{minimumRefundRatio:refundRatio});
 }
 
 function renderPlaying(){
@@ -1148,12 +1204,12 @@ function renderPlaying(){
     ${handArea("Duas cartas do bot",[null,null],"Ocultas até o final")}
     ${handArea("Cinco cartas públicas",d.board.map((c,i)=>i<stage?c:null),stage?`${stage} de 5 reveladas`:"Aguardando flop")}
     ${handArea("Suas duas cartas",d.player,active?`Melhor mão: ${active.score.name}`:"Suas cartas iniciais")}
-    <div class="actions"><button type="button" class="primary" data-action="${stage===5?'end-texas':'reveal-texas'}">${stepLabel} →</button></div></section>`;
+    <div class="actions texas-actions"><button type="button" class="primary" data-action="${stage===5?'end-texas':'reveal-texas'}">${stepLabel} →</button><button type="button" class="secondary" data-action="redeal-texas" ${(d.redeals||0)>=TEXAS_REDEALS?'disabled':''}>↻ Correr · ${TEXAS_REDEALS-(d.redeals||0)} restantes</button></div><p class="texas-redeal-note">Correr redistribui suas cartas, as do bot e as cinco públicas, sem nova aposta.</p></section>`;
   }
   if(state.mode==="plinko"){
     const d=state.data;
     return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">PLINKO · 11 CESTAS</span><h1>Caindo...</h1></div></section>
-    <section class="panel center plinko-game"><div class="status-label">Cesta escolhida: ${d.target+1}</div>${plinkoBoard(d)}<div class="plinko-live-note">As três cestas centrais perdem · Cesta exata: +${PLINKO_EXACT_BONUS} p.p.</div></section>`;
+    <section class="panel center plinko-game"><div class="status-label">Cesta escolhida: ${d.target+1}</div>${plinkoBoard(d)}<div class="plinko-live-note">5 e 7: metade da aposta · Centro escolhido: devolução total · Externa exata: +${PLINKO_EXACT_BONUS} p.p.</div></section>`;
   }
   if(state.mode==="yatzy"){
     const d=state.data,s=scoreYatzy(d.values);
@@ -1193,7 +1249,7 @@ function renderResult(){
   const amount=(r.delta>0?"+":"")+money(r.delta);
   return `${gameToolbar()}<section class="panel result-panel ${r.outcome}">
     <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${titles[r.outcome]}</h1><p>${r.description}</p>
-    <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`Escudo recuperou ${money(r.payout)} da aposta.`:"A aposta da rodada foi perdida."}</p>
+    <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`${money(r.payout)} da aposta recuperados.`:"A aposta da rodada foi perdida."}</p>
     <div class="result-details">${r.details}${r.upgradeNote||""}
       <div class="result-money"><div><span>Aposta</span><strong>${money(state.bet)}</strong></div><div><span>Recebido</span><strong>${money(r.payout)}</strong></div></div>
     </div><div class="actions"><button type="button" class="primary" data-action="again">Nova rodada</button><button type="button" class="secondary" data-action="back">Outros jogos</button></div>
@@ -1311,17 +1367,16 @@ function beginBet(){
     state.data={deck,player,bot,naturalReady: blackjackValue(player)===21 || blackjackValue(bot)===21};
     render();
   }else if(state.mode==="texas"){
-    state.data=drawTexas();render();
+    state.data={...drawTexas(),redeals:0};render();
   }else if(state.mode==="plinko"){
     state.data={target:Number(state.choice),...plinkoSequence(state.luckExtra)};
-    state.animation=true;render();const token=state.token;
-    setTimeout(()=>{if(state.token!==token||state.phase!=="playing"||state.mode!=="plinko")return;settlePlinko();},2360);
+    state.animation=true;render();animatePlinko(state.token);
   }else{
     const deck=makeDeck();const bot=Array.from({length:5},()=>deck.pop());const player=drawLuckyPoker(Array.from({length:5},()=>deck.pop()),deck);
     state.data={deck,player,bot,selected:[false,false,false,false,false],swaps:0};render();
   }
 }
-function finish(outcome,baseBonus,description,details){
+function finish(outcome,baseBonus,description,details,options={}){
   if(state.phase!=="playing")return;
   let bonus=baseBonus,payout=0,note="";
   if(outcome==="win"){
@@ -1337,8 +1392,10 @@ function finish(outcome,baseBonus,description,details){
     payout=state.bet;
   }else{
     const shield=Math.min(.8,.05*level("shield"));
-    payout=Math.round(state.bet*shield);
-    if(payout>0)note=`<div class="upgrade-result"><strong>Escudo</strong><div>+${percent(shield*100)} da aposta recuperada: ${money(payout)}</div></div>`;
+    const guaranteed=Math.max(0,Math.min(1,options.minimumRefundRatio||0));
+    const finalRefund=Math.max(shield,guaranteed);
+    payout=Math.round(state.bet*finalRefund);
+    if(payout>0)note=`<div class="upgrade-result"><strong>Recuperação</strong><div>${percent(finalRefund*100)} da aposta devolvida: ${money(payout)}${shield>guaranteed?' (Escudo aplicado)':''}</div></div>`;
     saved.shop.streak=0;
   }
   saved.shop.lastMode=state.mode;
@@ -1479,6 +1536,7 @@ document.addEventListener("click",event=>{
   else if(action==="swap"&&state.phase==="playing"&&state.mode==="poker")swapPoker();
   else if(action==="stand-poker"&&state.phase==="playing"&&state.mode==="poker")settlePoker();
   else if(action==="fold"&&state.phase==="playing"&&state.mode==="poker")settlePoker(true);
+  else if(action==="redeal-texas"&&state.phase==="playing"&&state.mode==="texas")texasRedeal();
   else if(action==="reveal-texas"&&state.phase==="playing"&&state.mode==="texas")texasReveal();
   else if(action==="end-texas"&&state.phase==="playing"&&state.mode==="texas")settleTexas();
 });
