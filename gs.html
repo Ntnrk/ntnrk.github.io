@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0e14">
+  <meta name="description" content="GS: cinco minijogos de probabilidades com créditos fictícios e saldo compartilhado.">
+  <title>GS — Game of Chances</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b0e14;--surface:#131923;--surface2:#1b2431;--border:#293544;--text:#f4f7fb;--muted:#9caabe;--accent:#b6eecb;--gold:#f3c978;--red:#ff969f;--blue:#8db6fb;--r:20px}
+    *{box-sizing:border-box}
+    html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);min-height:100vh;overflow-x:hidden}
+    button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{opacity:.44;cursor:not-allowed}
+    button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+    a{color:inherit;text-decoration:none}h1,h2,h3,p{margin-top:0}h1,h2,h3{line-height:1.15}p{color:var(--muted)}
+    .shell{width:min(1120px,calc(100% - 32px));margin:auto;min-height:100vh;display:flex;flex-direction:column}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:24px 0 34px}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .logo{width:45px;height:45px;flex-shrink:0;display:grid;place-items:center;border-radius:13px;background:var(--accent);color:#101c18;font-weight:950;letter-spacing:-.09em;font-size:1.2rem}
+    .brand strong{display:block;font-size:.95rem;letter-spacing:.04em}.brand small{display:block;color:var(--muted);font-size:.72rem}
+    .wallet{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:15px;padding:10px 14px;background:var(--surface);white-space:nowrap}
+    .wallet-icon{color:var(--gold);font-size:1.25rem}.wallet small{display:block;color:var(--muted);font-size:.68rem;line-height:1.2}.wallet strong{display:block;font-size:1.13rem;font-variant-numeric:tabular-nums}
+    .eyebrow{display:inline-block;font-weight:800;letter-spacing:.15em;text-transform:uppercase;font-size:.69rem;color:var(--accent);margin-bottom:14px}
+    .hero{padding:24px 0 22px}.hero h1{max-width:790px;font-size:clamp(2.3rem,5.4vw,4.9rem);letter-spacing:-.065em;margin:0 0 18px}.hero em{font-style:normal;color:var(--accent)}.hero p{max-width:590px;line-height:1.65}
+    .overview{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 36px}.stat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px 18px}.stat span{display:block;color:var(--muted);font-size:.75rem}.stat strong{font-size:1.55rem;font-weight:800;font-variant-numeric:tabular-nums}
+    .section-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:16px}.section-heading h2{margin:0;font-size:1.22rem}.section-heading small{color:var(--muted);font-size:.8rem}
+    .mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.mode-card{min-width:0;min-height:248px;text-align:left;border:1px solid var(--border);border-radius:var(--r);padding:22px;background:var(--surface);color:var(--text);display:flex;flex-direction:column;align-items:stretch;transition:border-color .16s,background .16s,transform .16s;overflow:hidden;position:relative}
+    .mode-card:hover{border-color:#5c7a80;background:#17212b;transform:translateY(-3px)}.mode-card .art{height:84px;display:flex;align-items:center;gap:9px;margin-bottom:13px;justify-content:flex-start}
+    .mode-card strong{font-size:1.14rem;letter-spacing:-.025em}.mode-card p{font-size:.84rem;line-height:1.5;margin:7px 0 17px;flex:1}.mode-card .go{display:flex;justify-content:space-between;gap:10px;align-items:center;color:var(--accent);font-size:.82rem;font-weight:800;border-top:1px solid var(--border);padding-top:13px}.go b{font-size:1.3rem;font-weight:400}
+    .artcoin{width:68px;height:68px;border-radius:50%;border:6px double #f2c778;background:radial-gradient(circle at 30% 24%,#ffedac,#d79529 85%);color:#5d3a0b;display:grid;place-items:center;font-size:2rem;font-weight:900;box-shadow:0 8px 24px #0003;transform:rotate(-10deg)}
+    .artcoin.second{margin-left:-29px;transform:rotate(13deg) translateY(8px);filter:brightness(.9)}.artcards{display:flex;align-items:center;height:90px}.artcards .tiny-card:nth-child(1){transform:rotate(-15deg) translate(8px,4px)}.artcards .tiny-card:nth-child(2){transform:rotate(5deg) translateY(-2px)}.artcards .tiny-card:nth-child(3){transform:rotate(16deg) translate(-8px,8px)}
+    .tiny-card{width:56px;height:77px;border:1px solid #e2e8ef;background:#f0f2f6;color:#202733;border-radius:8px;display:grid;place-items:center;font-size:1.65rem;font-weight:900;box-shadow:0 8px 18px #0004}.tiny-card.red{color:#ca4d58}.tiny-card.back{background:repeating-linear-gradient(45deg,#2d5575 0 5px,#386681 5px 10px);color:white;border:4px solid #e5e9ee}
+    .minidice{display:flex;gap:5px;align-items:center}.minidice .die-svg{width:58px;height:58px}.minidice.multiple .die-svg{width:41px;height:41px}.minidice.multiple{gap:0;flex-wrap:wrap;width:139px;max-height:82px}
+    .footer{margin-top:auto;padding:44px 0 24px;color:#7f8b9e;display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:.76rem}.footer a:hover{color:var(--accent)}
+    .back{display:inline-flex;align-items:center;gap:10px;background:transparent;border:0;color:var(--muted);padding:6px 0 18px;font-size:.86rem}.back:hover{color:white}
+    .game-intro{display:flex;justify-content:space-between;gap:26px;align-items:center;margin:5px 0 22px}.game-intro h1{font-size:clamp(2.2rem,4.5vw,4rem);letter-spacing:-.065em;margin:0 0 10px}.game-intro p{margin:0;max-width:590px}.game-intro .art{height:96px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .game-layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.8fr);gap:16px;align-items:start}.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;min-width:0}.panel h2{font-size:1.2rem;letter-spacing:-.025em;margin:0 0 9px}.panel p{font-size:.88rem;line-height:1.5}.panel .eyebrow{margin-bottom:9px}.panel-side{background:var(--surface2)}
+    .separator{border:0;border-top:1px solid var(--border);margin:23px 0}.panel-title{font-size:.78rem;color:var(--muted);font-weight:800;letter-spacing:.05em;margin:0 0 12px}
+    .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:16px 0}.choices.three{grid-template-columns:repeat(3,minmax(0,1fr))}.choice{border:1px solid var(--border);border-radius:14px;background:#1a2330;color:white;padding:15px 10px;text-align:center;min-width:0;min-height:80px;display:flex;flex-direction:column;justify-content:center;gap:5px;transition:border .15s,background .15s}.choice strong{font-size:1.01rem}.choice small{font-size:.75rem;color:var(--muted)}.choice.active{border-color:var(--accent);background:#1a302b}.choice:disabled{opacity:.32}.choice .emoji{font-size:1.25rem}
+    .target{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#111b25;border:1px solid var(--border);border-radius:14px;padding:14px 17px;margin:15px 0 10px}.target strong{font-size:2rem;font-variant-numeric:tabular-nums;color:var(--gold)}.target span{color:var(--muted);font-size:.83rem}.link-button{background:transparent;border:0;color:var(--accent);padding:7px 0;font-size:.81rem;font-weight:800}
+    .bet-line{display:flex;align-items:center;gap:13px;margin:15px 0}.bet-line input{width:100%;min-width:0;background:#0d131c;border:1px solid #3a4656;border-radius:13px;padding:13px 14px;color:white;font-size:1.18rem;font-weight:750;font-variant-numeric:tabular-nums;outline:0}.bet-line input:focus{border-color:var(--accent)}.currency-label{color:var(--muted);white-space:nowrap;font-size:.84rem}
+    .bet-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.preset{background:#233040;border:1px solid #334253;color:#d3dce6;border-radius:10px;padding:10px 0;font-size:.83rem;font-weight:800}.preset:hover{border-color:var(--accent)}
+    .primary{border:0;border-radius:13px;padding:14px 20px;background:var(--accent);color:#0e2419;font-weight:900;min-height:50px}.primary:hover{background:#cefadb}.primary.block{width:100%;margin-top:22px}.secondary{border:1px solid #46566a;border-radius:13px;background:#273240;color:white;padding:12px 16px;font-weight:800;min-height:49px}.secondary:hover{background:#304055}.danger{background:#44272d;color:#ffc5c9;border:1px solid #75404a;border-radius:13px;padding:12px 16px;font-weight:800;min-height:49px}.danger:hover{background:#533039}
+    .bet-flow{max-width:820px;margin:0 auto;display:grid;gap:16px}
+    .bonus-panel{background:#15201f}
+    .bonus-list{display:grid;grid-template-columns:1fr;gap:0;margin:17px 0 0;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+    .bonus-row{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:12px 15px;background:#101a20;border-bottom:1px solid var(--border)}
+    .bonus-row:last-child{border-bottom:0}
+    .bonus-row span{font-size:.87rem;color:#c8d3df;line-height:1.35}
+    .bonus-row strong{color:var(--accent);font-size:.99rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .bonus-row strong.unavailable{color:var(--muted)}
+    .rule{display:flex;gap:12px;margin:12px 0}.rule i{width:24px;height:24px;border-radius:8px;background:#2b4140;color:var(--accent);font-weight:900;font-style:normal;text-align:center;line-height:24px;flex-shrink:0;font-size:.81rem}.rule div{color:#bbc7d5;font-size:.84rem;line-height:1.55}.rule strong{color:var(--text)}.notice{font-size:.76rem;color:var(--muted);margin:15px 0 0}
+    .center{text-align:center}.status-label{font-size:.78rem;font-weight:800;letter-spacing:.09em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}.turn-heading{font-size:clamp(1.65rem,4vw,2.4rem);letter-spacing:-.045em;margin:0 0 14px}
+    .bigcoin{width:155px;height:155px;margin:20px auto;border-radius:50%;background:radial-gradient(circle at 32% 26%,#ffebae,#d89d34 78%);border:10px double #f8d989;color:#6f4b14;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px #f5c56a16,0 20px 50px #0005}.bigcoin span{font-size:3.1rem;line-height:1}.bigcoin strong{font-size:.89rem;text-transform:uppercase;letter-spacing:.1em}.bigcoin.spinning{animation:coinflip .7s ease-in-out infinite}@keyframes coinflip{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+    .dice-field{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:22px auto}.die-svg{width:70px;height:70px;flex-shrink:0;filter:drop-shadow(0 7px 8px #0003)}.die-toggle{border:2px solid transparent;background:#151d28;border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--muted);min-width:72px}.die-toggle:disabled{opacity:1;cursor:default}.die-toggle.held{border-color:var(--accent);background:#1c302d}.die-toggle.held small{color:var(--accent)}.die-toggle small{font-size:.72rem;font-weight:800}
+    .round-steps{display:flex;gap:8px;justify-content:center;margin:15px 0 22px}.round-steps b{width:40px;height:6px;border-radius:30px;background:#354354}.round-steps b.done{background:var(--accent)}
+    .actions{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}.actions>*{flex:1;min-width:125px}.score-preview{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.score-box{border:1px solid var(--border);background:#0e151e;border-radius:13px;padding:16px;text-align:center}.score-box span{display:block;color:var(--muted);font-size:.78rem}.score-box strong{display:block;font-size:1.65rem;font-variant-numeric:tabular-nums}.score-box small{font-size:.73rem;color:var(--muted)}
+    .playing-cards{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}.playing-card{width:clamp(52px,11vw,76px);height:clamp(78px,16.5vw,105px);border-radius:10px;background:#f5f7f9;border:2px solid white;color:#202633;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:7px;box-shadow:0 5px 10px #0004;user-select:none}.playing-card.red{color:#cf414e}.playing-card .corner{line-height:.9;font-weight:900;font-size:1.03rem}.playing-card .corner small{display:block;font-size:1rem;margin-top:4px}.playing-card .suit{font-size:2rem;line-height:1;align-self:center}.playing-card.pickable{cursor:pointer;transition:transform .16s,border .16s}.playing-card.pickable.selected{transform:translateY(-12px);border:3px solid var(--gold);box-shadow:0 0 0 3px #f3c97835}.playing-card.back-card{border:5px solid #e3e5ec;background:repeating-linear-gradient(45deg,#2a5375 0 6px,#3b7197 6px 12px);color:white;align-items:center;justify-content:center;font-size:1rem;font-weight:900;letter-spacing:.1em}
+    .hand-area{margin:16px 0;padding:14px 10px 18px;border-radius:15px;border:1px solid var(--border);background:#0d1520;text-align:center}.hand-area .hand-name{font-size:.75rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.hand-area .hand-value{font-size:.88rem;font-weight:850;color:var(--gold)}
+    .result-panel{text-align:center;max-width:790px;margin:0 auto;padding:32px 24px}.result-mark{width:60px;height:60px;display:grid;place-items:center;border-radius:50%;margin:0 auto 17px;font-size:1.8rem;font-weight:800}.result-panel.win .result-mark{background:#1b4030;color:var(--accent)}.result-panel.lose .result-mark{background:#48252b;color:var(--red)}.result-panel.tie .result-mark{background:#314052;color:var(--blue)}.result-panel h1{font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-.06em;margin:0 0 8px}.result-delta{font-size:clamp(1.7rem,4vw,2.7rem);font-weight:950;margin:12px 0;font-variant-numeric:tabular-nums}.result-delta.win{color:var(--accent)}.result-delta.lose{color:var(--red)}.result-delta.tie{color:var(--blue)}.result-details{margin:23px auto 0;border-top:1px solid var(--border);padding-top:23px;max-width:570px}.result-details .hand-area{background:#111a25}.summary-row{display:flex;gap:12px;justify-content:space-between;align-items:center;color:var(--muted);padding:7px 0;font-size:.88rem}.summary-row strong{color:var(--text)}
+    .reset{background:transparent;border:0;color:var(--muted);font-size:.74rem;text-decoration:underline;text-underline-offset:3px;margin-top:24px}.reset:hover{color:white}.toast{position:fixed;z-index:50;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:12px 18px;border:1px solid #55706d;background:#182d2b;color:white;border-radius:12px;box-shadow:0 8px 24px #0008;max-width:calc(100vw - 28px);transition:opacity .2s,transform .2s;font-size:.85rem;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:900px){.mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-layout{grid-template-columns:1fr}.panel-side{order:2}.game-intro .art{display:none}}
+    @media(max-width:540px){.shell{width:calc(100% - 26px)}.header{padding:16px 0 20px}.brand small{font-size:.62rem}.brand strong{font-size:.85rem}.wallet{gap:7px;padding:8px 10px}.wallet strong{font-size:.97rem}.wallet-icon{display:none}.hero{padding:16px 0}.hero h1{font-size:2.55rem}.overview{gap:7px;margin-bottom:28px}.stat{padding:11px 9px;border-radius:11px}.stat strong{font-size:1.3rem}.stat span{font-size:.66rem}.mode-grid{grid-template-columns:1fr;gap:11px}.mode-card{min-height:177px;padding:17px}.mode-card .art{height:61px;margin-bottom:7px}.mode-card .artcoin{width:52px;height:52px;font-size:1.5rem}.mode-card .tiny-card{width:44px;height:61px}.mode-card .die-svg{width:47px;height:47px}.mode-card .minidice.multiple .die-svg{width:31px;height:31px}.mode-card .minidice.multiple{width:114px}.mode-card p{margin-bottom:11px}.game-intro h1{font-size:2.3rem}.panel{padding:17px}.choices.three{gap:6px}.choices.three .choice{padding:10px 4px}.choices.three .choice strong{font-size:.92rem}.choices.three .choice small{font-size:.65rem}.bet-presets{gap:6px}.playing-card{width:54px;height:79px;padding:5px}.playing-card .suit{font-size:1.6rem}.die-svg{width:57px;height:57px}.die-toggle{padding:8px 4px;min-width:55px}.dice-field{gap:4px}.footer{flex-direction:column;align-items:flex-start;padding-top:30px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <a class="brand" href="index.html" aria-label="Voltar ao site NTNRK"><span class="logo">GS</span><span><strong>GAME OF CHANCES</strong><small>Simulador de probabilidades</small></span></a>
+    <div class="wallet" aria-label="Saldo compartilhado de créditos fictícios"><span class="wallet-icon">◈</span><span><small>SALDO GLOBAL</small><strong id="wallet">1.000 cr</strong></span></div>
+  </header>
+  <main id="app"></main>
+  <footer class="footer"><span>GS • Minijogos com créditos fictícios, sem dinheiro real.</span><a href="index.html">← Voltar para NTNRK</a></footer>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+const KEY = "gs-game-of-chances-v2";
+const OLD_KEY = "gs-simulador-v1";
+const INITIAL = 1000;
+const MODES = [
+  {id:"coin",title:"Cara ou coroa",tag:"MOEDA",sub:"Uma escolha, duas possibilidades.",desc:"Escolha um lado e lance a moeda.",bonus:"+100% se acertar"},
+  {id:"dice",title:"Maior, menor ou igual",tag:"2 DADOS",sub:"Compare a soma de dois dados com o alvo.",desc:"Um alvo aleatório e três possíveis resultados.",bonus:"Bônus pela probabilidade"},
+  {id:"yatzy",title:"Yatzy",tag:"5 DADOS",sub:"Guarde dados e tente superar o bot.",desc:"Você tem até três lançamentos por rodada.",bonus:"Até +300%"},
+  {id:"blackjack",title:"21",tag:"CARTAS",sub:"Chegue perto de 21 sem ultrapassar.",desc:"Comprar ou passar? O bot compra até 17.",bonus:"Até +150%"},
+  {id:"poker",title:"Pôquer fechado",tag:"5 CARTAS",sub:"Troque cartas e forme a melhor mão.",desc:"Até duas trocas de cartas. Mãos são comparadas no final.",bonus:"Até +900%"}
+];
+const PIP_POS = {
+  1:[[36,36]],2:[[19,19],[53,53]],3:[[19,19],[36,36],[53,53]],
+  4:[[19,19],[53,19],[19,53],[53,53]],
+  5:[[19,19],[53,19],[36,36],[19,53],[53,53]],
+  6:[[19,16],[53,16],[19,36],[53,36],[19,56],[53,56]]
+};
+const SUITS = ["♠","♥","♦","♣"];
+const RANKS = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+const POKER_NAMES = ["Carta alta","Um par","Dois pares","Trinca","Sequência","Flush","Full house","Quadra","Straight flush","Royal flush"];
+const POKER_BONUSES = [100,120,150,190,230,260,350,450,650,900];
+const money = n => Math.round(n).toLocaleString("pt-BR") + " cr";
+const percent = n => n.toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
+const rand = n => Math.floor(Math.random()*n);
+const dice = () => rand(6)+1;
+const sum = a => a.reduce((x,y)=>x+y,0);
+const sum2 = () => dice()+dice();
+const mode = () => MODES.find(m=>m.id===state.mode);
+function initialSave(){
+  let balance=INITIAL;
+  try{
+    const old=JSON.parse(localStorage.getItem(OLD_KEY));
+    if(old && Number.isSafeInteger(old.balance) && old.balance>=0) balance=old.balance;
+  }catch{}
+  return {balance,stats:{rounds:0,wins:0,losses:0,ties:0}};
+}
+function load(){
+  try{
+    const x=JSON.parse(localStorage.getItem(KEY));
+    if(x && Number.isSafeInteger(x.balance) && x.balance>=0 && x.stats && ["rounds","wins","losses","ties"].every(k=>Number.isSafeInteger(x.stats[k])&&x.stats[k]>=0))return x;
+  }catch{}
+  return initialSave();
+}
+let saved=load();
+let state={mode:null,phase:"lobby",bet:0,data:null,choice:"cara",result:null,animation:false,token:0};
+let toastTimer;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(saved));}catch{}}
+function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600)}
+function dieSvg(n){
+  if(!n)return '<svg class="die-svg" viewBox="0 0 72 72" aria-label="Dado ainda não lançado"><rect x="3" y="3" width="66" height="66" rx="13" fill="#233242" stroke="#53667a" stroke-width="2"/><text x="36" y="47" text-anchor="middle" font-size="32" fill="#aab6c6">?</text></svg>';
+  return `<svg class="die-svg" viewBox="0 0 72 72" role="img" aria-label="Dado ${n}"><rect x="3" y="3" width="66" height="66" rx="13" fill="#f3f5fa" stroke="#c6d1dd" stroke-width="2"/>${PIP_POS[n].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.6" fill="#253648"/>`).join("")}</svg>`;
+}
+function gameArt(id){
+  if(id==="coin")return '<div class="artcoin">★</div><div class="artcoin second">♛</div>';
+  if(id==="dice")return `<div class="minidice">${dieSvg(4)}${dieSvg(6)}</div>`;
+  if(id==="yatzy")return `<div class="minidice multiple">${[1,5,4,6,2].map(dieSvg).join("")}</div>`;
+  if(id==="blackjack")return '<div class="artcards"><div class="tiny-card">A♠</div><div class="tiny-card red">K♥</div></div>';
+  return '<div class="artcards"><div class="tiny-card back">GS</div><div class="tiny-card red">Q♦</div><div class="tiny-card">Q♣</div></div>';
+}
+function renderLobby(){
+  return `<section class="hero"><span class="eyebrow">5 MODOS • 1 SALDO</span><h1>Cinco jogos.<br><em>Uma só carteira.</em></h1><p>Escolha um modo, use créditos fictícios e descubra como a sorte, as probabilidades e suas decisões influenciam cada resultado.</p></section>
+  <section class="overview" aria-label="Estatísticas globais"><div class="stat"><span>Rodadas</span><strong>${saved.stats.rounds}</strong></div><div class="stat"><span>Vitórias</span><strong>${saved.stats.wins}</strong></div><div class="stat"><span>Derrotas</span><strong>${saved.stats.losses}</strong></div></section>
+  <section><div class="section-heading"><h2>Escolha um jogo</h2><small>Todos compartilham o saldo</small></div>
+  <div class="mode-grid">${MODES.map(m=>`<button type="button" class="mode-card" data-mode="${m.id}" aria-label="Jogar ${m.title}"><div class="art" aria-hidden="true">${gameArt(m.id)}</div><strong>${m.title}</strong><p>${m.sub}</p><span class="go"><span>${m.tag}</span><b>↗</b></span></button>`).join("")}</div></section>
+  <button type="button" class="reset" data-action="reset">Reiniciar créditos e estatísticas</button>`;
+}
+function countSums(target,choice){
+  let count=0;
+  for(let a=1;a<=6;a++)for(let b=1;b<=6;b++){
+    const total=a+b;
+    if((choice==="higher"&&total>target)||(choice==="lower"&&total<target)||(choice==="equal"&&total===target))count++;
+  }
+  return count;
+}
+function chooseMarkup(){
+  if(state.mode==="coin")return `<h2>Escolha um lado</h2><p>Ambos têm 50% de chance. Acertou? Você recebe o valor apostado de volta e mais 100% de bônus.</p><div class="choices">
+  ${[["cara","★","Cara"],["coroa","♛","Coroa"]].map(([id,emoji,name])=>`<button type="button" class="choice ${state.choice===id?"active":""}" data-choice="${id}" aria-pressed="${state.choice===id}"><span class="emoji">${emoji}</span><strong>${name}</strong></button>`).join("")}</div>`;
+  if(state.mode==="dice"){
+    const target=state.data.target;
+    return `<h2>Adivinhe a soma</h2><p>Dois dados serão lançados. A soma será maior, menor ou igual ao número de referência?</p>
+      <div class="target"><div><span>Número de referência</span><br><strong>${target}</strong></div><button type="button" class="link-button" data-action="target">Novo número ↻</button></div>
+      <div class="choices three">${[["higher","Maior","&gt;"],["equal","Igual","="],["lower","Menor","&lt;"]].map(([id,name,symbol])=>{
+        const count=countSums(target,id),prob=count/36*100,b=(36/count-1)*100;
+        return `<button type="button" class="choice ${state.choice===id?"active":""}" data-choice="${id}" aria-pressed="${state.choice===id}" ${!count?"disabled":""}><strong>${symbol} ${name}</strong><small>${count?`${percent(prob)} de chance`:`Impossível`}</small><small>${count?`+${percent(b)} de bônus`:`—`}</small></button>`;
+      }).join("")}</div>`;
+  }
+  if(state.mode==="yatzy")return `<h2>Desafio de dados</h2><p>Supere a pontuação do bot usando cinco dados.</p><div class="score-preview"><div class="score-box"><span>Dados</span><strong>5</strong><small>por rodada</small></div><div class="score-box"><span>Lançamentos</span><strong>3</strong><small>no máximo</small></div></div>`;
+  if(state.mode==="blackjack")return `<h2>Desafio de cartas</h2><p>Você contra o bot: vença com a melhor pontuação até 21.</p><div class="artcards" aria-hidden="true" style="justify-content:center;margin:16px 0"><div class="tiny-card">A♠</div><div class="tiny-card red">10♥</div></div>`;
+  return `<h2>Desafio de pôquer</h2><p>Monte uma mão forte com cinco cartas e até duas trocas.</p><div class="artcards" aria-hidden="true" style="justify-content:center;margin:16px 0"><div class="tiny-card red">A♥</div><div class="tiny-card red">K♦</div><div class="tiny-card">Q♠</div></div>`;
+}
+function bonusGuide(){
+  let rows=[];
+  if(state.mode==="coin")rows=[["Acertar cara ou coroa", "+100%"]];
+  else if(state.mode==="dice"){
+    const target=state.data.target;
+    rows=[["Maior", "higher"],["Igual", "equal"],["Menor", "lower"]].map(([label,id])=>{
+      const count=countSums(target,id);
+      const probability=count/36*100;
+      return [`Soma ${label.toLowerCase()} que ${target} • ${count?percent(probability)+" de chance":"impossível"}`,count?"+"+percent((36/count-1)*100):"—"];
+    });
+  }
+  else if(state.mode==="yatzy")rows=[
+    ["Vencer com Yatzy (5 iguais)","+300%"],
+    ["Vencer com quadra (4 iguais)","+180%"],
+    ["Vencer com full house (3 + 2 iguais)","+150%"],
+    ["Vencer com qualquer outra combinação","+100%"]
+  ];
+  else if(state.mode==="blackjack")rows=[
+    ["Vencer com 21 natural (2 cartas)","+150%"],
+    ["Vencer com 21 (3 ou mais cartas)","+120%"],
+    ["Vencer com menos de 21","+100%"]
+  ];
+  else rows=POKER_NAMES.map((name,i)=>["Vitória com "+name.toLowerCase(),"+"+POKER_BONUSES[i]+"%"]);
+  return `<section class="panel bonus-panel" aria-label="Tabela de bônus"><span class="eyebrow">PREMIAÇÃO</span><h2>Bônus por resultado</h2><p>Esses bônus são pagos <strong>somente em caso de vitória</strong>, além da devolução dos créditos apostados.</p>
+    <div class="bonus-list">${rows.map(([condition,bonus])=>`<div class="bonus-row"><span>${condition}</span><strong class="${bonus==="—"?"unavailable":""}">${bonus}</strong></div>`).join("")}</div>
+    <p class="notice">Em caso de empate, a aposta é devolvida sem bônus. Em caso de derrota ou desistência, a aposta é perdida. Todos os créditos são fictícios.</p>
+  </section>`;
+}
+function sideRules(){
+  const examples={
+    coin:[['1','Escolha cara ou coroa.'],['2','A moeda tem 50% de chance para cada lado.'],['3','Confira o resultado do lançamento.']],
+    dice:[['1','O alvo é sorteado entre 2 e 12.'],['2','Preveja se a soma dos dois dados será maior, menor ou igual ao alvo.'],['3','As chances consideram os 36 resultados possíveis dos dados.']],
+    yatzy:[['1','Você começa lançando cinco dados.'],['2','Toque nos dados que deseja manter e role os outros; são até três lançamentos no total.'],['3','Sua pontuação é a soma dos dados mais o bônus de combinação. O bot também joga até três vezes.']],
+    blackjack:[['1','Você e o bot recebem duas cartas.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Passar de 21 causa derrota.']],
+    poker:[['1','Você e o bot começam com cinco cartas.'],['2','Selecione as cartas para substituir. Você tem duas oportunidades de troca, podendo ficar antes.'],['3','O bot também pode trocar até duas vezes. Você pode ficar para comparar ou correr e desistir da rodada.']]
+  };
+  return `<section class="panel panel-side" aria-labelledby="howto-title"><span class="eyebrow">INSTRUÇÕES</span><h2 id="howto-title">Como jogar</h2>${examples[state.mode].map(([i,s])=>`<div class="rule"><i>${i}</i><div>${s}</div></div>`).join("")}<hr class="separator"><p class="notice">Saldo único para todos os modos. Os créditos não possuem valor monetário, não podem ser comprados ou resgatados.</p></section>`;
+}
+function renderBet(){
+  const recommended=Math.min(saved.balance,25);
+  return `<button type="button" class="back" data-action="back">← Voltar aos jogos</button>
+  <section class="game-intro"><div><span class="eyebrow">${mode().tag}</span><h1>${mode().title}</h1><p>${mode().desc}</p></div><div class="art" aria-hidden="true">${gameArt(state.mode)}</div></section>
+  <div class="bet-flow"><section class="panel">${chooseMarkup()}<hr class="separator"><h2>Defina sua aposta</h2><p>O valor é descontado no início da rodada. Se vencer, recebe a aposta de volta mais um bônus.</p>
+  <label class="panel-title" for="bet-input">Créditos fictícios a apostar</label><div class="bet-line"><input id="bet-input" inputmode="numeric" pattern="[0-9]*" type="number" min="1" step="1" max="${saved.balance}" value="${recommended}" aria-label="Valor da aposta"><span class="currency-label">créditos</span></div>
+  <div class="bet-presets">${[10,25,50,100].map(n=>`<button class="preset" type="button" data-stake="${n}" ${saved.balance<n?"disabled":""}>${n}</button>`).join("")}</div>
+  <button type="button" class="primary block" data-action="start" ${saved.balance===0?"disabled":""}>${saved.balance===0?"Sem créditos — reinicie":"Iniciar rodada →"}</button>
+  ${saved.balance===0?'<button class="secondary block" style="width:100%;margin-top:10px" data-action="reset">Reiniciar créditos</button>':''}</section>
+  ${bonusGuide()}
+  ${sideRules()}</div>`;
+}
+function scoreYatzy(values){
+  if(values.some(v=>!v))return {total:0,base:0,bonus:0,name:"Aguardando lançamento"};
+  const base=sum(values),counts=[1,2,3,4,5,6].map(n=>values.filter(x=>x===n).length).sort((a,b)=>b-a);
+  const uniq=new Set(values);let name="Somente soma",bonus=0;
+  const large=([1,2,3,4,5].every(x=>uniq.has(x)) || [2,3,4,5,6].every(x=>uniq.has(x)));
+  const small=([1,2,3,4].every(x=>uniq.has(x)) || [2,3,4,5].every(x=>uniq.has(x)) || [3,4,5,6].every(x=>uniq.has(x)));
+  if(counts[0]===5){name="Yatzy (5 iguais)";bonus=50;}
+  else if(counts[0]===4){name="Quadra";bonus=35;}
+  else if(counts[0]===3&&counts[1]===2){name="Full house";bonus=25;}
+  else if(large){name="Sequência grande";bonus=20;}
+  else if(small){name="Sequência pequena";bonus=15;}
+  else if(counts[0]===3){name="Trinca";bonus=12;}
+  else if(counts[0]===2&&counts[1]===2){name="Dois pares";bonus=8;}
+  else if(counts[0]===2){name="Par";bonus=4;}
+  return {total:base+bonus,base,bonus,name};
+}
+function botDice(){
+  let v=Array.from({length:5},dice);
+  for(let round=0;round<2;round++){
+    const score=scoreYatzy(v);
+    if(score.bonus>=20)break;
+    const frequencies=new Map();v.forEach(x=>frequencies.set(x,(frequencies.get(x)||0)+1));
+    const most=[...frequencies.entries()].sort((a,b)=>b[1]-a[1]||b[0]-a[0])[0][0];
+    let keep=v.map((x,i)=>x===most?i:-1).filter(x=>x>=0);
+    const unique=new Set(v);
+    const straightOptions=[[1,2,3,4,5],[2,3,4,5,6]];
+    for(const seq of straightOptions){
+      const matches=seq.filter(x=>unique.has(x));
+      if(matches.length>=4 && matches.length>keep.length){
+        const used=new Set();keep=v.map((x,i)=>{if(matches.includes(x)&&!used.has(x)){used.add(x);return i;}return -1;}).filter(x=>x>=0);
+      }
+    }
+    v=v.map((x,i)=>keep.includes(i)?x:dice());
+  }
+  return v;
+}
+function makeDeck(){
+  const deck=[];
+  for(const suit of SUITS)for(let v=2;v<=14;v++)deck.push({suit,value:v,rank:RANKS[v-2]});
+  for(let i=deck.length-1;i>0;i--){const j=rand(i+1);[deck[i],deck[j]]=[deck[j],deck[i]];}
+  return deck;
+}
+function cardMarkup(c,opts={}){
+  if(!c)return '<div class="playing-card back-card" aria-label="Carta escondida">GS</div>';
+  const red=c.suit==="♥"||c.suit==="♦";
+  const selected=opts.selected?" selected":"";
+  const cls=`playing-card ${red?"red":""}${opts.pickable?" pickable":""}${selected}`;
+  const inner=`<span class="corner">${c.rank}<small>${c.suit}</small></span><span class="suit">${c.suit}</span>`;
+  return opts.pickable?`<button type="button" class="${cls}" data-card="${opts.index}" aria-pressed="${!!opts.selected}" aria-label="${c.rank} de ${suitName(c.suit)}${selected?' selecionada':''}">${inner}</button>`:`<div class="${cls}" aria-label="${c.rank} de ${suitName(c.suit)}">${inner}</div>`;
+}
+function suitName(s){return ({"♠":"espadas","♥":"copas","♦":"ouros","♣":"paus"})[s]||"naipe"}
+function handArea(label,hand,extra="",options={}){
+  return `<div class="hand-area"><div class="hand-name">${label}</div><div class="playing-cards">${hand.map((c,i)=>cardMarkup(c,{pickable:options.pickable,index:i,selected:options.selected?.[i]})).join("")}</div>${extra?`<div class="hand-value">${extra}</div>`:""}</div>`;
+}
+function blackjackValue(hand){
+  let points=hand.reduce((p,c)=>p+(c.value===14?11:Math.min(10,c.value)),0);
+  let aces=hand.filter(c=>c.value===14).length;
+  while(points>21&&aces>0){points-=10;aces--;}
+  return points;
+}
+function rankPoker(hand){
+  const values=hand.map(c=>c.value).sort((a,b)=>b-a);
+  const count=new Map();for(const v of values)count.set(v,(count.get(v)||0)+1);
+  const pairs=[...count.entries()].sort((a,b)=>b[1]-a[1]||b[0]-a[0]);
+  const uniq=[...new Set(values)].sort((a,b)=>a-b);
+  let highStraight=0;
+  if(uniq.length===5 && uniq[4]-uniq[0]===4)highStraight=uniq[4];
+  if(uniq.join(",")==="2,3,4,5,14")highStraight=5;
+  const flush=hand.every(c=>c.suit===hand[0].suit);
+  let rank=0,keys=values;
+  if(highStraight&&flush){rank=highStraight===14?9:8;keys=[highStraight];}
+  else if(pairs[0][1]===4){rank=7;keys=[pairs[0][0],pairs[1][0]];}
+  else if(pairs[0][1]===3&&pairs[1][1]===2){rank=6;keys=[pairs[0][0],pairs[1][0]];}
+  else if(flush){rank=5;keys=values;}
+  else if(highStraight){rank=4;keys=[highStraight];}
+  else if(pairs[0][1]===3){rank=3;keys=[pairs[0][0],...pairs.slice(1).map(x=>x[0]).sort((a,b)=>b-a)];}
+  else if(pairs[0][1]===2&&pairs[1][1]===2){rank=2;keys=[Math.max(pairs[0][0],pairs[1][0]),Math.min(pairs[0][0],pairs[1][0]),pairs[2][0]];}
+  else if(pairs[0][1]===2){rank=1;keys=[pairs[0][0],...pairs.slice(1).map(x=>x[0]).sort((a,b)=>b-a)];}
+  return {rank,keys,name:POKER_NAMES[rank]};
+}
+function comparePoker(a,b){
+  const A=rankPoker(a),B=rankPoker(b);
+  if(A.rank!==B.rank)return Math.sign(A.rank-B.rank);
+  for(let i=0;i<Math.max(A.keys.length,B.keys.length);i++){
+    if((A.keys[i]||0)!==(B.keys[i]||0))return Math.sign((A.keys[i]||0)-(B.keys[i]||0));
+  }
+  return 0;
+}
+function botPokerSwap(hand,deck){
+  const evaluation=rankPoker(hand);
+  if(evaluation.rank>=4 || evaluation.rank===3 || evaluation.rank===2)return hand;
+  let kept=[];
+  const counts=new Map();for(const c of hand)counts.set(c.value,(counts.get(c.value)||0)+1);
+  if(evaluation.rank===1)kept=hand.filter(c=>counts.get(c.value)>=2);
+  else{
+    const suitCounts=new Map();for(const c of hand)suitCounts.set(c.suit,(suitCounts.get(c.suit)||0)+1);
+    const bestSuit=[...suitCounts].sort((a,b)=>b[1]-a[1])[0];
+    if(bestSuit[1]>=4)kept=hand.filter(c=>c.suit===bestSuit[0]);
+    else{
+      const uniq=[...new Set(hand.map(c=>c.value))];
+      const seqs=[[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[6,7,8,9,10],[7,8,9,10,11],[8,9,10,11,12],[9,10,11,12,13],[10,11,12,13,14]];
+      let best=[];
+      for(const sequence of seqs){const matched=uniq.filter(v=>sequence.includes(v));if(matched.length>best.length)best=matched;}
+      if(best.length>=4){const seen=new Set();kept=hand.filter(c=>{if(best.includes(c.value)&&!seen.has(c.value)){seen.add(c.value);return true}return false});}
+      else kept=[...hand].sort((a,b)=>b.value-a.value).slice(0,2);
+    }
+  }
+  const toKeep=[...kept];
+  return hand.map(c=>{const idx=toKeep.findIndex(k=>k===c);if(idx>=0){toKeep.splice(idx,1);return c;}return deck.pop();});
+}
+function renderPlaying(){
+  if(state.animation){
+    const c=state.mode==="coin";
+    return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="panel result-panel"><div class="status-label">SORTEANDO RESULTADO</div><h1>${c?"Lançando a moeda...":"Lançando dois dados..."}</h1>${c?'<div class="bigcoin spinning"><span>★</span><strong>GS</strong></div>':`<div class="dice-field">${dieSvg(3)}${dieSvg(5)}</div>`}<p>Calculando o resultado da rodada.</p></section>`;
+  }
+  if(state.mode==="yatzy"){
+    const d=state.data,s=scoreYatzy(d.values);
+    return `<button class="back" data-action="back">← Voltar aos jogos</button><div class="game-intro"><div><span class="eyebrow">YATZY • ${d.rolls}/3 LANÇAMENTOS</span><h1>Seus dados</h1><p>Toque em um dado depois de lançar para mantê-lo.</p></div></div>
+    <section class="panel center"><div class="status-label">${d.rolls===0?"Pronto para começar":d.rolls<3?"Selecione os dados para manter":"Último lançamento"}</div>
+    <div class="round-steps" aria-label="${d.rolls} de 3 lançamentos">${[1,2,3].map(i=>`<b class="${d.rolls>=i?"done":""}"></b>`).join("")}</div>
+    <div class="dice-field">${d.values.map((v,i)=>`<button type="button" class="die-toggle ${d.held[i]?"held":""}" data-hold="${i}" aria-pressed="${d.held[i]}" ${d.rolls===0?"disabled":""}>${dieSvg(v)}<small>${d.rolls===0?"—":d.held[i]?"Mantido":"Rolar"}</small></button>`).join("")}</div>
+    <div class="score-preview"><div class="score-box"><span>Pontos atuais</span><strong>${s.total}</strong><small>${s.name}</small></div><div class="score-box"><span>Composição</span><strong>${s.base} + ${s.bonus}</strong><small>soma + bônus</small></div></div>
+    <div class="actions"><button class="primary" type="button" data-action="roll" ${d.rolls>=3?"disabled":""}>${d.rolls===0?"Lançar dados":"Rolar novamente"}</button><button class="secondary" type="button" data-action="end-yatzy" ${d.rolls===0?"disabled":""}>Comparar com bot</button></div>
+    <p class="notice">O bot também pode lançar até 3 vezes. Empate devolve os créditos apostados.</p></section>`;
+  }
+  if(state.mode==="blackjack"){
+    const d=state.data;
+    return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="game-intro"><div><span class="eyebrow">CARTAS • 21</span><h1>Comprar ou passar?</h1><p>Chegue perto de 21 sem passar. O bot está com uma carta escondida.</p></div></section>
+    <section class="panel center">${handArea("Cartas do bot",[d.bot[0],null],"Carta oculta")}${handArea("Suas cartas",d.player,`${blackjackValue(d.player)} pontos`)}
+    <div class="actions"><button type="button" class="primary" data-action="hit">+ Comprar carta</button><button type="button" class="secondary" data-action="stand">Passar / ficar</button></div>
+    <p class="notice">Ás vale 1 ou 11. Figuras valem 10. O bot compra até ter pelo menos 17 pontos.</p></section>`;
+  }
+  const d=state.data;
+  const swapsLeft=2-d.swaps;
+  return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="game-intro"><div><span class="eyebrow">CARTAS • PÔQUER FECHADO</span><h1>Monte sua mão</h1><p>${swapsLeft?`Selecione as cartas a trocar. Trocas restantes: ${swapsLeft} de 2.`:"Suas duas trocas foram usadas. Agora decida se fica ou corre."}</p></div></section>
+  <section class="panel center"><div class="status-label">${d.swaps}/2 trocas usadas</div><div class="round-steps" aria-label="${d.swaps} de 2 trocas usadas">${[1,2].map(i=>`<b class="${d.swaps>=i?"done":""}"></b>`).join("")}</div>
+  ${handArea("Cinco cartas do bot",[null,null,null,null,null],"Mão escondida")}
+  ${handArea("Sua mão",d.player,rankPoker(d.player).name,{pickable:swapsLeft>0,selected:d.selected})}
+  <div class="actions">${swapsLeft>0?`<button type="button" class="primary" data-action="swap">Trocar cartas (${swapsLeft} restantes)</button>`:""}<button type="button" class="secondary" data-action="stand-poker">Ficar / comparar</button><button type="button" class="danger" data-action="fold">Correr</button></div>
+  <p class="notice">Você pode ficar antes de usar todas as trocas. Correr significa desistir da rodada e perder somente o valor apostado.</p></section>`;
+}
+function renderResult(){
+  const r=state.result;
+  const titles={win:"Você venceu!",lose:"Não foi dessa vez",tie:"Empate!"};
+  const symbols={win:"✓",lose:"×",tie:"="};
+  const amount=(r.delta>0?"+":"")+money(r.delta);
+  return `<button type="button" class="back" data-action="back">← Voltar aos jogos</button><section class="panel result-panel ${r.outcome}">
+    <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${titles[r.outcome]}</h1><p>${r.description}</p>
+    <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":"A aposta da rodada foi perdida."}</p>
+    <div class="result-details">${r.details}
+      <hr class="separator"><div class="summary-row"><span>Créditos apostados</span><strong>${money(state.bet)}</strong></div><div class="summary-row"><span>Créditos recebidos</span><strong>${money(r.payout)}</strong></div><div class="summary-row"><span>Saldo global atual</span><strong>${money(saved.balance)}</strong></div>
+    </div><div class="actions"><button type="button" class="primary" data-action="again">Nova rodada</button><button type="button" class="secondary" data-action="back">Outros jogos</button></div>
+    ${saved.balance===0?'<button type="button" class="secondary" style="margin-top:15px" data-action="reset">Reiniciar créditos</button>':''}
+    </section>`;
+}
+function render(){
+  document.getElementById("wallet").textContent=money(saved.balance);
+  document.getElementById("app").innerHTML=state.phase==="lobby"?renderLobby():state.phase==="bet"?renderBet():state.phase==="playing"?renderPlaying():renderResult();
+}
+function selectMode(id){
+  if(!MODES.some(m=>m.id===id))return;
+  state.mode=id;state.phase="bet";state.bet=0;state.result=null;state.animation=false;state.choice=id==="coin"?"cara":id==="dice"?"higher":"";
+  state.data=id==="dice"?{target:rand(11)+2}:null;
+  if(id==="dice"&&!countSums(state.data.target,state.choice))state.choice="equal";
+  render();window.scrollTo({top:0,behavior:"instant"});
+}
+function beginBet(){
+  const input=document.getElementById("bet-input");
+  const raw=input?.value;
+  const stake=Number(raw);
+  if(raw===""||!Number.isSafeInteger(stake)||stake<1){toast("Digite uma aposta inteira maior que zero.");return;}
+  if(stake>saved.balance){toast("Você não tem créditos suficientes.");return;}
+  if(state.mode==="dice"&&!countSums(state.data.target,state.choice)){toast("Esta opção não é possível para o alvo atual.");return;}
+  saved.balance-=stake;save();state.bet=stake;state.phase="playing";state.result=null;state.token++;
+  if(state.mode==="coin" || state.mode==="dice"){
+    state.animation=true;render();const token=state.token;
+    setTimeout(()=>{
+      if(state.token!==token||state.phase!=="playing")return;
+      state.animation=false;
+      if(state.mode==="coin"){
+        const side=rand(2)?"cara":"coroa";
+        const won=side===state.choice;
+        const content=`<div class="bigcoin"><span>${side==="cara"?"★":"♛"}</span><strong>${side}</strong></div><div class="summary-row"><span>Sua escolha</span><strong>${state.choice==="cara"?"Cara":"Coroa"}</strong></div><div class="summary-row"><span>Resultado</span><strong>${side==="cara"?"Cara":"Coroa"}</strong></div>`;
+        finish(won?"win":"lose",100,won?"Você acertou o lado da moeda.":"O lado sorteado foi diferente da sua escolha.",content);
+      }else{
+        const a=dice(),b=dice(),total=a+b,target=state.data.target;
+        const won=state.choice==="higher"?total>target:state.choice==="lower"?total<target:total===target;
+        const prob=countSums(target,state.choice)/36;
+        const bonus=(1/prob-1)*100;
+        const content=`<div class="dice-field">${dieSvg(a)}${dieSvg(b)}</div><div class="summary-row"><span>Soma dos dados</span><strong>${a} + ${b} = ${total}</strong></div><div class="summary-row"><span>Número de referência</span><strong>${target}</strong></div><div class="summary-row"><span>Sua previsão</span><strong>${({higher:"Maior",lower:"Menor",equal:"Igual"})[state.choice]}</strong></div>`;
+        finish(won?"win":"lose",bonus,won?"Sua previsão da soma estava certa.":"A soma não correspondeu à previsão.",content);
+      }
+    },650);
+  }else if(state.mode==="yatzy"){
+    state.data={values:[0,0,0,0,0],held:[false,false,false,false,false],rolls:0};render();
+  }else if(state.mode==="blackjack"){
+    const deck=makeDeck();const player=[deck.pop()],bot=[deck.pop()];player.push(deck.pop());bot.push(deck.pop());
+    state.data={deck,player,bot};
+    if(blackjackValue(player)===21 || blackjackValue(bot)===21)settle21();else render();
+  }else{
+    const deck=makeDeck();const player=Array.from({length:5},()=>deck.pop());const bot=Array.from({length:5},()=>deck.pop());
+    state.data={deck,player,bot,selected:[false,false,false,false,false],swaps:0};render();
+  }
+}
+function finish(outcome,bonus,description,details){
+  if(state.phase!=="playing")return;
+  const payout=outcome==="win"?Math.round(state.bet*(1+bonus/100)):outcome==="tie"?state.bet:0;
+  saved.balance+=payout;
+  saved.stats.rounds++;
+  if(outcome==="win")saved.stats.wins++;
+  else if(outcome==="lose")saved.stats.losses++;
+  else saved.stats.ties++;
+  save();state.phase="result";state.animation=false;
+  state.result={outcome,bonus,description,details,payout,delta:payout-state.bet};render();
+}
+function yatzyRoll(){
+  const d=state.data;if(state.phase!=="playing"||state.mode!=="yatzy"||d.rolls>=3)return;
+  d.values=d.values.map((v,i)=>d.rolls===0||!d.held[i]?dice():v);d.rolls++;
+  if(d.rolls===3)endYatzy();else render();
+}
+function endYatzy(){
+  const d=state.data;if(state.phase!=="playing"||d.rolls===0)return;
+  const user=scoreYatzy(d.values),botValues=botDice(),bot=scoreYatzy(botValues);
+  const outcome=user.total>bot.total?"win":user.total<bot.total?"lose":"tie";
+  const bonus=user.bonus>=50?300:user.bonus>=35?180:user.bonus>=25?150:100;
+  const content=`${handDice("Seus dados",d.values,user)}${handDice("Dados do bot",botValues,bot)}`;
+  finish(outcome,bonus,outcome==="win"?"Sua pontuação superou a do bot.":outcome==="tie"?"Os dois fizeram a mesma pontuação.":"O bot conseguiu uma pontuação maior.",content);
+}
+function handDice(label,values,score){
+  return `<div class="hand-area"><div class="hand-name">${label}</div><div class="dice-field">${values.map(dieSvg).join("")}</div><div class="hand-value">${score.total} pontos • ${score.name} (${score.base} + ${score.bonus})</div></div>`;
+}
+function settle21(){
+  const d=state.data;
+  if(blackjackValue(d.player)<=21 && blackjackValue(d.player)!==21 && blackjackValue(d.bot)!==21){
+    while(blackjackValue(d.bot)<17)d.bot.push(d.deck.pop());
+  }
+  const p=blackjackValue(d.player),b=blackjackValue(d.bot);
+  let outcome;
+  if(p>21)outcome="lose";
+  else if(b>21)outcome="win";
+  else if(p>b)outcome="win";
+  else if(p<b)outcome="lose";
+  else outcome="tie";
+  const bonus=p===21?(d.player.length===2?150:120):100;
+  const details=handArea("Suas cartas",d.player,`${p} pontos`)+handArea("Cartas do bot",d.bot,`${b} pontos`);
+  finish(outcome,bonus,p>21?"Você ultrapassou 21.":b>21?"O bot ultrapassou 21.":outcome==="win"?"Sua mão ficou mais perto de 21.":outcome==="tie"?"Vocês terminaram com a mesma pontuação.":"O bot ficou mais perto de 21.",details);
+}
+function hit21(){
+  if(state.phase!=="playing")return;
+  const d=state.data;d.player.push(d.deck.pop());
+  if(blackjackValue(d.player)>=21)settle21();else render();
+}
+function swapPoker(){
+  const d=state.data;if(d.swaps>=2)return;
+  if(!d.selected.some(Boolean)){toast("Selecione pelo menos uma carta para trocar.");return;}
+  d.player=d.player.map((c,i)=>d.selected[i]?d.deck.pop():c);d.selected.fill(false);d.swaps++;render();
+}
+function settlePoker(fold=false){
+  const d=state.data;
+  let bot=d.bot;
+  if(!fold)for(let i=0;i<2;i++)bot=botPokerSwap(bot,d.deck);
+  const result=comparePoker(d.player,bot);
+  const outcome=fold?"lose":result>0?"win":result<0?"lose":"tie";
+  const evaluation=rankPoker(d.player),bonus=POKER_BONUSES[evaluation.rank];
+  const details=handArea("Sua mão",d.player,evaluation.name)+handArea("Mão do bot",bot,rankPoker(bot).name);
+  finish(outcome,bonus,fold?"Você correu e encerrou a rodada.":outcome==="win"?"Você formou a mão mais forte.":outcome==="tie"?"As mãos possuem a mesma força.":"A mão do bot foi mais forte.",details);
+}
+function abandonAndBack(){
+  if(state.phase==="playing"){
+    if(!window.confirm("Rodada em andamento. Sair agora perde os créditos apostados. Deseja sair?"))return;
+    saved.stats.rounds++;saved.stats.losses++;save();
+  }
+  state.token++;state.mode=null;state.phase="lobby";state.data=null;state.result=null;render();window.scrollTo({top:0,behavior:"instant"});
+}
+function resetAll(){
+  if(!window.confirm("Reiniciar o saldo para 1.000 créditos e zerar todas as estatísticas?"))return;
+  state.token++;saved={balance:INITIAL,stats:{rounds:0,wins:0,losses:0,ties:0}};save();state.phase="lobby";state.mode=null;state.data=null;render();toast("Créditos e estatísticas reiniciados.");
+}
+document.addEventListener("click",event=>{
+  const modeButton=event.target.closest("[data-mode]");
+  if(modeButton&&state.phase==="lobby"){selectMode(modeButton.dataset.mode);return;}
+  const stakeButton=event.target.closest("[data-stake]");
+  if(stakeButton&&state.phase==="bet"){document.getElementById("bet-input").value=stakeButton.dataset.stake;return;}
+  const choiceButton=event.target.closest("[data-choice]");
+  if(choiceButton&&state.phase==="bet"){state.choice=choiceButton.dataset.choice;render();return;}
+  const holdButton=event.target.closest("[data-hold]");
+  if(holdButton&&state.phase==="playing"&&state.mode==="yatzy"&&state.data.rolls>0&&state.data.rolls<3){
+    const index=Number(holdButton.dataset.hold);state.data.held[index]=!state.data.held[index];render();return;
+  }
+  const cardButton=event.target.closest("[data-card]");
+  if(cardButton&&state.phase==="playing"&&state.mode==="poker"&&state.data.swaps<2){
+    const index=Number(cardButton.dataset.card);state.data.selected[index]=!state.data.selected[index];render();return;
+  }
+  const btn=event.target.closest("[data-action]");if(!btn)return;
+  const action=btn.dataset.action;
+  if(action==="back")abandonAndBack();
+  else if(action==="reset")resetAll();
+  else if(action==="target"&&state.phase==="bet"&&state.mode==="dice"){
+    state.data.target=rand(11)+2;
+    if(!countSums(state.data.target,state.choice))state.choice="equal";
+    render();
+  }
+  else if(action==="start"&&state.phase==="bet")beginBet();
+  else if(action==="again"&&state.phase==="result")selectMode(state.mode);
+  else if(action==="roll"&&state.phase==="playing"&&state.mode==="yatzy")yatzyRoll();
+  else if(action==="end-yatzy"&&state.phase==="playing"&&state.mode==="yatzy")endYatzy();
+  else if(action==="hit"&&state.phase==="playing"&&state.mode==="blackjack")hit21();
+  else if(action==="stand"&&state.phase==="playing"&&state.mode==="blackjack")settle21();
+  else if(action==="swap"&&state.phase==="playing"&&state.mode==="poker")swapPoker();
+  else if(action==="stand-poker"&&state.phase==="playing"&&state.mode==="poker")settlePoker();
+  else if(action==="fold"&&state.phase==="playing"&&state.mode==="poker")settlePoker(true);
+});
+render();
+</script>
+</body>
+</html>
