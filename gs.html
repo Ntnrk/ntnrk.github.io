@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b0e14">
   <meta name="description" content="GS: cinco minijogos de probabilidades com créditos fictícios e saldo compartilhado.">
-  <title>GS — Game of Chances</title>
+  <title>GS — Gambler Simulateerrr</title>
   <style>
     :root{color-scheme:dark;--bg:#0b0e14;--surface:#131923;--surface2:#1b2431;--border:#293544;--text:#f4f7fb;--muted:#9caabe;--accent:#b6eecb;--gold:#f3c978;--red:#ff969f;--blue:#8db6fb;--r:20px}
     *{box-sizing:border-box}
@@ -72,7 +72,7 @@
     <div class="wallet" aria-label="Saldo compartilhado de créditos fictícios"><span class="wallet-icon">◈</span><span><small>SALDO GLOBAL</small><strong id="wallet">1.000 cr</strong></span></div>
   </header>
   <main id="app"></main>
-  <footer class="footer"><span>GS • Minijogos com créditos fictícios, sem dinheiro real.</span><a href="index.html">← Voltar para NTNRK</a></footer>
+  <footer class="footer"><span>GS • Não existe nenhum ganho real, todos os créditos deste site são puramente ficticios, você esta jogando contra um computador.</span><a href="index.html">← Voltar para NTNRK</a></footer>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
@@ -96,7 +96,7 @@ const PIP_POS = {
 const SUITS = ["♠","♥","♦","♣"];
 const RANKS = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
 const POKER_NAMES = ["Carta alta","Um par","Dois pares","Trinca","Sequência","Flush","Full house","Quadra","Straight flush","Royal flush"];
-const POKER_BONUSES = [100,120,150,190,230,260,350,450,650,900];
+const POKER_BONUSES = [0,20,50,100,200,300,350,550,1000,10000];
 const money = n => Math.round(n).toLocaleString("pt-BR") + " cr";
 const percent = n => n.toLocaleString("pt-BR",{maximumFractionDigits:1}) + "%";
 const rand = n => Math.floor(Math.random()*n);
@@ -129,11 +129,11 @@ function dieSvg(n){
   return `<svg class="die-svg" viewBox="0 0 72 72" role="img" aria-label="Dado ${n}"><rect x="3" y="3" width="66" height="66" rx="13" fill="#f3f5fa" stroke="#c6d1dd" stroke-width="2"/>${PIP_POS[n].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.6" fill="#253648"/>`).join("")}</svg>`;
 }
 function gameArt(id){
-  if(id==="coin")return '<div class="artcoin">★</div><div class="artcoin second">♛</div>';
-  if(id==="dice")return `<div class="minidice">${dieSvg(4)}${dieSvg(6)}</div>`;
-  if(id==="yatzy")return `<div class="minidice multiple">${[1,5,4,6,2].map(dieSvg).join("")}</div>`;
+  if(id==="coin")return '<div class="artcoin">gs</div><div class="artcoin second">♛</div>';
+  if(id==="dice")return `<div class="minidice">${dieSvg(1)}${dieSvg(6)}</div>`;
+  if(id==="yatzy")return `<div class="minidice multiple">${[1,2,3,4,2].map(dieSvg).join("")}</div>`;
   if(id==="blackjack")return '<div class="artcards"><div class="tiny-card">A♠</div><div class="tiny-card red">K♥</div></div>';
-  return '<div class="artcards"><div class="tiny-card back">GS</div><div class="tiny-card red">Q♦</div><div class="tiny-card">Q♣</div></div>';
+  return '<div class="artcards"><div class="tiny-card back">GS</div><div class="tiny-card red">K♦</div><div class="tiny-card">K♣</div></div>';
 }
 function renderLobby(){
   return `<section class="hero"><span class="eyebrow">5 MODOS • 1 SALDO</span><h1>Cinco jogos.<br><em>Uma só carteira.</em></h1><p>Escolha um modo, use créditos fictícios e descubra como a sorte, as probabilidades e suas decisões influenciam cada resultado.</p></section>
