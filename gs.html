@@ -885,7 +885,10 @@ function bonusGuide(){
   else if(state.mode==="blackjack")rows=[
     ["Vencer sem ultrapassar 21", "Variável"],
     ["Ambos ultrapassam 21: vence a menor soma", "Variável"],
-    ["Vencer com 21 natural (2 cartas)", "Fórmula + 15 p.p."]
+    ["Vencer com 21 natural (2 cartas)", "Fórmula + 15 p.p."],
+    ["Mesmos pontos (até 21) e mesma quantidade de cartas", "Empate: 100% da aposta"],
+    ["Mesmos pontos (até 21), bot com menos cartas", "Devolução: A ÷ Q do jogador"],
+    ["Mesmos pontos (até 21), jogador com menos cartas", "Devolução: (Q − 1) × A ÷ Q do bot"]
   ];
   else if(state.mode==="texas")rows=POKER_NAMES.map((name,i)=>["Vitória com "+name.toLowerCase(),"+"+TEXAS_BONUSES[i]+"%"]);
   else if(state.mode==="plinko")rows=[
@@ -902,14 +905,15 @@ function bonusGuide(){
   const bonusFormula = state.mode==="dice"
     ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = (36 ÷ N − 1) × 100</code><small>N é a quantidade de combinações favoráveis para a sua previsão. Os dois dados têm 36 resultados possíveis, e o bônus varia conforme o número de referência e a opção escolhida.</small></div>`
     : state.mode==="blackjack"
-    ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = mín(150; 25 + 4 × |J − B| + 2 × J + N)</code><small>J = soma dos valores das cartas do jogador (ás vale 1 ou 11); B = soma das cartas do bot; |J − B| = diferença absoluta entre as mãos; N = 15 para 21 natural vencedor, ou 0 nos outros casos. O bônus máximo é +150% e só é pago em caso de vitória.</small></div>`
+    ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = mín(150; 25 + 4 × |J − B| + 2 × J + N)</code><small>J = soma dos valores das cartas do jogador (ás vale 1 ou 11); B = soma das cartas do bot; |J − B| = diferença absoluta entre as mãos; N = 15 para 21 natural vencedor, ou 0 nos outros casos. O bônus máximo é +150% e só é pago em caso de vitória comum.</small></div>
+      <div class="bonus-formula"><strong>Igualdade de pontos até 21: critério de cartas</strong><code>Bot com menos cartas: recebido = A ÷ Q (suas cartas)</code><code>Você com menos cartas: recebido = (Q − 1) × A ÷ Q (cartas do bot)</code><small>A = créditos apostados; Q = quantidade de cartas indicada em cada caso. Só há empate se os dois tiverem a mesma pontuação e a mesma quantidade de cartas. As devoluções parciais são arredondadas ao crédito inteiro mais próximo e não recebem bônus adicionais da loja.</small></div>`
     : state.mode==="plinko"
     ? `<div class="bonus-formula"><strong>Como os bônus são calculados</strong><code>Bônus (%) = 100 × 2^(|P − 6| − 2), para cestas premiadas</code><small>P é o número da cesta (1 a 11); |P − 6| é a distância até a cesta central. Faixas premiadas: de 4 ou 8 (+100%) até 1 ou 11 (+800%). Cestas 5 e 7 sempre recuperam ao menos 50% da aposta; a cesta 6 perde a aposta se não for escolhida. Se acertar exatamente a cesta central selecionada (5, 6 ou 7), recupera 100% do valor, sem bônus. Se acertar uma cesta externa selecionada, acrescente ${PLINKO_EXACT_BONUS} pontos percentuais. O sorteio usa dez desvios, com a Sorte podendo favorecer cestas premiadas.</small></div>`
     : "";
-  return `<section class="panel bonus-panel" aria-label="Tabela de bônus"><span class="eyebrow">PREMIAÇÃO</span><h2>Bônus por resultado</h2><p>Esses bônus são pagos <strong>somente em caso de vitória</strong>, além da devolução dos créditos apostados.</p>
+  return `<section class="panel bonus-panel" aria-label="Tabela de bônus"><span class="eyebrow">PREMIAÇÃO</span><h2>Bônus por resultado</h2><p>${state.mode==="blackjack"?"As vitórias comuns pagam a aposta e o bônus; pontos iguais com quantidades diferentes de cartas seguem a devolução parcial abaixo.":"Esses bônus são pagos <strong>somente em caso de vitória</strong>, além da devolução dos créditos apostados."}</p>
     <div class="bonus-list">${rows.map(([condition,bonus])=>`<div class="bonus-row"><span>${condition}</span><strong class="${bonus==="—"?"unavailable":""}">${bonus}</strong></div>`).join("")}</div>
     ${bonusFormula}
-    <p class="notice">Em caso de empate, a aposta é devolvida sem bônus. Em caso de derrota ou desistência, a aposta é perdida. Todos os créditos são fictícios.</p>
+    <p class="notice">${state.mode==="blackjack"?"No 21, pontos iguais até 21 só são empate se o número de cartas também for igual. Nas outras situações, valem as regras de vitória, derrota e devolução parcial apresentadas acima.":"Em caso de empate, a aposta é devolvida sem bônus. Em caso de derrota ou desistência, a aposta é perdida."} Todos os créditos são fictícios.</p>
   </section>`;
 }
 function sideRules(){
@@ -917,7 +921,7 @@ function sideRules(){
     coin:[['1','Escolha cara ou coroa.'],['2','A moeda tem 50% de chance para cada lado.'],['3','Confira o resultado do lançamento.']],
     dice:[['1','O alvo é sorteado entre 2 e 12.'],['2','Preveja se a soma dos dois dados será maior, menor ou igual ao alvo.'],['3','As chances consideram os 36 resultados possíveis dos dados.']],
     yatzy:[['1','Você começa lançando cinco dados.'],['2','Toque nos dados que deseja manter e role os outros; são até três lançamentos no total.'],['3','Sua pontuação é a soma dos dados mais o bônus de combinação. O bot também joga até três vezes.']],
-    blackjack:[['1','Você e o bot recebem duas cartas. Se houver 21 natural, toque em Revelar resultado para conferir as mãos.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Se ambos ultrapassarem 21, vence a menor soma; se apenas um ultrapassar, perde.']],
+    blackjack:[['1','Você e o bot recebem duas cartas. Se houver 21 natural, toque em Revelar resultado para conferir as mãos.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Se ambos ultrapassarem 21, vence a menor soma; se apenas um ultrapassar, perde.'],['4','Se os pontos forem iguais e até 21, só há empate com o mesmo número de cartas. Com menos cartas, o jogador vence no desempate, mas o recebimento é parcial conforme as fórmulas de premiação.']],
     poker:[['1','Você e o bot começam com cinco cartas.'],['2','Selecione as cartas para substituir. Você tem duas oportunidades de troca, podendo ficar antes.'],['3','O bot também pode trocar até duas vezes. Você pode ficar para comparar ou correr e desistir da rodada.']],
     texas:[['1','Você recebe duas cartas próprias; o bot recebe duas escondidas. Cinco cartas públicas são distribuídas.'],['2','Você pode correr (redistribuir) até três vezes: todas as cartas são embaralhadas e entregues novamente, sem nova aposta. Isso reinicia o flop, turn e river.'],['3','Revele flop, turn e river; a melhor mão de cinco cartas entre as sete vence. Empate devolve a aposta.']],
     plinko:[['1','Escolha a cesta desejada antes de lançar a bola.'],['2','A bola desvia entre dez fileiras de pinos. As cestas 5 e 7 devolvem pelo menos metade; a 6 normalmente não paga.'],['3','Acertar a cesta central escolhida devolve toda a aposta; se acertar uma cesta externa escolhida, soma 75 pontos percentuais ao bônus.']]
@@ -1247,9 +1251,13 @@ function renderResult(){
   const titles={win:"Você venceu!",lose:"Não foi dessa vez",tie:"Empate!"};
   const symbols={win:"✓",lose:"×",tie:"="};
   const amount=(r.delta>0?"+":"")+money(r.delta);
+  const resultHeading=r.fixedPayout!==null&&r.fixedPayout!==undefined?(r.outcome==="win"?"Você teve menos cartas!":"O bot teve menos cartas!"):titles[r.outcome];
+  const payoutExplanation=r.fixedPayout!==null&&r.fixedPayout!==undefined
+    ? `Recebimento parcial pela regra de desempate: ${money(r.payout)} de ${money(state.bet)} apostados.`
+    : r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`${money(r.payout)} da aposta recuperados.`:"A aposta da rodada foi perdida.";
   return `${gameToolbar()}<section class="panel result-panel ${r.outcome}">
-    <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${titles[r.outcome]}</h1><p>${r.description}</p>
-    <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`${money(r.payout)} da aposta recuperados.`:"A aposta da rodada foi perdida."}</p>
+    <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${resultHeading}</h1><p>${r.description}</p>
+    <div class="result-delta ${r.delta<0?"lose":r.outcome}">${amount}</div><p>${payoutExplanation}</p>
     <div class="result-details">${r.details}${r.upgradeNote||""}
       <div class="result-money"><div><span>Aposta</span><strong>${money(state.bet)}</strong></div><div><span>Recebido</span><strong>${money(r.payout)}</strong></div></div>
     </div><div class="actions"><button type="button" class="primary" data-action="again">Nova rodada</button><button type="button" class="secondary" data-action="back">Outros jogos</button></div>
@@ -1379,7 +1387,17 @@ function beginBet(){
 function finish(outcome,baseBonus,description,details,options={}){
   if(state.phase!=="playing")return;
   let bonus=baseBonus,payout=0,note="";
-  if(outcome==="win"){
+  if(Number.isSafeInteger(options.fixedPayout)&&options.fixedPayout>=0){
+    // A regra especial do 21 define um valor recebido exato: sem bônus ou Escudo.
+    payout=Math.min(state.bet,options.fixedPayout);
+    bonus=0;
+    note='<div class="upgrade-result"><strong>Desempate por quantidade de cartas</strong><div>Devolução parcial calculada pela fórmula do 21, sem bônus adicionais da loja.</div></div>';
+    if(outcome==="win"){
+      const key=currentEventKey();
+      saved.shop.events[key]=(saved.shop.events[key]||0)+1;
+      saved.shop.streak++;
+    }else if(outcome==="lose")saved.shop.streak=0;
+  }else if(outcome==="win"){
     const upgrades=victoryUpgrades(baseBonus);
     bonus=upgrades.bonus;
     const maxPayout=Math.max(0,Number.MAX_SAFE_INTEGER-saved.balance);
@@ -1406,7 +1424,7 @@ function finish(outcome,baseBonus,description,details,options={}){
   else if(outcome==="lose")saved.stats.losses++;
   else saved.stats.ties++;
   save();state.phase="result";state.animation=false;
-  state.result={outcome,bonus,description,details,payout,upgradeNote:note,delta:payout-state.bet};render();
+  state.result={outcome,bonus,description,details,payout,upgradeNote:note,delta:payout-state.bet,fixedPayout:options.fixedPayout??null};render();
 }
 
 function yatzyRoll(){
@@ -1437,7 +1455,7 @@ function settle21(){
     while(blackjackValue(d.bot)<17)d.bot.push(d.deck.pop());
   }
   const p=blackjackValue(d.player),b=blackjackValue(d.bot);
-  let outcome,description;
+  let outcome,description,fixedPayout=null,partialFormula="";
   if(p>21&&b>21){
     outcome=p<b?"win":p>b?"lose":"tie";
     description=outcome==="tie"?"Os dois ultrapassaram 21 com a mesma soma.":"Os dois ultrapassaram 21: venceu a menor soma.";
@@ -1445,12 +1463,29 @@ function settle21(){
   else if(b>21){outcome="win";description="O bot ultrapassou 21, mas você não.";}
   else if(p>b){outcome="win";description="Sua mão ficou mais perto de 21.";}
   else if(p<b){outcome="lose";description="O bot ficou mais perto de 21.";}
-  else {outcome="tie";description="Vocês terminaram com a mesma pontuação.";}
+  else if(d.player.length===d.bot.length){
+    outcome="tie";
+    description=`Ambos fizeram ${p} pontos com ${d.player.length} cartas: empate completo.`;
+  }else if(d.bot.length<d.player.length){
+    const Q=d.player.length,A=state.bet;
+    outcome="lose";
+    fixedPayout=Math.round(A/Q);
+    description=`Ambos fizeram ${p} pontos, mas o bot usou menos cartas (${d.bot.length} contra ${Q}).`;
+    partialFormula=`Bot com menos cartas: A ÷ Q = ${A} ÷ ${Q} = ${money(fixedPayout)} recebidos.`;
+  }else{
+    const Q=d.bot.length,A=state.bet;
+    outcome="win";
+    fixedPayout=Math.round((Q-1)*A/Q);
+    description=`Ambos fizeram ${p} pontos, mas você usou menos cartas (${d.player.length} contra ${Q}).`;
+    partialFormula=`Você com menos cartas: ((Q − 1) × A) ÷ Q = ((${Q} − 1) × ${A}) ÷ ${Q} = ${money(fixedPayout)} recebidos.`;
+  }
   const calc=blackjackBonus(d.player,d.bot);
   const formula=`25 + 4 × |${p} − ${b}| + 2 × ${p}${calc.natural?" + 15 (natural)":""} = ${calc.raw}%${calc.raw>150?" → limite de 150%":""}`;
-  const details=handArea("Suas cartas",d.player,`${p} pontos`)+handArea("Cartas do bot",d.bot,`${b} pontos`)+
-    `<div class="bonus-formula"><strong>Cálculo do bônus desta mão</strong><code>${formula}</code><small>Diferença: ${calc.difference} pontos. Bônus calculado: ${percent(calc.bonus)}${outcome!=="win"?" (não pago: não houve vitória)":""}.</small></div>`;
-  finish(outcome,calc.bonus,description,details);
+  const details=handArea("Suas cartas",d.player,`${p} pontos (${d.player.length} cartas)`)+handArea("Cartas do bot",d.bot,`${b} pontos (${d.bot.length} cartas)`)+
+    (partialFormula
+      ? `<div class="bonus-formula"><strong>Cálculo da devolução parcial</strong><code>${partialFormula}</code><small>O pagamento segue a regra especial de igualdade de pontos, sem aplicar o bônus normal de vitória.</small></div>`
+      : `<div class="bonus-formula"><strong>Cálculo do bônus desta mão</strong><code>${formula}</code><small>Diferença: ${calc.difference} pontos. Bônus calculado: ${percent(calc.bonus)}${outcome!=="win"?" (não pago: não houve vitória)":""}.</small></div>`);
+  finish(outcome,calc.bonus,description,details,{fixedPayout});
 }
 function hit21(){
   if(state.phase!=="playing"||state.mode!=="blackjack"||state.data.naturalReady)return;
