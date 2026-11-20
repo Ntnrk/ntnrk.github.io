@@ -311,17 +311,210 @@
       .mode-card:hover,.mode-card:focus-visible {transform:none}
       .mode-card:hover .art > *,.brand:hover .logo {transform:none}
     }
+
+    /* GS FIXED VIEWPORT — sem rolagem na tela principal */
+    html, body {width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+    body {height:100dvh;min-height:0}
+    .shell {height:100%;min-height:0;display:flex;flex-direction:column;width:min(1100px,calc(100% - 28px));}
+    .header {flex:0 0 auto;padding:10px 0;gap:8px;min-height:64px}
+    .brand {min-width:0;gap:8px}
+    .brand strong {font-size:clamp(.64rem,2.4vw,.84rem);line-height:1.05}
+    .logo {width:37px;height:37px;font-size:.99rem;border-radius:9px}
+    .header-actions {margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .wallet {padding:7px 10px;gap:6px;border-radius:9px}
+    .wallet small {font-size:.58rem}
+    .wallet strong {font-size:clamp(.86rem,2.7vw,1.08rem)}
+    .stats-button,.info-button,.close-button {font-size:.82rem;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;background:#222a36;color:var(--text);border:1px solid var(--border);border-radius:9px;min-height:39px;padding:8px 12px;font-weight:750;transition:background .18s,transform .18s}
+    .stats-button:hover,.info-button:hover,.close-button:hover {background:#2d3a4b;transform:translateY(-1px)}
+    .stats-icon {font-size:1.15rem;line-height:1;color:var(--blue)}
+    .stats-short {display:none}
+    .info-button {border-color:#386052;color:var(--accent);background:#172921}
+    .info-button > span {font-size:1.14rem}
+    #app {min-height:0;flex:1;overflow:hidden;position:relative;isolation:isolate}
+    .screen {position:relative;transform-origin:top center;display:flex;flex-direction:column;align-items:stretch;gap:0;will-change:transform}
+    #app:has(.screen-lobby) {display:flex;flex-direction:column;justify-content:center;align-items:center}
+    .screen-lobby {height:auto;max-width:100%;margin:auto 0}
+    .lobby-heading {padding:clamp(15px,3vh,30px) 0 14px;text-align:center;animation:gs-rise .45s ease both}
+    .lobby-heading .eyebrow {margin-bottom:5px}
+    .lobby-heading h1 {font-size:clamp(1.35rem,3.3vw,2.4rem);margin:0;letter-spacing:-.045em}
+    .mode-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+    .mode-card {min-height:0;height:clamp(150px,24vh,210px);padding:clamp(11px,2vh,18px);border-radius:11px;overflow:hidden}
+    .mode-card .art {height:clamp(53px,11vh,83px);margin:0 0 auto}
+    .mode-card strong {font-size:clamp(.84rem,1.65vw,1.08rem);margin-top:4px;line-height:1.18}
+    .mode-card .go {font-size:.69rem;margin-top:8px;padding-top:7px}
+    .mode-card p {display:none}
+    .game-toolbar {display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 7px}
+    .back {padding:5px 0;margin:0;font-weight:700;font-size:.82rem}
+    .game-intro {margin:0 0 13px;min-height:0}
+    .game-intro .eyebrow {margin-bottom:3px}
+    .game-intro h1 {font-size:clamp(1.65rem,3.5vw,2.6rem);margin:0}
+    .bet-flow {max-width:650px;width:100%;gap:0}
+    .bet-panel {padding:clamp(16px,2.5vh,26px) clamp(16px,3vw,28px)}
+    .bet-panel h2 {font-size:1.1rem;margin-bottom:8px}
+    .choices {margin:8px 0 8px;gap:8px}
+    .choice {min-height:60px;padding:7px 6px;gap:2px}
+    .choice .emoji {font-size:1.08rem}
+    .choice strong {font-size:.92rem}
+    .choice small {font-size:.68rem;line-height:1.2}
+    .target {margin:6px 0 8px;padding:8px 12px}
+    .target strong {font-size:1.5rem}
+    .target span {font-size:.72rem}
+    .stake-section {margin-top:clamp(12px,2.4vh,22px);padding-top:clamp(12px,2.4vh,22px);border-top:1px solid var(--border)}
+    .panel-title {margin-bottom:5px;font-size:.7rem}
+    .bet-line {margin:6px 0 10px}
+    .bet-line input {padding:10px 12px;font-size:1.02rem}
+    .bet-presets {gap:7px}
+    .preset {padding:8px 0;font-size:.77rem;min-height:36px}
+    .primary.block {margin-top:13px}
+    .primary,.secondary,.danger {min-height:43px;padding:10px 13px}
+    .ready-label {display:flex;align-items:center;gap:14px;padding:6px 0 8px}
+    .ready-label>span {font-size:2.5rem;color:var(--accent);line-height:1}
+    .ready-label strong {font-size:1.15rem}
+    .ready-label small {color:var(--muted);font-size:.76rem;margin-left:auto}
+    .screen-game>.panel:not(.result-panel) {max-width:850px;width:100%;align-self:center;padding:clamp(11px,2vh,22px)}
+    .status-label {margin:0 0 6px;font-size:.7rem}
+    .round-steps {margin:8px 0 10px}
+    .dice-field {margin:10px auto}
+    .die-svg {width:clamp(48px,8vh,70px);height:clamp(48px,8vh,70px)}
+    .dice-field:has(.die-toggle) {margin:12px auto;gap:7px}
+    .score-preview {margin-top:11px;gap:7px}
+    .score-box {padding:10px}
+    .score-box strong {font-size:1.25rem}
+    .actions {margin-top:13px;gap:7px}
+    .actions>* {flex:1;min-width:0}
+    .hand-area {margin:9px 0;padding:8px 6px 9px}
+    .playing-cards {margin:7px auto;gap:6px}
+    .playing-card {max-width:67px}
+    .result-panel {max-width:730px;width:100%;align-self:center;padding:17px 22px}
+    .result-panel h1 {font-size:clamp(1.6rem,3vw,2.35rem)}
+    .result-panel>.eyebrow {margin-bottom:5px}
+    .result-panel>p {font-size:.81rem;margin:5px auto}
+    .result-mark {width:44px;height:44px;margin-bottom:7px;font-size:1.4rem}
+    .result-delta {font-size:clamp(1.45rem,3vw,2.1rem);margin:6px 0}
+    .result-details {margin:10px auto 0;padding:10px 0 0}
+    .result-details .hand-area {margin:6px 0}
+    .result-details .bonus-formula {margin:7px 0;padding:9px}
+    .result-money {margin:9px auto 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;border-top:1px solid var(--border);padding-top:8px}
+    .result-money>div {display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:.79rem}
+    .result-money strong {color:var(--text);font-size:.88rem}
+    .screen-game .notice {display:none}
+    .footer,.overview {display:none!important}
+    .overlay[hidden] {display:none!important}
+    .overlay {position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--text);animation:gs-rise .21s ease both}
+    .overlay-page {height:100dvh;max-width:1140px;margin:auto;padding:clamp(12px,2vh,24px) clamp(14px,3vw,30px);display:flex;flex-direction:column;min-height:0}
+    .overlay-top {flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding-bottom:12px}
+    .overlay-top .eyebrow {margin:0 0 4px;font-size:.63rem}
+    .overlay-top h2 {font-size:clamp(1.12rem,3.2vw,1.75rem);margin:0;line-height:1.2}
+    .overlay-scroll {flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:17px 1px 8px}
+    .info-layout {display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:15px;align-items:start}
+    .info-layout .panel {padding:16px;border-radius:11px}
+    .info-layout .panel h2 {font-size:1rem}
+    .info-layout .panel>.eyebrow {font-size:.65rem;margin-bottom:5px}
+    .info-layout .panel>p:not(.notice) {font-size:.77rem;margin:0 0 6px}
+    .info-layout .bonus-list {margin:8px 0 0}
+    .info-layout .bonus-row {padding:7px 10px}
+    .info-layout .bonus-row span {font-size:.78rem}
+    .info-layout .bonus-row strong {font-size:.81rem}
+    .info-layout .rule {gap:8px;margin:7px 0}
+    .info-layout .rule div {font-size:.78rem}
+    .info-layout .separator {margin:11px 0}
+    .info-layout .bonus-formula {margin:10px 0 0;padding:10px}
+    .info-layout .bonus-formula code {font-size:.73rem}
+    .info-layout .notice {margin:10px 0 0;font-size:.69rem}
+    .stats-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .stat-tile {border:1px solid var(--border);border-radius:11px;background:var(--surface);padding:16px}
+    .stat-tile span {display:block;font-size:.75rem;color:var(--muted)}
+    .stat-tile strong {display:block;font-size:clamp(1.3rem,3vw,2rem);color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .stat-tile strong.negative {color:var(--red)}
+    .stats-subhead {font-size:1.05rem;margin:18px 0 10px}
+    .mode-stats {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .mode-stat {background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+    .mode-stat>strong {font-size:.88rem}
+    .mode-stat-values {display:flex;justify-content:space-between;gap:8px;margin:6px 0;color:var(--muted);font-size:.72rem;flex-wrap:wrap}
+    .mode-stat-values b {color:var(--text)}
+    .bar-track {height:5px;background:#313947;border-radius:5px;overflow:hidden}
+    .bar-track>div {height:100%;background:var(--accent);border-radius:5px;transition:width .35s}
+    .overlay .reset {margin-top:12px;padding-bottom:16px}
+    @media (max-width:720px) {
+      .stats-label,.stats-icon {display:none}
+      .stats-short {display:inline}
+      .stats-button {padding:6px 9px}
+      .info-layout {grid-template-columns:1fr;gap:8px}
+      .info-layout .panel {padding:13px}
+      .stats-summary {grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+      .stat-tile {padding:10px}
+      .mode-stats {grid-template-columns:1fr}
+    }
+    @media (max-width:540px) {
+      .shell {width:calc(100% - 22px)}
+      .header {padding:8px 0;min-height:56px}
+      .brand strong {font-size:.66rem;max-width:99px}
+      .logo {width:31px;height:31px;font-size:.83rem}
+      .wallet {padding:6px 8px}
+      .wallet strong {font-size:.81rem}
+      .header-actions {gap:5px}
+      .mode-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+      .mode-card {height:clamp(126px,20vh,166px);padding:11px}
+      .mode-card .art {height:clamp(47px,9vh,65px);margin:0 0 auto}
+      .mode-card strong {font-size:clamp(.79rem,3.3vw,.95rem)}
+      .mode-card .go {margin-top:5px;padding-top:5px;font-size:.59rem}
+      .mode-card .artcoin {width:43px;height:43px;font-size:1.2rem}
+      .mode-card .tiny-card {width:38px;height:52px;font-size:1.2rem}
+      .mode-card .minidice .die-svg {width:42px;height:42px}
+      .mode-card .minidice.multiple {width:110px}
+      .mode-card .minidice.multiple .die-svg {width:29px;height:29px}
+      .lobby-heading {padding:clamp(10px,3vh,18px) 0 12px}
+      .lobby-heading h1 {font-size:1.3rem}
+      .game-toolbar {padding:7px 0 4px}
+      .game-intro {margin-bottom:9px}
+      .game-intro h1 {font-size:clamp(1.4rem,6vw,1.95rem)}
+      .game-intro .eyebrow {font-size:.61rem}
+      .bet-panel {padding:13px}
+      .choice {min-height:53px;padding:6px 3px}
+      .choices.three .choice strong {font-size:.83rem}
+      .choices.three .choice small {font-size:.61rem}
+      .ready-label>span {font-size:1.8rem}
+      .ready-label small {font-size:.68rem}
+      .screen-game>.panel:not(.result-panel) {padding:11px}
+      .hand-area {margin:6px 0;padding:6px 4px}
+      .playing-cards {margin:6px auto}
+      .playing-card {max-width:57px}
+      .result-panel {padding:12px}
+      .result-mark {width:38px;height:38px}
+      .result-panel h1 {font-size:1.6rem}
+      .info-layout .bonus-row {padding:5px 8px}
+      .info-layout .bonus-panel>p:not(.notice) {display:none}
+      .info-layout .bonus-panel>.notice {display:none}
+      .overlay-top {padding-bottom:8px}
+      .overlay-scroll {padding-top:10px}
+      .close-button {min-height:36px;padding:6px 9px}
+    }
+    @media (max-width:360px) {
+      .brand strong {font-size:.59rem;max-width:80px}
+      .wallet strong {font-size:.76rem}
+      .stats-button {padding:6px 7px;min-height:34px;font-size:.72rem}
+      .mode-card {height:123px}
+      .mode-card .art {height:39px}
+      .mode-card strong {font-size:.76rem}
+      .mode-card .artcoin {width:37px;height:37px}
+      .mode-card .tiny-card {width:32px;height:43px}
+      .mode-card .minidice .die-svg {width:35px;height:35px}
+      .mode-card .minidice.multiple .die-svg {width:24px;height:24px}
+    }
+    @media (prefers-reduced-motion:reduce){.overlay,.lobby-heading {animation:none}}
   </style>
 </head>
 <body>
 <div class="shell">
   <header class="header">
-    <a class="brand" href="index.html" aria-label="Voltar ao site NTNRK"><span class="logo">GS</span><span><strong>GAMBLER SIMULATOR</strong><small>Simulador de probabilidades</small></span></a>
-    <div class="wallet" aria-label="Saldo compartilhado de créditos fictícios"><span class="wallet-icon">◈</span><span><small>SALDO GLOBAL</small><strong id="wallet">1.000 cr</strong></span></div>
+    <a class="brand" href="index.html" aria-label="Voltar ao site NTNRK"><span class="logo">GS</span><strong>GAMBLER SIMULATOR</strong></a>
+    <div class="header-actions"><div class="wallet" aria-label="Saldo compartilhado de créditos fictícios"><span><small>SALDO</small><strong id="wallet">1.000 cr</strong></span></div>
+    <button type="button" class="stats-button" data-action="stats" aria-label="Abrir estatísticas"><span class="stats-icon" aria-hidden="true">▥</span><span class="stats-label">Estatísticas</span><span class="stats-short">Estat.</span></button></div>
   </header>
   <main id="app"></main>
-  <footer class="footer"><span>GS • Não existe nenhum ganho real, todos os créditos deste site são puramente ficticios, você esta jogando contra um computador.</span><a href="index.html">← Voltar para NTNRK</a></footer>
+  <!-- Créditos fictícios, sem compras e sem recompensas reais. -->
 </div>
+<div id="overlay" class="overlay" aria-live="off" hidden></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
 "use strict";
@@ -369,6 +562,29 @@ function load(){
   return initialSave();
 }
 let saved=load();
+function emptyModeStats(){return {rounds:0,wins:0,losses:0,ties:0,staked:0,paid:0};}
+function prepareStats(){
+  if(!saved.detail || typeof saved.detail!=="object")saved.detail={};
+  if(!saved.detail.byMode || typeof saved.detail.byMode!=="object")saved.detail.byMode={};
+  for(const m of MODES){
+    const old=saved.detail.byMode[m.id];
+    if(!old || typeof old!=="object")saved.detail.byMode[m.id]=emptyModeStats();
+    else for(const key of ["rounds","wins","losses","ties","staked","paid"]){
+      if(!Number.isFinite(old[key]) || old[key]<0)old[key]=0;
+    }
+  }
+}
+prepareStats();
+function trackRound(outcome,payout){
+  const data=saved.detail.byMode[state.mode];
+  if(!data)return;
+  data.rounds++;
+  if(outcome==="win")data.wins++;
+  else if(outcome==="tie")data.ties++;
+  else data.losses++;
+  data.staked+=state.bet;
+  data.paid+=payout;
+}
 let state={mode:null,phase:"lobby",bet:0,data:null,choice:"cara",result:null,animation:false,token:0};
 let toastTimer;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(saved));}catch{}}
@@ -385,12 +601,13 @@ function gameArt(id){
   return '<div class="artcards"><div class="tiny-card back">GS</div><div class="tiny-card red">K♦</div><div class="tiny-card">K♣</div></div>';
 }
 function renderLobby(){
-  return `<section class="hero"><span class="eyebrow">5 MODOS • 1 SALDO</span><h1>Cinco jogos.<br><em>Uma só carteira.</em></h1><p>Escolha um modo, use créditos fictícios e descubra como a sorte, as probabilidades e suas decisões influenciam cada resultado.</p></section>
-  <section class="overview" aria-label="Estatísticas globais"><div class="stat"><span>Rodadas</span><strong>${saved.stats.rounds}</strong></div><div class="stat"><span>Vitórias</span><strong>${saved.stats.wins}</strong></div><div class="stat"><span>Derrotas</span><strong>${saved.stats.losses}</strong></div></section>
-  <section><div class="section-heading"><h2>Escolha um jogo</h2><small>Todos compartilham o saldo</small></div>
-  <div class="mode-grid">${MODES.map(m=>`<button type="button" class="mode-card" data-mode="${m.id}" aria-label="Jogar ${m.title}"><div class="art" aria-hidden="true">${gameArt(m.id)}</div><strong>${m.title}</strong><p>${m.sub}</p><span class="go"><span>${m.tag}</span><b>↗</b></span></button>`).join("")}</div></section>
-  <button type="button" class="reset" data-action="reset">Reiniciar créditos e estatísticas</button>`;
+  return `<section class="lobby-heading"><span class="eyebrow">GS · CINCO MODOS</span><h1>Escolha um jogo</h1></section>
+  <section class="mode-grid" aria-label="Modos de jogo">${MODES.map(m=>`<button type="button" class="mode-card" data-mode="${m.id}" aria-label="Jogar ${m.title}"><div class="art" aria-hidden="true">${gameArt(m.id)}</div><strong>${m.title}</strong><span class="go"><span>${m.tag}</span><b>↗</b></span></button>`).join("")}</section>`;
 }
+function gameToolbar(){
+  return `<div class="game-toolbar"><button type="button" class="back" data-action="back">← Jogos</button><button type="button" class="info-button" data-action="info" aria-label="Ver informações, premiação e como jogar"><span aria-hidden="true">ⓘ</span> Informações</button></div>`;
+}
+
 function countSums(target,choice){
   let count=0;
   for(let a=1;a<=6;a++)for(let b=1;b<=6;b++){
@@ -400,20 +617,20 @@ function countSums(target,choice){
   return count;
 }
 function chooseMarkup(){
-  if(state.mode==="coin")return `<h2>Escolha um lado</h2><p>Ambos têm 50% de chance. Acertou? Você recebe o valor apostado de volta e mais ${COIN_BONUS}% de bônus.</p><div class="choices">
+  if(state.mode==="coin")return `<h2>Escolha um lado</h2><div class="choices">
   ${[["cara","★","Cara"],["coroa","♛","Coroa"]].map(([id,emoji,name])=>`<button type="button" class="choice ${state.choice===id?"active":""}" data-choice="${id}" aria-pressed="${state.choice===id}"><span class="emoji">${emoji}</span><strong>${name}</strong></button>`).join("")}</div>`;
   if(state.mode==="dice"){
     const target=state.data.target;
-    return `<h2>Adivinhe a soma</h2><p>Dois dados serão lançados. A soma será maior, menor ou igual ao número de referência?</p>
+    return `<h2>Adivinhe a soma</h2>
       <div class="target"><div><span>Número de referência</span><br><strong>${target}</strong></div><button type="button" class="link-button" data-action="target">Novo número ↻</button></div>
       <div class="choices three">${[["higher","Maior","&gt;"],["equal","Igual","="],["lower","Menor","&lt;"]].map(([id,name,symbol])=>{
         const count=countSums(target,id),prob=count/36*100,b=(36/count-1)*100;
         return `<button type="button" class="choice ${state.choice===id?"active":""}" data-choice="${id}" aria-pressed="${state.choice===id}" ${!count?"disabled":""}><strong>${symbol} ${name}</strong><small>${count?`${percent(prob)} de chance`:`Impossível`}</small><small>${count?`+${percent(b)} de bônus`:`—`}</small></button>`;
       }).join("")}</div>`;
   }
-  if(state.mode==="yatzy")return `<h2>Desafio de dados</h2><p>Supere a pontuação do bot usando cinco dados.</p><div class="score-preview"><div class="score-box"><span>Dados</span><strong>5</strong><small>por rodada</small></div><div class="score-box"><span>Lançamentos</span><strong>3</strong><small>no máximo</small></div></div>`;
-  if(state.mode==="blackjack")return `<h2>Desafio de cartas</h2><p>Você contra o bot: vença com a melhor pontuação até 21.</p><div class="artcards" aria-hidden="true" style="justify-content:center;margin:16px 0"><div class="tiny-card">A♠</div><div class="tiny-card red">10♥</div></div>`;
-  return `<h2>Desafio de pôquer</h2><p>Monte uma mão forte com cinco cartas e até duas trocas.</p><div class="artcards" aria-hidden="true" style="justify-content:center;margin:16px 0"><div class="tiny-card red">A♥</div><div class="tiny-card red">K♦</div><div class="tiny-card">Q♠</div></div>`;
+  if(state.mode==="yatzy")return `<div class="ready-label"><span>⚄</span><strong>Yatzy</strong><small>5 dados · 3 lançamentos</small></div>`;
+  if(state.mode==="blackjack")return `<div class="ready-label"><span>♠</span><strong>21</strong><small>Você × bot</small></div>`;
+  return `<div class="ready-label"><span>♥</span><strong>Pôquer fechado</strong><small>5 cartas · 2 trocas</small></div>`;
 }
 function bonusGuide(){
   let rows=[];
@@ -461,16 +678,14 @@ function sideRules(){
 }
 function renderBet(){
   const recommended=Math.min(saved.balance,25);
-  return `<button type="button" class="back" data-action="back">← Voltar aos jogos</button>
-  <section class="game-intro"><div><span class="eyebrow">${mode().tag}</span><h1>${mode().title}</h1><p>${mode().desc}</p></div><div class="art" aria-hidden="true">${gameArt(state.mode)}</div></section>
-  <div class="bet-flow"><section class="panel">${chooseMarkup()}<hr class="separator"><h2>Defina sua aposta</h2><p>O valor é descontado no início da rodada. Se vencer, recebe a aposta de volta mais um bônus.</p>
-  <label class="panel-title" for="bet-input">Créditos fictícios a apostar</label><div class="bet-line"><input id="bet-input" inputmode="numeric" pattern="[0-9]*" type="number" min="1" step="1" max="${saved.balance}" value="${recommended}" aria-label="Valor da aposta"><span class="currency-label">créditos</span></div>
-  <div class="bet-presets">${[10,25,50,100].map(n=>`<button class="preset" type="button" data-stake="${n}" ${saved.balance<n?"disabled":""}>${n}</button>`).join("")}</div>
-  <button type="button" class="primary block" data-action="start" ${saved.balance===0?"disabled":""}>${saved.balance===0?"Sem créditos — reinicie":"Iniciar rodada →"}</button>
-  ${saved.balance===0?'<button class="secondary block" style="width:100%;margin-top:10px" data-action="reset">Reiniciar créditos</button>':''}</section>
-  ${bonusGuide()}
-  ${sideRules()}</div>`;
+  return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">${mode().tag}</span><h1>${mode().title}</h1></div></section>
+  <div class="bet-flow"><section class="panel bet-panel">${chooseMarkup()}<div class="stake-section"><label class="panel-title" for="bet-input">APOSTA · CRÉDITOS FICTÍCIOS</label>
+  <div class="bet-line"><input id="bet-input" inputmode="numeric" pattern="[0-9]*" type="number" min="1" step="1" max="${saved.balance}" value="${recommended}" aria-label="Valor da aposta"><span class="currency-label">cr</span></div>
+  <div class="bet-presets">${[10,25,50,100].map(n=>`<button class="preset" type="button" data-stake="${n}" ${saved.balance<n?"disabled":""}>${n}</button>`).join("")}</div></div>
+  <button type="button" class="primary block" data-action="start" ${saved.balance===0?"disabled":""}>${saved.balance===0?"Sem créditos":"Iniciar rodada →"}</button>
+  ${saved.balance===0?'<button class="secondary" style="width:100%;margin-top:8px" data-action="reset">Reiniciar créditos</button>':''}</section></div>`;
 }
+
 function scoreYatzy(values){
   if(values.some(v=>!v))return {total:0,base:0,bonus:0,name:"Aguardando lançamento"};
   const base=sum(values),counts=[1,2,3,4,5,6].map(n=>values.filter(x=>x===n).length).sort((a,b)=>b-a);
@@ -591,63 +806,120 @@ function botPokerSwap(hand,deck){
 function renderPlaying(){
   if(state.animation){
     const c=state.mode==="coin";
-    return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="panel result-panel"><div class="status-label">SORTEANDO RESULTADO</div><h1>${c?"Lançando a moeda...":"Lançando dois dados..."}</h1>${c?'<div class="bigcoin spinning"><span>★</span><strong>GS</strong></div>':`<div class="dice-field">${dieSvg(3)}${dieSvg(5)}</div>`}<p>Calculando o resultado da rodada.</p></section>`;
+    return `${gameToolbar()}<section class="panel result-panel"><div class="status-label">SORTEANDO RESULTADO</div><h1>${c?"Lançando a moeda...":"Lançando dois dados..."}</h1>${c?'<div class="bigcoin spinning"><span>★</span><strong>GS</strong></div>':`<div class="dice-field">${dieSvg(3)}${dieSvg(5)}</div>`}<p>Calculando o resultado da rodada.</p></section>`;
   }
   if(state.mode==="yatzy"){
     const d=state.data,s=scoreYatzy(d.values);
-    return `<button class="back" data-action="back">← Voltar aos jogos</button><div class="game-intro"><div><span class="eyebrow">YATZY • ${d.rolls}/3 LANÇAMENTOS</span><h1>Seus dados</h1><p>Toque em um dado depois de lançar para mantê-lo.</p></div></div>
+    return `${gameToolbar()}<div class="game-intro"><div><span class="eyebrow">YATZY · ${d.rolls}/3</span><h1>Seus dados</h1></div></div>
     <section class="panel center"><div class="status-label">${d.rolls===0?"Pronto para começar":d.rolls<3?"Selecione os dados para manter":"Último lançamento"}</div>
     <div class="round-steps" aria-label="${d.rolls} de 3 lançamentos">${[1,2,3].map(i=>`<b class="${d.rolls>=i?"done":""}"></b>`).join("")}</div>
     <div class="dice-field">${d.values.map((v,i)=>`<button type="button" class="die-toggle ${d.held[i]?"held":""}" data-hold="${i}" aria-pressed="${d.held[i]}" ${d.rolls===0?"disabled":""}>${dieSvg(v)}<small>${d.rolls===0?"—":d.held[i]?"Mantido":"Rolar"}</small></button>`).join("")}</div>
     <div class="score-preview"><div class="score-box"><span>Pontos atuais</span><strong>${s.total}</strong><small>${s.name}</small></div><div class="score-box"><span>Composição</span><strong>${s.base} + ${s.bonus}</strong><small>soma + bônus</small></div></div>
     <div class="actions"><button class="primary" type="button" data-action="roll" ${d.rolls>=3?"disabled":""}>${d.rolls===0?"Lançar dados":"Rolar novamente"}</button><button class="secondary" type="button" data-action="end-yatzy" ${d.rolls===0?"disabled":""}>Comparar com bot</button></div>
-    <p class="notice">O bot também pode lançar até 3 vezes. Empate devolve os créditos apostados.</p></section>`;
+    </section>`;
   }
   if(state.mode==="blackjack"){
     const d=state.data;
     const initialNatural=d.naturalReady;
     const heading=initialNatural&&blackjackValue(d.player)===21?"21 natural!":initialNatural?"Hora de revelar": "Comprar ou passar?";
     const description=initialNatural?"As cartas iniciais já definiram esta rodada. Confira suas cartas e revele o resultado.":"Chegue perto de 21 sem passar. O bot está com uma carta escondida.";
-    return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="game-intro"><div><span class="eyebrow">CARTAS • 21</span><h1>${heading}</h1><p>${description}</p></div></section>
+    return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">CARTAS · 21</span><h1>${heading}</h1></div></section>
     <section class="panel center">${handArea("Cartas do bot",[d.bot[0],null],"Carta oculta")}${handArea("Suas cartas",d.player,`${blackjackValue(d.player)} pontos`)}
     <div class="actions">${initialNatural
       ? `<button type="button" class="primary" data-action="reveal-21">Revelar resultado →</button>`
       : `<button type="button" class="primary" data-action="hit">+ Comprar carta</button><button type="button" class="secondary" data-action="stand">Passar / ficar</button>`}</div>
-    <p class="notice">${initialNatural?"21 natural é uma mão inicial de duas cartas. Revele o resultado quando quiser.":"Ás vale 1 ou 11. Figuras valem 10. O bot compra até ter pelo menos 17 pontos. Se ambos passarem de 21, vence a menor soma."}</p></section>`;
+    </section>`;
   }
   const d=state.data;
   const swapsLeft=2-d.swaps;
-  return `<button class="back" data-action="back">← Voltar aos jogos</button><section class="game-intro"><div><span class="eyebrow">CARTAS • PÔQUER FECHADO</span><h1>Monte sua mão</h1><p>${swapsLeft?`Selecione as cartas a trocar. Trocas restantes: ${swapsLeft} de 2.`:"Suas duas trocas foram usadas. Agora decida se fica ou corre."}</p></div></section>
+  return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">PÔQUER · ${swapsLeft}/2 TROCAS RESTANTES</span><h1>Monte sua mão</h1></div></section>
   <section class="panel center"><div class="status-label">${d.swaps}/2 trocas usadas</div><div class="round-steps" aria-label="${d.swaps} de 2 trocas usadas">${[1,2].map(i=>`<b class="${d.swaps>=i?"done":""}"></b>`).join("")}</div>
   ${handArea("Cinco cartas do bot",[null,null,null,null,null],"Mão escondida")}
   ${handArea("Sua mão",d.player,rankPoker(d.player).name,{pickable:swapsLeft>0,selected:d.selected})}
   <div class="actions">${swapsLeft>0?`<button type="button" class="primary" data-action="swap">Trocar cartas (${swapsLeft} restantes)</button>`:""}<button type="button" class="secondary" data-action="stand-poker">Ficar / comparar</button><button type="button" class="danger" data-action="fold">Correr</button></div>
-  <p class="notice">Você pode ficar antes de usar todas as trocas. Correr significa desistir da rodada e perder somente o valor apostado.</p></section>`;
+  </section>`;
 }
 function renderResult(){
   const r=state.result;
   const titles={win:"Você venceu!",lose:"Não foi dessa vez",tie:"Empate!"};
   const symbols={win:"✓",lose:"×",tie:"="};
   const amount=(r.delta>0?"+":"")+money(r.delta);
-  return `<button type="button" class="back" data-action="back">← Voltar aos jogos</button><section class="panel result-panel ${r.outcome}">
+  return `${gameToolbar()}<section class="panel result-panel ${r.outcome}">
     <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${titles[r.outcome]}</h1><p>${r.description}</p>
     <div class="result-delta ${r.outcome}">${amount}</div><p>${r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":"A aposta da rodada foi perdida."}</p>
     <div class="result-details">${r.details}
-      <hr class="separator"><div class="summary-row"><span>Créditos apostados</span><strong>${money(state.bet)}</strong></div><div class="summary-row"><span>Créditos recebidos</span><strong>${money(r.payout)}</strong></div><div class="summary-row"><span>Saldo global atual</span><strong>${money(saved.balance)}</strong></div>
+      <div class="result-money"><div><span>Aposta</span><strong>${money(state.bet)}</strong></div><div><span>Recebido</span><strong>${money(r.payout)}</strong></div></div>
     </div><div class="actions"><button type="button" class="primary" data-action="again">Nova rodada</button><button type="button" class="secondary" data-action="back">Outros jogos</button></div>
     ${saved.balance===0?'<button type="button" class="secondary" style="margin-top:15px" data-action="reset">Reiniciar créditos</button>':''}
     </section>`;
 }
+const ratio = (part,total)=>total>0?100*part/total:0;
+function statTile(label,n){
+  const positive=n>=0;
+  return `<div class="stat-tile"><span>${label}</span><strong class="${positive?"":"negative"}">${n>0?"+":""}${percent(n)}</strong></div>`;
+}
+function renderStats(){
+  const a=saved.stats, entries=MODES.map(m=>({...m,...saved.detail.byMode[m.id]}));
+  const tracked=entries.reduce((v,e)=>v+e.rounds,0);
+  const staked=entries.reduce((v,e)=>v+e.staked,0);
+  const paid=entries.reduce((v,e)=>v+e.paid,0);
+  return `<div class="stats-summary">
+    ${statTile("Vitórias",ratio(a.wins,a.rounds))}${statTile("Derrotas",ratio(a.losses,a.rounds))}${statTile("Empates",ratio(a.ties,a.rounds))}
+    ${statTile("Vitórias sem empates",ratio(a.wins,a.wins+a.losses))}
+    ${statTile("Variação do saldo",100*(saved.balance-INITIAL)/INITIAL)}
+    ${statTile("Retorno líquido*",ratio(paid-staked,staked))}
+  </div>
+  <h3 class="stats-subhead">Desempenho por jogo</h3>
+  <div class="mode-stats">${entries.map(e=>`<div class="mode-stat"><strong>${e.title}</strong><div class="mode-stat-values"><span>Vitórias <b>${percent(ratio(e.wins,e.rounds))}</b></span><span>Participação <b>${percent(ratio(e.rounds,tracked))}</b></span></div><div class="bar-track"><div style="width:${ratio(e.wins,e.rounds)}%"></div></div></div>`).join("")}</div>
+  <p class="notice">*Retorno líquido e dados por jogo são registrados a partir desta versão. Os percentuais gerais incluem as partidas anteriores.</p>
+  <button type="button" class="reset" data-action="reset">Reiniciar créditos e estatísticas</button>`;
+}
+function showOverlay(type){
+  const overlay=document.getElementById("overlay");
+  const info=type==="info";
+  if(info && !state.mode)return;
+  const heading=info?`Informações · ${mode().title}`:"Estatísticas";
+  overlay.innerHTML=`<div class="overlay-page" role="dialog" aria-modal="true" aria-label="${heading}">
+    <div class="overlay-top"><div><span class="eyebrow">${info?"GS · GUIA DO JOGO":"GS · SEU DESEMPENHO"}</span><h2>${heading}</h2></div><button type="button" class="close-button" data-action="close-overlay" aria-label="Fechar">✕ <span>Fechar</span></button></div>
+    <div class="overlay-scroll">${info?`<div class="info-layout">${bonusGuide()}${sideRules()}</div>`:renderStats()}</div>
+    </div>`;
+  overlay.hidden=false;
+  overlay.dataset.type=type;
+  overlay.querySelector(".close-button")?.focus();
+}
+function closeOverlay(){
+  const overlay=document.getElementById("overlay");
+  if(overlay.hidden)return;
+  overlay.hidden=true;overlay.innerHTML="";
+}
+function fitScreen(){
+  const app=document.getElementById("app");
+  const screen=app.querySelector(".screen");
+  if(!screen)return;
+  screen.style.transform="";
+  screen.style.width="100%";
+  screen.style.left="";
+  const available=app.clientHeight;
+  const natural=screen.scrollHeight;
+  if(available<=0||natural<=0)return;
+  const scale=Math.min(1,available/natural);
+  if(scale<.995){
+    screen.style.width=`${100/scale}%`;
+    screen.style.left="50%";
+    screen.style.transform=`translateX(-50%) scale(${scale})`;
+  }
+}
 function render(){
   document.getElementById("wallet").textContent=money(saved.balance);
-  document.getElementById("app").innerHTML=state.phase==="lobby"?renderLobby():state.phase==="bet"?renderBet():state.phase==="playing"?renderPlaying():renderResult();
+  document.getElementById("app").innerHTML=`<div class="screen ${state.phase==='lobby'?'screen-lobby':'screen-game'}">${state.phase==="lobby"?renderLobby():state.phase==="bet"?renderBet():state.phase==="playing"?renderPlaying():renderResult()}</div>`;
+  fitScreen();
 }
 function selectMode(id){
   if(!MODES.some(m=>m.id===id))return;
   state.mode=id;state.phase="bet";state.bet=0;state.result=null;state.animation=false;state.choice=id==="coin"?"cara":id==="dice"?"higher":"";
   state.data=id==="dice"?{target:rand(11)+2}:null;
   if(id==="dice"&&!countSums(state.data.target,state.choice))state.choice="equal";
-  render();window.scrollTo({top:0,behavior:"instant"});
+  closeOverlay();render();
 }
 function beginBet(){
   const input=document.getElementById("bet-input");
@@ -692,6 +964,7 @@ function finish(outcome,bonus,description,details){
   const payout=outcome==="win"?Math.round(state.bet*(1+bonus/100)):outcome==="tie"?state.bet:0;
   saved.balance+=payout;
   saved.stats.rounds++;
+  trackRound(outcome,payout);
   if(outcome==="win")saved.stats.wins++;
   else if(outcome==="lose")saved.stats.losses++;
   else saved.stats.ties++;
@@ -761,15 +1034,23 @@ function settlePoker(fold=false){
 function abandonAndBack(){
   if(state.phase==="playing"){
     if(!window.confirm("Rodada em andamento. Sair agora perde os créditos apostados. Deseja sair?"))return;
-    saved.stats.rounds++;saved.stats.losses++;save();
+    saved.stats.rounds++;saved.stats.losses++;trackRound("lose",0);save();
   }
-  state.token++;state.mode=null;state.phase="lobby";state.data=null;state.result=null;render();window.scrollTo({top:0,behavior:"instant"});
+  state.token++;state.mode=null;state.phase="lobby";state.data=null;state.result=null;closeOverlay();render();
 }
 function resetAll(){
   if(!window.confirm("Reiniciar o saldo para 1.000 créditos e zerar todas as estatísticas?"))return;
-  state.token++;saved={balance:INITIAL,stats:{rounds:0,wins:0,losses:0,ties:0}};save();state.phase="lobby";state.mode=null;state.data=null;render();toast("Créditos e estatísticas reiniciados.");
+  state.token++;saved={balance:INITIAL,stats:{rounds:0,wins:0,losses:0,ties:0}};prepareStats();save();state.phase="lobby";state.mode=null;state.data=null;closeOverlay();render();toast("Créditos e estatísticas reiniciados.");
 }
 document.addEventListener("click",event=>{
+  const btn0=event.target.closest("[data-action]");
+  if(btn0?.dataset.action==="close-overlay"){closeOverlay();return;}
+  if(btn0?.dataset.action==="stats"){showOverlay("stats");return;}
+  if(btn0?.dataset.action==="info"){showOverlay("info");return;}
+  if(!document.getElementById("overlay").hidden){
+    if(btn0?.dataset.action==="reset")resetAll();
+    return;
+  }
   const modeButton=event.target.closest("[data-mode]");
   if(modeButton&&state.phase==="lobby"){selectMode(modeButton.dataset.mode);return;}
   const stakeButton=event.target.closest("[data-stake]");
@@ -804,6 +1085,9 @@ document.addEventListener("click",event=>{
   else if(action==="stand-poker"&&state.phase==="playing"&&state.mode==="poker")settlePoker();
   else if(action==="fold"&&state.phase==="playing"&&state.mode==="poker")settlePoker(true);
 });
+window.addEventListener("resize",()=>requestAnimationFrame(fitScreen));
+window.visualViewport?.addEventListener("resize",()=>requestAnimationFrame(fitScreen));
+document.addEventListener("keydown",event=>{if(event.key==="Escape")closeOverlay();});
 render();
 </script>
 </body>
