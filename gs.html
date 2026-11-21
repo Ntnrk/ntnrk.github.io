@@ -659,6 +659,43 @@
       .truco-turn-note{font-size:.69rem}
     }
     @media(max-height:610px){.truco-game .truco-seat{padding:4px 2px}.truco-game .truco-mini{margin:3px 0}.truco-game .truco-own{min-height:59px}.truco-game .truco-own .playing-card{width:46px;height:67px}.truco-game .truco-played-seat .playing-card{height:49px}}
+
+    /* Histórico de Truco: prévia no resultado e todas as cartas em tela cheia. */
+    .truco-history-corner{position:absolute;top:11px;right:11px;z-index:2;border:1px solid #405464;background:#1d2935;color:var(--accent);padding:7px 10px;border-radius:9px;font-size:.73rem;font-weight:800;min-height:33px;transition:background .2s,transform .2s}
+    .truco-history-corner:hover{background:#273749;transform:translateY(-2px)}
+    .truco-last-round{background:#101c27;border:1px solid #304253;border-radius:10px;margin:9px 0 0;padding:9px 11px}
+    .truco-last-head{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;font-size:.73rem}
+    .truco-last-head>strong{color:var(--text)}.truco-last-head>span{color:var(--muted);font-size:.67rem}
+    .truco-last-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+    .truco-last-seat{min-width:0;border:1px solid var(--border);border-radius:7px;padding:5px 3px;display:flex;align-items:center;justify-content:center;gap:6px;background:#192430}
+    .truco-last-seat>small{color:var(--muted);font-size:.64rem;white-space:nowrap}
+    .truco-last-seat>strong{color:#e6edf7;font-size:.85rem;white-space:nowrap}
+    .truco-last-seat>strong.red{color:#f4a0ac}
+    .truco-history-view{max-width:880px;margin:0 auto;display:grid;gap:14px}
+    .truco-history-summary{display:flex;gap:8px;flex-wrap:wrap}
+    .truco-history-summary>span{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--muted);font-size:.79rem}
+    .truco-history-summary strong{color:var(--text);margin-left:5px}
+    .truco-history-round{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:15px}
+    .truco-history-round-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;font-size:.88rem}
+    .truco-history-round-title span{font-size:.77rem;color:var(--muted)}
+    .truco-history-round-title span.win{color:var(--accent)}.truco-history-round-title span.lose{color:var(--red)}.truco-history-round-title span.tie{color:var(--gold)}
+    .truco-history-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+    .truco-history-play{min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;background:#111b25;border:1px solid var(--border);border-radius:9px;padding:10px 3px}
+    .truco-history-play>strong{font-size:.81rem}.truco-history-play>small{font-size:.68rem;color:var(--muted)}
+    .truco-history-play .playing-card{width:55px;height:78px;margin:5px 0 0;padding:6px}
+    .truco-history-play .playing-card .suit{font-size:1.65rem}
+    .truco-history-footnote{font-size:.75rem;color:var(--muted);margin:0}
+    @media(max-width:540px){
+      .truco-history-corner{padding:5px 7px;font-size:.67rem;top:9px;right:9px}
+      .truco-last-seat{flex-direction:column;gap:1px;padding:3px 1px}
+      .truco-last-seat>small{font-size:.61rem}.truco-last-seat>strong{font-size:.85rem}
+      .truco-last-round{padding:7px 8px}
+      .truco-history-round{padding:10px}
+      .truco-history-cards{gap:5px}
+      .truco-history-play{padding:7px 1px}
+      .truco-history-play>strong{font-size:.68rem}.truco-history-play>small{font-size:.6rem}
+      .truco-history-play .playing-card{width:47px;height:65px;padding:4px}
+    }
   </style>
 </head>
 <body>
@@ -843,6 +880,9 @@ const TRUCO_RANKS = ["4","5","6","7","Q","J","K","A","2","3"];
 const TRUCO_SUIT_POWER = {"♦":1,"♠":2,"♥":3,"♣":4};
 const TRUCO_WIN_BONUS = {0:150,3:600,6:2400,9:38400};
 const TRUCO_REFUND = {0:.75,3:.30,6:.01};
+// Tempo para acompanhar cada jogada e analisar as quatro cartas na mesa.
+const TRUCO_BOT_DELAY = 1150;
+const TRUCO_TRICK_PAUSE = 2100;
 const TEXAS_REDEALS = 3;
 const PLINKO_ANIMATION_MS = 3180;
 const PLINKO_WEIGHTS = [1,10,45,120,210,252,210,120,45,10,1];
@@ -1020,7 +1060,7 @@ function sideRules(){
     poker:[['1','Você e o bot começam com cinco cartas.'],['2','Selecione as cartas para substituir. Você tem duas oportunidades de troca, podendo ficar antes.'],['3','O bot também pode trocar até duas vezes. Você pode ficar para comparar ou correr e desistir da rodada.']],
     texas:[['1','Você recebe duas cartas próprias; o bot recebe duas escondidas. Cinco cartas públicas são distribuídas.'],['2','Você pode correr (redistribuir) até três vezes: todas as cartas são embaralhadas e entregues novamente, sem nova aposta. Isso reinicia o flop, turn e river.'],['3','Revele flop, turn e river; a melhor mão de cinco cartas entre as sete vence. Empate devolve a aposta.']],
     plinko:[['1','Escolha a cesta desejada antes de lançar a bola.'],['2','A bola desvia entre dez fileiras de pinos. As cestas 5 e 7 devolvem pelo menos metade; a 6 normalmente não paga.'],['3','Acertar a cesta central escolhida devolve toda a aposta; se acertar uma cesta externa escolhida, soma 75 pontos percentuais ao bônus.']],
-    truco:[['1','Truco Paulista: baralho de 40 cartas. A carta virada determina a manilha (a carta seguinte na ordem 4, 5, 6, 7, Q, J, K, A, 2, 3).'],['2','Você e o parceiro formam uma dupla contra dois bots. Só suas cartas são abertas; do parceiro, apenas as manilhas ficam visíveis.'],['3','Escolha uma carta por vaza. Após sua jogada, os três bots jogam. A dupla com a carta mais forte vence a vaza; vença duas vazas para ganhar.'],['4','Na sua vez, você pode correr e receber de volta a aposta, ou pedir truco. Os bots só podem pedir seis depois do seu truco; então você pode aceitar seis ou pedir nove.'],['5','Se as vazas terminarem empatadas, a primeira vaza decisiva prevalece; três vazas empatadas devolvem a aposta. Na derrota após nove, a perda adicional fica limitada ao saldo disponível.']]
+    truco:[['1','Truco Paulista: baralho de 40 cartas. A carta virada determina a manilha (a carta seguinte na ordem 4, 5, 6, 7, Q, J, K, A, 2, 3).'],['2','Você e o parceiro formam uma dupla contra dois bots. Só suas cartas são abertas; do parceiro, apenas as manilhas ficam visíveis.'],['3','Escolha uma carta por vaza. Após sua jogada, os três bots jogam. A dupla com a carta mais forte vence a vaza; vença duas vazas para ganhar.'],['4','Na sua vez, você pode correr e receber de volta a aposta, ou pedir truco. Os bots só podem pedir seis depois do seu truco; então você pode aceitar seis ou pedir nove.'],['5','Se a primeira vaza amarrar, quem vencer a segunda leva a mão; se as duas primeiras amarrarem, a terceira decide. Se a segunda ou terceira amarrar, vale a primeira vaza vencida. Três amarras devolvem a aposta. Na derrota após nove, a perda adicional fica limitada ao saldo disponível.']]
   };
   return `<section class="panel panel-side" aria-labelledby="howto-title"><span class="eyebrow">INSTRUÇÕES</span><h2 id="howto-title">Como jogar</h2>${examples[state.mode].map(([i,s])=>`<div class="rule"><i>${i}</i><div>${s}</div></div>`).join("")}<hr class="separator"><p class="notice">Saldo único para todos os modos. Os créditos não possuem valor monetário, não podem ser comprados ou resgatados.</p></section>`;
 }
@@ -1307,6 +1347,21 @@ function trucoPower(card,manilha){
  if(card.rank===manilha)return 100+TRUCO_SUIT_POWER[card.suit];
  return TRUCO_RANKS.indexOf(card.rank);
 }
+// Desempate entre vazas: quem fez a primeira leva a amarra posterior;
+// se a primeira amarrou, a segunda vaza decidida define a mão.
+// Retorna 0 (sua dupla), 1 (adversários), "tie" (três amarras) ou null (em andamento).
+function decideTrucoMatch(tricks){
+ if(tricks.length<2)return null;
+ const first=tricks[0].winner,second=tricks[1].winner;
+ if(first===null){
+  if(second!==null)return second;
+  if(tricks.length<3)return null;
+  return tricks[2].winner===null?"tie":tricks[2].winner;
+ }
+ if(second===null||second===first)return first;
+ if(tricks.length<3)return null;
+ return tricks[2].winner===null?first:tricks[2].winner;
+}
 function drawTruco(){
  const hand=dealTruco();
  if(Math.random()<state.luckExtra/100){
@@ -1381,10 +1436,12 @@ function playTruco(index){
   if(state.token!==token||state.phase!=="playing"||state.mode!=="truco")return;
   if(step===3){settleTrucoTrick(token);return;}
   const seat=step+1,idx=trucoBotChoice(d,seat);
-  d.plays.push({seat,card:d.hands[seat].splice(idx,1)[0]});
-  render();setTimeout(()=>follow(step+1),330);
+  const card=d.hands[seat].splice(idx,1)[0];
+  d.plays.push({seat,card});
+  d.trickMessage=`${seat===2?"Seu parceiro":`Bot ${seat===1?1:2}`} jogou ${card.rank}${card.suit}.`;
+  render();setTimeout(()=>follow(step+1),TRUCO_BOT_DELAY);
  };
- setTimeout(()=>follow(0),290);
+ setTimeout(()=>follow(0),TRUCO_BOT_DELAY);
 }
 function settleTrucoTrick(token){
  const d=state.data;
@@ -1393,27 +1450,47 @@ function settleTrucoTrick(token){
  const teams=new Set(strongest.map(p=>p.seat%2));
  const winner=teams.size===1?[...teams][0]:null;
  d.tricks.push({winner,plays:d.plays.slice()});
- const won=d.tricks.filter(t=>t.winner===0).length;
- const lost=d.tricks.filter(t=>t.winner===1).length;
- const done=won===2||lost===2||d.tricks.length===3;
- d.trickMessage=winner===null?"Vaza empatada":winner===0?"Vaza para sua dupla!":"Vaza para os adversários";
+ const decision=decideTrucoMatch(d.tricks);
+ d.trickMessage=winner===null?"Amarrou!":winner===0?"Vaza para sua dupla!":"Vaza para os adversários";
  render();
  setTimeout(()=>{
   if(state.token!==token||state.phase!=="playing"||state.mode!=="truco")return;
-  if(done){
-   let outcome=won>lost?"win":won<lost?"lose":"tie";
-   if(won===lost&&won>0){const first=d.tricks.find(t=>t.winner!==null);outcome=first.winner===0?"win":"lose";}
-   finishTruco(outcome);return;
+  if(decision!==null){
+   finishTruco(decision==="tie"?"tie":decision===0?"win":"lose");return;
   }
   d.busy=false;d.plays=[];d.trickMessage="Nova vaza: escolha uma carta.";
   if(d.tier===3&&!d.sixAsked)askTrucoSix(d,.38);
   render();
- },680);
+ },TRUCO_TRICK_PAUSE);
+}
+function trucoRoundLabel(trick){
+ return trick.winner===null?"Amarrou":trick.winner===0?"Sua dupla venceu":"Adversários venceram";
 }
 function trucoDetails(){
  const d=state.data;
- const vals=d.tricks.map((t,i)=>`<span>Vaza ${i+1}: ${t.winner===null?'Empate':t.winner===0?'Sua dupla':'Adversários'}</span>`).join('');
- return `<div class="truco-recap"><span>Vira: ${d.vira.rank}${d.vira.suit}</span><span>Manilha: ${d.manilha}</span><span>Pedido: ${trucoTierLabel(d.tier)}</span></div><div class="truco-recap">${vals}</div>`;
+ const vals=d.tricks.map((t,i)=>`<span>Vaza ${i+1}: ${t.winner===null?'Amarra':t.winner===0?'Sua dupla':'Adversários'}</span>`).join('');
+ const last=d.tricks.at(-1);
+ const people=["Você","Bot 1","Parceiro","Bot 2"];
+ const cards=last?people.map((name,seat)=>{
+  const card=last.plays.find(p=>p.seat===seat)?.card;
+  return `<div class="truco-last-seat"><small>${name}</small>${card?`<strong class="${card.suit==='♥'||card.suit==='♦'?'red':''}">${card.rank}${card.suit}</strong>`:'<strong>—</strong>'}</div>`;
+ }).join(''):'';
+ return `<div class="truco-recap"><span>Vira: ${d.vira.rank}${d.vira.suit}</span><span>Manilha: ${d.manilha}</span><span>Pedido: ${trucoTierLabel(d.tier)}</span></div><div class="truco-recap">${vals}</div>
+ ${last?`<div class="truco-last-round"><div class="truco-last-head"><strong>Última vaza · ${trucoRoundLabel(last)}</strong><span>${d.tricks.length} ${d.tricks.length===1?'vaza':'vazas'} jogadas</span></div><div class="truco-last-cards">${cards}</div></div>`:''}`;
+}
+function trucoHistoryView(){
+ const d=state.data,people=["Você","Bot 1","Parceiro","Bot 2"];
+ const summary=`<div class="truco-history-summary"><span>Vira <strong>${d.vira.rank}${d.vira.suit}</strong></span><span>Manilha <strong>${d.manilha}</strong></span><span>Pedido <strong>${trucoTierLabel(d.tier)}</strong></span></div>`;
+ const rounds=d.tricks.map((t,i)=>{
+  const bySeat=new Map(t.plays.map(p=>[p.seat,p.card]));
+  const winnerClass=t.winner===null?'tie':t.winner===0?'win':'lose';
+  return `<section class="truco-history-round"><div class="truco-history-round-title"><strong>Vaza ${i+1}</strong><span class="${winnerClass}">${trucoRoundLabel(t)}</span></div>
+  <div class="truco-history-cards">${people.map((name,seat)=>{
+   const card=bySeat.get(seat);
+   return `<div class="truco-history-play"><strong>${name}</strong><small>${seat%2===0?'Sua dupla':'Adversário'}</small>${card?cardMarkup(card):'<div class="truco-placeholder">—</div>'}</div>`;
+  }).join('')}</div></section>`;
+ }).join('');
+ return `<div class="truco-history-view">${summary}${rounds||'<p>Nenhuma vaza foi concluída antes de correr.</p>'}<p class="truco-history-footnote">As cartas são mostradas na ordem de cada jogador, inclusive as que estavam escondidas durante a rodada.</p></div>`;
 }
 function finishTruco(outcome){
  const tier=state.data.tier,bet=state.bet,details=trucoDetails();
@@ -1497,6 +1574,7 @@ function renderResult(){
     ? state.mode==="truco"?`Devolução da tabela: ${money(r.payout)}. ${r.extraDebit?"Perda adicional: "+money(r.extraDebit)+".":""}`:`Recebimento parcial pela regra de desempate: ${money(r.payout)} de ${money(state.bet)} apostados.`
     : r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`${money(r.payout)} da aposta recuperados.`:"A aposta da rodada foi perdida.";
   return `${gameToolbar()}<section class="panel result-panel ${r.outcome}">
+    ${state.mode==="truco"?'<button type="button" class="truco-history-corner" data-action="truco-history" aria-label="Abrir histórico completo do Truco">☷ Histórico</button>':''}
     <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${resultHeading}</h1><p>${r.description}</p>
     <div class="result-delta ${r.delta<0?"lose":r.outcome}">${amount}</div><p>${payoutExplanation}</p>
     <div class="result-details">${r.details}${r.upgradeNote||""}
@@ -1528,12 +1606,13 @@ function renderStats(){
 }
 function showOverlay(type){
   const overlay=document.getElementById("overlay");
-  const info=type==="info",shop=type==="shop";
+  const info=type==="info",shop=type==="shop",history=type==="truco-history";
   if(info && !state.mode)return;
-  const heading=info?`Informações · ${mode().title}`:shop?"Loja de aprimoramentos":"Estatísticas";
+  if(history && (state.mode!=="truco"||state.phase!=="result"))return;
+  const heading=history?"Histórico da última partida":info?`Informações · ${mode().title}`:shop?"Loja de aprimoramentos":"Estatísticas";
   overlay.innerHTML=`<div class="overlay-page" role="dialog" aria-modal="true" aria-label="${heading}">
-    <div class="overlay-top"><div><span class="eyebrow">${info?"GS · GUIA DO JOGO":shop?"GS · MELHORIAS":"GS · SEU DESEMPENHO"}</span><h2>${heading}</h2></div><button type="button" class="close-button" data-action="close-overlay" aria-label="Fechar">✕ <span>Fechar</span></button></div>
-    <div class="overlay-scroll">${info?`<div class="info-layout">${bonusGuide()}${sideRules()}</div>`:shop?renderShop():renderStats()}</div>
+    <div class="overlay-top"><div><span class="eyebrow">${history?"GS · TRUCO":info?"GS · GUIA DO JOGO":shop?"GS · MELHORIAS":"GS · SEU DESEMPENHO"}</span><h2>${heading}</h2></div><button type="button" class="close-button" data-action="close-overlay" aria-label="Fechar">✕ <span>Fechar</span></button></div>
+    <div class="overlay-scroll">${history?trucoHistoryView():info?`<div class="info-layout">${bonusGuide()}${sideRules()}</div>`:shop?renderShop():renderStats()}</div>
     </div>`;
   overlay.hidden=false;
   overlay.dataset.type=type;
@@ -1824,6 +1903,7 @@ document.addEventListener("click",event=>{
   else if(action==="fold"&&state.phase==="playing"&&state.mode==="poker")settlePoker(true);
   else if(["truco-raise","truco-six","truco-nine"].includes(action)&&state.phase==="playing"&&state.mode==="truco")raiseTruco(action);
   else if(action==="truco-run"&&state.phase==="playing"&&state.mode==="truco")runTruco();
+  else if(action==="truco-history"&&state.phase==="result"&&state.mode==="truco")showOverlay("truco-history");
   else if(action==="redeal-texas"&&state.phase==="playing"&&state.mode==="texas")texasRedeal();
   else if(action==="reveal-texas"&&state.phase==="playing"&&state.mode==="texas")texasReveal();
   else if(action==="end-texas"&&state.phase==="playing"&&state.mode==="texas")settleTexas();
