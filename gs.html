@@ -1064,12 +1064,15 @@ function sideRules(){
   };
   return `<section class="panel panel-side" aria-labelledby="howto-title"><span class="eyebrow">INSTRUÇÕES</span><h2 id="howto-title">Como jogar</h2>${examples[state.mode].map(([i,s])=>`<div class="rule"><i>${i}</i><div>${s}</div></div>`).join("")}<hr class="separator"><p class="notice">Saldo único para todos os modos. Os créditos não possuem valor monetário, não podem ser comprados ou resgatados.</p></section>`;
 }
+function betFromPercent(p){
+  return saved.balance > 0 ? Math.min(saved.balance, Math.max(1, Math.round(saved.balance * p / 100))) : 0;
+}
 function renderBet(){
-  const recommended=Math.min(saved.balance,25);
+  const recommended=betFromPercent(2.5);
   return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">${mode().tag}</span><h1>${mode().title}</h1></div></section>
   <div class="bet-flow"><section class="panel bet-panel">${chooseMarkup()}<div class="stake-section"><label class="panel-title" for="bet-input">APOSTA · CRÉDITOS FICTÍCIOS</label>
   <div class="bet-line"><input id="bet-input" inputmode="numeric" pattern="[0-9]*" type="number" min="1" step="1" max="${saved.balance}" value="${recommended}" aria-label="Valor da aposta"><span class="currency-label">cr</span></div><div class="luck-preview" id="luck-preview" aria-live="polite"></div>
-  <div class="bet-presets">${[10,25,50,100].map(n=>`<button class="preset" type="button" data-stake="${n}" ${saved.balance<n?"disabled":""}>${n}</button>`).join("")}</div></div>
+  <div class="bet-presets">${[1,2.5,5,10].map(p=>{const stake=betFromPercent(p);return `<button class="preset" type="button" data-stake="${stake}" ${saved.balance===0?"disabled":""}>${String(p).replace(".",",")}%</button>`;}).join("")}</div></div>
   <button type="button" class="primary block" data-action="start" ${saved.balance===0?"disabled":""}>${saved.balance===0?"Sem créditos":"Iniciar rodada →"}</button>
   ${saved.balance===0?'<button class="secondary" style="width:100%;margin-top:8px" data-action="reset">Reiniciar créditos</button>':''}</section></div>`;
 }
