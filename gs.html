@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b0e14">
-  <meta name="description" content="GS: sete minijogos de probabilidades com créditos fictícios e saldo compartilhado.">
+  <meta name="description" content="GS: oito minijogos de probabilidades com créditos fictícios e saldo compartilhado.">
   <title>GS — Gambler Simulateerrr</title>
   <style>
     :root{color-scheme:dark;--bg:#0b0e14;--surface:#131923;--surface2:#1b2431;--border:#293544;--text:#f4f7fb;--muted:#9caabe;--accent:#b6eecb;--gold:#f3c978;--red:#ff969f;--blue:#8db6fb;--r:20px}
@@ -598,6 +598,67 @@
       .mode-grid:has(.mode-card:nth-child(7)) .mode-card .artcoin{width:30px;height:30px;font-size:.9rem;border-width:3px}
     }
     .texas-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.texas-actions>*{min-width:0;width:100%;font-size:clamp(.73rem,2vw,.9rem);padding:10px 8px}.texas-redeal-note{font-size:.69rem;color:var(--muted);margin:8px 0 0}.plinko-board #plinko-ball{filter:drop-shadow(0 2px 3px #0b1017)}@media(max-width:380px){.texas-actions{gap:5px}.texas-actions>*{font-size:.71rem;padding:9px 5px}}
+
+    /* TRUCO — mesa compacta, cartas animadas e cores chapadas */
+    .mode-card:nth-child(8){--mode-color:#dfb477;animation-delay:.27s}
+    .truco-game{max-width:840px!important}
+    .truco-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 7px;flex-wrap:wrap}
+    .truco-tag{border:1px solid #4a5563;background:#232b38;border-radius:7px;padding:5px 9px;color:#e5d1ad;font-size:.7rem;font-weight:850}
+    .truco-bot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:5px 0}
+    .truco-seat{min-width:0;background:#111a24;border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center}
+    .truco-seat strong{display:block;font-size:clamp(.63rem,2.1vw,.84rem);white-space:nowrap}
+    .truco-seat small{display:block;color:var(--muted);font-size:.62rem}
+    .truco-seat.partner{border-color:#39745d;background:#182a28}
+    .truco-mini{display:flex;gap:3px;justify-content:center;margin:5px auto 0}
+    .truco-mini .playing-card{width:clamp(24px,6vw,35px);height:clamp(34px,8.5vw,48px);max-width:none;flex:0 1 auto;padding:3px;border-radius:5px;border-width:1px}
+    .truco-mini .corner{font-size:.62rem}.truco-mini .corner small{font-size:.55rem;margin-top:1px}.truco-mini .suit{font-size:.89rem}.truco-mini .back-card{border-width:2px;font-size:.45rem}
+    .truco-divider{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 0;padding:7px 10px;background:#1e2632;border:1px solid #364454;border-radius:8px}
+    .truco-vira{display:flex;align-items:center;gap:9px;min-width:0;text-align:left}
+    .truco-vira .playing-card{width:37px;height:51px;max-width:none;flex-shrink:0;padding:4px}
+    .truco-vira .corner{font-size:.72rem}.truco-vira .corner small{font-size:.66rem}.truco-vira .suit{font-size:1.1rem}
+    .truco-vira div>span{display:block;color:var(--muted);font-size:.64rem}.truco-vira div>strong{font-size:.87rem;color:var(--gold)}
+    .truco-tricks{display:flex;gap:4px;justify-content:flex-end}
+    .truco-tricks span{border:1px solid #3b4656;background:#202a36;border-radius:5px;color:#b9c4d3;font-size:.69rem;min-width:27px;padding:4px;text-align:center}
+    .truco-tricks .win{border-color:#387963;color:#56dfb4}.truco-tricks .lose{border-color:#844458;color:#fa91a2}.truco-tricks .tie{color:var(--gold)}
+    .truco-played{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:8px 0}
+    .truco-played-seat{text-align:center;background:#111a24;border:1px solid var(--border);border-radius:8px;padding:6px 2px;min-width:0}
+    .truco-played-seat small{display:block;font-size:.63rem;color:var(--muted);margin-bottom:3px}
+    .truco-played-seat .playing-card{width:clamp(29px,6vw,49px);height:clamp(42px,9vw,68px);max-width:none;margin:auto;padding:4px}
+    .truco-played-seat .corner{font-size:.79rem}.truco-played-seat .corner small{font-size:.75rem}.truco-played-seat .suit{font-size:1.3rem}
+    .truco-placeholder{width:clamp(29px,6vw,49px);height:clamp(42px,9vw,68px);border:1px dashed #415164;border-radius:6px;margin:auto;display:grid;place-items:center;color:#7a8999;font-size:1rem}
+    .truco-turn-note{font-size:.76rem;color:var(--muted);margin:8px 0 4px}
+    .truco-own{display:flex;justify-content:center;gap:10px;align-items:center;min-height:83px;margin:5px auto}
+    .truco-own .playing-card{width:clamp(51px,12vw,66px);height:clamp(73px,17vw,91px);max-width:none;flex:0 1 auto}
+    .truco-own .playing-card.pickable{transition:transform .15s,border-color .15s}
+    .truco-own .playing-card.pickable:hover{transform:translateY(-7px);border-color:var(--gold)}
+    .truco-prompt{border:1px solid #b29b57;background:#332f24;color:#ffe9b1;border-radius:9px;padding:9px 12px;margin:7px 0;font-size:.84rem;font-weight:800}
+    .truco-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0}
+    .truco-actions button{min-width:0;width:100%;font-size:clamp(.71rem,2.6vw,.88rem)}
+    .truco-actions button:only-child{grid-column:1/-1}
+    .truco-recap{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+    .truco-recap span{font-size:.74rem;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:6px 9px}
+    .truco-game .playing-card:not(.back-card),.truco-played-seat .playing-card{animation:gs-deal .3s ease both}
+    @media(max-width:540px){
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card:nth-child(7){grid-column:auto}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card{height:clamp(88px,14.1vh,119px);padding:8px}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .art{height:clamp(29px,4.8vh,44px)}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card strong{font-size:clamp(.71rem,3vw,.91rem)}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .go{margin-top:2px;padding-top:2px}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .tiny-card{width:27px;height:37px;font-size:.83rem}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .artcards{height:100%}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .artcoin{width:33px;height:33px;font-size:.93rem}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .minidice .die-svg{width:29px;height:29px}
+      .mode-grid:has(.mode-card:nth-child(8)) .mode-card .minidice.multiple .die-svg{width:20px;height:20px}
+      .truco-seat{padding:5px 2px}
+      .truco-bot-grid{gap:4px}
+      .truco-played{gap:4px;margin:6px 0}
+      .truco-played-seat{padding:4px 2px}
+      .truco-divider{padding:5px 7px;margin:5px 0}
+      .truco-own{gap:9px;min-height:76px}
+      .truco-actions{margin:6px 0}
+      .truco-turn-note{font-size:.69rem}
+    }
+    @media(max-height:610px){.truco-game .truco-seat{padding:4px 2px}.truco-game .truco-mini{margin:3px 0}.truco-game .truco-own{min-height:59px}.truco-game .truco-own .playing-card{width:46px;height:67px}.truco-game .truco-played-seat .playing-card{height:49px}}
   </style>
 </head>
 <body>
@@ -625,14 +686,15 @@ const MODES = [
   {id:"blackjack",title:"21",tag:"CARTAS",sub:"Chegue perto de 21 sem ultrapassar.",desc:"Comprar ou passar? O bot compra até 17.",bonus:"Bônus variável até +150%"},
   {id:"poker",title:"Pôquer fechado",tag:"5 CARTAS",sub:"Troque cartas e forme a melhor mão.",desc:"Até duas trocas de cartas. Mãos são comparadas no final.",bonus:"Até +900%"},
   {id:"texas",title:"Texas Hold'em",tag:"PÔQUER TEXAS",sub:"Duas cartas próprias e cinco públicas.",desc:"Revele flop, turn e river. Você pode redistribuir todas as cartas até três vezes.",bonus:"Bônus pela mão"},
-  {id:"plinko",title:"Plinko",tag:"11 CESTAS",sub:"Solte a bola e tente a cesta premiada.",desc:"Cestas 5 e 7 recuperam metade; acertar a cesta central escolhida devolve a aposta.",bonus:"Bônus até +875%"}
+  {id:"plinko",title:"Plinko",tag:"11 CESTAS",sub:"Solte a bola e tente a cesta premiada.",desc:"Cestas 5 e 7 recuperam metade; acertar a cesta central escolhida devolve a aposta.",bonus:"Bônus até +875%"},
+  {id:"truco",title:"Truco",tag:"4 JOGADORES",sub:"Você e um parceiro contra dois bots.",desc:"Três cartas por jogador, três vazas e pedidos de truco, seis ou nove.",bonus:"Até +38.400%"}
 ];
 
 const SHOP_ITEMS=[
  {id:"luck",name:"Sorte",symbol:"✦",type:"chance",cost:130,growth:1.75,
   desc:"Quanto maior a aposta em relação ao saldo, maior a chance de um resultado favorável.",formula:"S (p.p.) = nível × aposta ÷ saldo antes da aposta"},
  {id:"exponent",name:"Exponente estatístico",symbol:"∑",type:"reward",cost:170,growth:1.85,
-  desc:"Resultados que você já acertou mais vezes dão bônus maiores. Cara e coroa evoluem separadamente.",formula:"Extra (p.p.) = nível × vitórias anteriores no mesmo resultado"},
+  desc:"Acertos acumulados aumentam o bônus, sem zerar nas derrotas. Cara e coroa contam juntas.",formula:"Extra (p.p.) = nível × acertos acumulados (cara + coroa, no jogo da moeda)"},
  {id:"current",name:"Correnteza",symbol:"↝",type:"reward",cost:210,growth:1.9,
   desc:"Bônus de vitórias consecutivas crescem geometricamente; qualquer derrota zera a sequência.",formula:"Multiplicador = (1 + 0,10 × nível) ^ vitórias seguidas"},
  {id:"impulse",name:"Impulso",symbol:"＋",type:"reward",cost:85,growth:1.6,
@@ -651,6 +713,14 @@ function prepareShop(){
   for(const item of SHOP_ITEMS){const n=shop.levels[item.id];shop.levels[item.id]=Number.isSafeInteger(n)&&n>=0?Math.min(100,n):0;}
   if(!shop.events||typeof shop.events!=="object")shop.events={};
   for(const k of Object.keys(shop.events))if(!Number.isSafeInteger(shop.events[k])||shop.events[k]<0)delete shop.events[k];
+  // Migra os acertos antigos de cara e coroa para um único contador acumulado.
+  // A migração é feita uma vez: as chaves antigas são apagadas para evitar soma dupla.
+  const oldCoinKeys=["coin:cara","coin:coroa"];
+  if(oldCoinKeys.some(k=>Object.hasOwn(shop.events,k))){
+    const count=oldCoinKeys.reduce((n,k)=>n+(shop.events[k]||0),shop.events["coin:acertos"]||0);
+    shop.events["coin:acertos"]=count;
+    for(const k of oldCoinKeys)delete shop.events[k];
+  }
   if(!Number.isSafeInteger(shop.streak)||shop.streak<0)shop.streak=0;
   if(![null,...MODES.map(m=>m.id)].includes(shop.lastMode))shop.lastMode=null;
 }
@@ -664,10 +734,13 @@ function isRareOutcome(){
  if(state.mode==="poker")return rankPoker(state.data.player).rank>=5;
  if(state.mode==="texas")return bestTexas([...state.data.player,...state.data.board]).score.rank>=5;
  if(state.mode==="plinko")return state.data.slot<=1||state.data.slot>=9;
+ if(state.mode==="truco")return state.data.tier>=6;
  return false;
 }
 function currentEventKey(){
- if(state.mode==="coin"||state.mode==="dice")return state.mode+":"+state.choice;
+ // Cara e coroa usam o MESMO histórico para o Exponente estatístico.
+ if(state.mode==="coin")return "coin:acertos";
+ if(state.mode==="dice")return state.mode+":"+state.choice;
  if(state.mode==="yatzy")return "yatzy:"+scoreYatzy(state.data.values).name;
  if(state.mode==="blackjack"){
   const v=blackjackValue(state.data.player);
@@ -676,6 +749,7 @@ function currentEventKey(){
  if(state.mode==="poker")return "poker:"+rankPoker(state.data.player).name;
  if(state.mode==="texas")return "texas:"+bestTexas([...state.data.player,...state.data.board]).score.name;
  if(state.mode==="plinko")return "plinko:cesta-"+state.data.slot;
+ if(state.mode==="truco")return "truco:"+state.data.tier;
  return "";
 }
 function victoryUpgrades(baseBonus){
@@ -713,7 +787,7 @@ function renderShop(){
  ${[["Probabilidades","chance"],["Bônus e proteção","reward"]].map(([name,group])=>`<h3 class="shop-category">${name}<small>${group==="chance"?"Alteram os sorteios":"Alteram créditos recebidos"}</small></h3>
  <div class="shop-grid">${SHOP_ITEMS.filter(i=>i.type===group).map(item=>{const n=level(item.id),price=upgradePrice(item),disabled=state.phase==="playing"||!Number.isFinite(price)||saved.balance<price;
  return `<article class="shop-card" data-shop-card="${item.id}"><div class="shop-card-top"><span class="shop-symbol" aria-hidden="true">${item.symbol}</span><div class="shop-card-title"><strong>${item.name}</strong><span>Nível ${n} → ${n+1}</span></div></div><p>${item.desc}</p><div class="shop-formula">${item.formula}</div><div class="shop-card-bottom"><span class="shop-level">Nível <b>${n}</b></span><button type="button" class="shop-buy" data-buy="${item.id}" ${disabled?"disabled":""}>${!Number.isFinite(price)?"Limite atingido":state.phase==="playing"?"Rodada em curso":saved.balance<price?`Faltam ${money(price-saved.balance)}`:`Comprar · ${money(price)}`}</button></div></article>`;}).join("")}</div>`).join("")}
- <p class="shop-extra">Sorte usa a aposta e o saldo antes do desconto. Empates não quebram a Correnteza; derrotas quebram. Compras e níveis ficam salvos neste navegador. Créditos não têm valor real.</p>`;
+ <p class="shop-extra">Sorte usa a aposta e o saldo antes do desconto. O Exponente acumula acertos e nunca zera ao errar; no jogo da moeda, cara e coroa contam juntas. Já a Correnteza zera nas derrotas, mas não nos empates. Compras e níveis ficam salvos neste navegador. Créditos não têm valor real.</p>`;
 }
 function buyUpgrade(id){
  const item=SHOP_ITEMS.find(x=>x.id===id);
@@ -764,6 +838,11 @@ const TEXAS_BONUSES = [20,35,55,85,125,175,220,350,550,1000];
 // Índices 4, 5 e 6 são cestas perdedoras. Os bônus positivos dobram a cada faixa externa.
 const PLINKO_BONUSES = [800,400,200,100,0,0,0,100,200,400,800];
 const PLINKO_EXACT_BONUS = 75;
+// Truco Paulista: a manilha é a próxima carta acima da vira.
+const TRUCO_RANKS = ["4","5","6","7","Q","J","K","A","2","3"];
+const TRUCO_SUIT_POWER = {"♦":1,"♠":2,"♥":3,"♣":4};
+const TRUCO_WIN_BONUS = {0:150,3:600,6:2400,9:38400};
+const TRUCO_REFUND = {0:.75,3:.30,6:.01};
 const TEXAS_REDEALS = 3;
 const PLINKO_ANIMATION_MS = 3180;
 const PLINKO_WEIGHTS = [1,10,45,120,210,252,210,120,45,10,1];
@@ -804,14 +883,15 @@ function prepareStats(){
 }
 prepareStats();
 prepareShop();
-function trackRound(outcome,payout){
+save(); // Salva a migração dos históricos anteriores sem alterar níveis ou saldo.
+function trackRound(outcome,payout,extraDebit=0){
   const data=saved.detail.byMode[state.mode];
   if(!data)return;
   data.rounds++;
   if(outcome==="win")data.wins++;
   else if(outcome==="tie")data.ties++;
   else data.losses++;
-  data.staked+=state.bet;
+  data.staked+=state.bet+extraDebit;
   data.paid+=payout;
 }
 let state={mode:null,phase:"lobby",bet:0,data:null,choice:"cara",result:null,animation:false,token:0,luckExtra:0};
@@ -829,10 +909,11 @@ function gameArt(id){
   if(id==="blackjack")return '<div class="artcards"><div class="tiny-card">A♠</div><div class="tiny-card red">K♥</div></div>';
   if(id==="texas")return '<div class="artcards"><div class="tiny-card">A♠</div><div class="tiny-card red">A♥</div><div class="tiny-card back">GS</div></div>';
   if(id==="plinko")return '<div class="plinko-art"><span>●</span><span>·····</span><span>∪∪∪∪∪</span></div>';
+  if(id==="truco")return '<div class="artcards"><div class="tiny-card red">3♥</div><div class="tiny-card">A♠</div><div class="tiny-card red">7♦</div></div>';
   return '<div class="artcards"><div class="tiny-card back">GS</div><div class="tiny-card red">K♦</div><div class="tiny-card">K♣</div></div>';
 }
 function renderLobby(){
-  return `<section class="lobby-heading"><span class="eyebrow">GS · SETE MODOS</span><h1>Escolha um jogo</h1></section>
+  return `<section class="lobby-heading"><span class="eyebrow">GS · OITO MODOS</span><h1>Escolha um jogo</h1></section>
   <section class="mode-grid" aria-label="Modos de jogo">${MODES.map(m=>`<button type="button" class="mode-card" data-mode="${m.id}" aria-label="Jogar ${m.title}"><div class="art" aria-hidden="true">${gameArt(m.id)}</div><strong>${m.title}</strong><span class="go"><span>${m.tag}</span><b>↗</b></span></button>`).join("")}</section>`;
 }
 function gameToolbar(){
@@ -862,6 +943,7 @@ function chooseMarkup(){
   if(state.mode==="yatzy")return `<div class="ready-label"><span>⚄</span><strong>Yatzy</strong><small>5 dados · 3 lançamentos</small></div>`;
   if(state.mode==="blackjack")return `<div class="ready-label"><span>♠</span><strong>21</strong><small>Você × bot</small></div>`;
   if(state.mode==="texas")return `<div class="ready-label"><span>♠</span><strong>Texas Hold'em</strong><small>2 próprias · 5 públicas · 3 redistribuições</small></div>`;
+  if(state.mode==="truco")return `<div class="ready-label"><span>♣</span><strong>Truco em duplas</strong><small>4 jogadores · 3 cartas</small></div>`;
   if(state.mode==="plinko")return `<h2>Escolha uma cesta</h2><div class="plinko-picks" aria-label="Escolha a cesta exata">${PLINKO_BONUSES.map((v,i)=>`<button type="button" class="plinko-pick ${Number(state.choice)===i?'active':''} ${v===0?'risk':''}" data-basket="${i}" aria-pressed="${Number(state.choice)===i}"><strong>${i+1}</strong><small>${v?`+${v}%`:i===4||i===6?'½':'−'}</small></button>`).join('')}</div><p class="plinko-hint">5 e 7: devolvem metade. 6: perde. Se acertar uma cesta central escolhida, recupera toda a aposta. Cesta externa escolhida: +${PLINKO_EXACT_BONUS}%.</p>`;
   return `<div class="ready-label"><span>♥</span><strong>Pôquer fechado</strong><small>5 cartas · 2 trocas</small></div>`;
 }
@@ -890,6 +972,17 @@ function bonusGuide(){
     ["Mesmos pontos (até 21), bot com menos cartas", "Devolução: A ÷ Q do jogador"],
     ["Mesmos pontos (até 21), jogador com menos cartas", "Devolução: (Q − 1) × A ÷ Q do bot"]
   ];
+  else if(state.mode==="truco")rows=[
+    ["Ganhar após pedir nove", "+38.400%"],
+    ["Ganhar após aceitar seis", "+2.400%"],
+    ["Ganhar após pedir truco", "+600%"],
+    ["Ganhar sem pedir aumento", "+150%"],
+    ["Correr", "100% devolvido"],
+    ["Perder sem aumento", "75% devolvido"],
+    ["Perder após truco", "30% devolvido"],
+    ["Perder após seis", "1% devolvido"],
+    ["Perder após nove", "−100% adicional da aposta"]
+  ];
   else if(state.mode==="texas")rows=POKER_NAMES.map((name,i)=>["Vitória com "+name.toLowerCase(),"+"+TEXAS_BONUSES[i]+"%"]);
   else if(state.mode==="plinko")rows=[
     ["Cestas 1 ou 11 (extremidades)","+800%"],
@@ -907,6 +1000,8 @@ function bonusGuide(){
     : state.mode==="blackjack"
     ? `<div class="bonus-formula"><strong>Fórmula do bônus variável</strong><code>Bônus (%) = mín(150; 25 + 4 × |J − B| + 2 × J + N)</code><small>J = soma dos valores das cartas do jogador (ás vale 1 ou 11); B = soma das cartas do bot; |J − B| = diferença absoluta entre as mãos; N = 15 para 21 natural vencedor, ou 0 nos outros casos. O bônus máximo é +150% e só é pago em caso de vitória comum.</small></div>
       <div class="bonus-formula"><strong>Igualdade de pontos até 21: critério de cartas</strong><code>Bot com menos cartas: recebido = A ÷ Q (suas cartas)</code><code>Você com menos cartas: recebido = (Q − 1) × A ÷ Q (cartas do bot)</code><small>A = créditos apostados; Q = quantidade de cartas indicada em cada caso. Só há empate se os dois tiverem a mesma pontuação e a mesma quantidade de cartas. As devoluções parciais são arredondadas ao crédito inteiro mais próximo e não recebem bônus adicionais da loja.</small></div>`
+    : state.mode==="truco"
+    ? `<div class="bonus-formula"><strong>Como funcionam os valores</strong><code>Vitória: recebido = A × (1 + bônus/100)</code><code>Derrota comum/truco/seis: devolvido = A × 0,75 / 0,30 / 0,01</code><code>Derrota no nove: mais −A além da aposta já descontada</code><small>A = aposta, em créditos fictícios. A penalidade adicional do nove é limitada ao saldo disponível, sem saldo negativo. Correr devolve A. Sorte e bônus da loja podem modificar os ganhos; as devoluções por derrota seguem a tabela.</small></div>`
     : state.mode==="plinko"
     ? `<div class="bonus-formula"><strong>Como os bônus são calculados</strong><code>Bônus (%) = 100 × 2^(|P − 6| − 2), para cestas premiadas</code><small>P é o número da cesta (1 a 11); |P − 6| é a distância até a cesta central. Faixas premiadas: de 4 ou 8 (+100%) até 1 ou 11 (+800%). Cestas 5 e 7 sempre recuperam ao menos 50% da aposta; a cesta 6 perde a aposta se não for escolhida. Se acertar exatamente a cesta central selecionada (5, 6 ou 7), recupera 100% do valor, sem bônus. Se acertar uma cesta externa selecionada, acrescente ${PLINKO_EXACT_BONUS} pontos percentuais. O sorteio usa dez desvios, com a Sorte podendo favorecer cestas premiadas.</small></div>`
     : "";
@@ -924,7 +1019,8 @@ function sideRules(){
     blackjack:[['1','Você e o bot recebem duas cartas. Se houver 21 natural, toque em Revelar resultado para conferir as mãos.'],['2','Compre novas cartas ou passe para comparar com o bot, que compra até chegar a pelo menos 17.'],['3','Figuras valem 10; ás vale 1 ou 11. Se ambos ultrapassarem 21, vence a menor soma; se apenas um ultrapassar, perde.'],['4','Se os pontos forem iguais e até 21, só há empate com o mesmo número de cartas. Com menos cartas, o jogador vence no desempate, mas o recebimento é parcial conforme as fórmulas de premiação.']],
     poker:[['1','Você e o bot começam com cinco cartas.'],['2','Selecione as cartas para substituir. Você tem duas oportunidades de troca, podendo ficar antes.'],['3','O bot também pode trocar até duas vezes. Você pode ficar para comparar ou correr e desistir da rodada.']],
     texas:[['1','Você recebe duas cartas próprias; o bot recebe duas escondidas. Cinco cartas públicas são distribuídas.'],['2','Você pode correr (redistribuir) até três vezes: todas as cartas são embaralhadas e entregues novamente, sem nova aposta. Isso reinicia o flop, turn e river.'],['3','Revele flop, turn e river; a melhor mão de cinco cartas entre as sete vence. Empate devolve a aposta.']],
-    plinko:[['1','Escolha a cesta desejada antes de lançar a bola.'],['2','A bola desvia entre dez fileiras de pinos. As cestas 5 e 7 devolvem pelo menos metade; a 6 normalmente não paga.'],['3','Acertar a cesta central escolhida devolve toda a aposta; se acertar uma cesta externa escolhida, soma 75 pontos percentuais ao bônus.']]
+    plinko:[['1','Escolha a cesta desejada antes de lançar a bola.'],['2','A bola desvia entre dez fileiras de pinos. As cestas 5 e 7 devolvem pelo menos metade; a 6 normalmente não paga.'],['3','Acertar a cesta central escolhida devolve toda a aposta; se acertar uma cesta externa escolhida, soma 75 pontos percentuais ao bônus.']],
+    truco:[['1','Truco Paulista: baralho de 40 cartas. A carta virada determina a manilha (a carta seguinte na ordem 4, 5, 6, 7, Q, J, K, A, 2, 3).'],['2','Você e o parceiro formam uma dupla contra dois bots. Só suas cartas são abertas; do parceiro, apenas as manilhas ficam visíveis.'],['3','Escolha uma carta por vaza. Após sua jogada, os três bots jogam. A dupla com a carta mais forte vence a vaza; vença duas vazas para ganhar.'],['4','Na sua vez, você pode correr e receber de volta a aposta, ou pedir truco. Os bots só podem pedir seis depois do seu truco; então você pode aceitar seis ou pedir nove.'],['5','Se as vazas terminarem empatadas, a primeira vaza decisiva prevalece; três vazas empatadas devolvem a aposta. Na derrota após nove, a perda adicional fica limitada ao saldo disponível.']]
   };
   return `<section class="panel panel-side" aria-labelledby="howto-title"><span class="eyebrow">INSTRUÇÕES</span><h2 id="howto-title">Como jogar</h2>${examples[state.mode].map(([i,s])=>`<div class="rule"><i>${i}</i><div>${s}</div></div>`).join("")}<hr class="separator"><p class="notice">Saldo único para todos os modos. Os créditos não possuem valor monetário, não podem ser comprados ou resgatados.</p></section>`;
 }
@@ -1194,11 +1290,156 @@ function settlePlinko(){
  finish(outcome,bonus,description,details,{minimumRefundRatio:refundRatio});
 }
 
+
+function makeTrucoDeck(){
+ const deck=[];
+ for(const suit of SUITS)for(const rank of TRUCO_RANKS)deck.push({suit,rank});
+ for(let i=deck.length-1;i>0;i--){const j=rand(i+1);[deck[i],deck[j]]=[deck[j],deck[i]];}
+ return deck;
+}
+function dealTruco(){
+ const deck=makeTrucoDeck(),vira=deck.pop();
+ const manilha=TRUCO_RANKS[(TRUCO_RANKS.indexOf(vira.rank)+1)%TRUCO_RANKS.length];
+ const hands=Array.from({length:4},()=>Array.from({length:3},()=>deck.pop()));
+ return {hands,vira,manilha,tier:0,sixAsked:false,pendingSix:false,tricks:[],plays:[],busy:false,trickMessage:"",round:0};
+}
+function trucoPower(card,manilha){
+ if(card.rank===manilha)return 100+TRUCO_SUIT_POWER[card.suit];
+ return TRUCO_RANKS.indexOf(card.rank);
+}
+function drawTruco(){
+ const hand=dealTruco();
+ if(Math.random()<state.luckExtra/100){
+  const alt=dealTruco();
+  const score=h=>[0,2].flatMap(i=>h.hands[i]).reduce((v,c)=>v+trucoPower(c,h.manilha),0)-[1,3].flatMap(i=>h.hands[i]).reduce((v,c)=>v+trucoPower(c,h.manilha),0);
+  if(score(alt)>score(hand))return alt;
+ }
+ return hand;
+}
+function trucoTierLabel(tier){return ({0:"Normal",3:"Truco",6:"Seis",9:"Nove"})[tier];}
+function trucoVisibleCards(hand,partner,manilha){
+ return `<div class="truco-mini">${hand.map(c=>cardMarkup(partner&&c.rank===manilha?c:null)).join("")}</div>`;
+}
+function renderTruco(){
+ const d=state.data;
+ const people=["Você","Bot 1","Parceiro","Bot 2"];
+ const last=d.tricks.at(-1);
+ const table=d.plays.map(p=>[p.seat,p.card]);
+ const played=new Map(table);
+ const status=d.pendingSix?"Os bots pediram SEIS!":d.busy?(d.trickMessage||"Os bots estão jogando..."):d.trickMessage||"Escolha uma carta para esta vaza";
+ return `${gameToolbar()}<section class="game-intro"><div><span class="eyebrow">TRUCO · VAZA ${Math.min(3,d.tricks.length+1)} DE 3</span><h1>Você + parceiro</h1></div></section>
+ <section class="panel center truco-game">
+ <div class="truco-top"><span class="truco-tag">${trucoTierLabel(d.tier)} · vitória +${percent(TRUCO_WIN_BONUS[d.tier])}</span><span class="truco-tag">${d.tricks.filter(x=>x.winner===0).length} × ${d.tricks.filter(x=>x.winner===1).length} vazas</span></div>
+ <div class="truco-bot-grid">
+ ${[1,2,3].map(i=>`<div class="truco-seat ${i===2?'partner':''}"><strong>${people[i]}</strong><small>${i===2?'Sua dupla':'Adversário'} · ${d.hands[i].length} cartas</small>${trucoVisibleCards(d.hands[i],i===2,d.manilha)}</div>`).join('')}
+ </div>
+ <div class="truco-divider"><div class="truco-vira">${cardMarkup(d.vira)}<div><span>Vira</span><strong>Manilha: ${d.manilha}</strong></div></div>
+ <div class="truco-tricks" aria-label="Vazas vencidas">${[0,1,2].map(i=>{const result=d.tricks[i];return `<span class="${result?result.winner===0?'win':result.winner===1?'lose':'tie':''}">${result?result.winner===0?'✓':result.winner===1?'×':'=':i+1}</span>`;}).join('')}</div></div>
+ <div class="truco-played">${people.map((person,i)=>`<div class="truco-played-seat"><small>${person}</small>${played.has(i)?cardMarkup(played.get(i)):'<div class="truco-placeholder">·</div>'}</div>`).join('')}</div>
+ <p class="truco-turn-note" aria-live="polite">${status}</p>
+ ${d.pendingSix?'<div class="truco-prompt">Oponente pediu SEIS: aceite, aumente para NOVE ou corra.</div>':''}
+ <div class="truco-own">${d.hands[0].map((c,i)=>cardMarkup(c,{pickable:!d.busy&&!d.pendingSix,index:i})).join('')}</div>
+ <div class="truco-actions">
+ ${d.pendingSix?'<button type="button" class="primary" data-action="truco-six">Aceitar seis</button><button type="button" class="secondary" data-action="truco-nine">Pedir nove</button>':d.busy?'':d.tier===0?'<button type="button" class="primary" data-action="truco-raise">Pedir truco</button>':d.tier===6&&d.sixAsked?'<button type="button" class="primary" data-action="truco-nine">Pedir nove</button>':''}
+ ${!d.busy?'<button type="button" class="danger" data-action="truco-run">Correr · devolver aposta</button>':''}
+ </div>
+ </section>`;
+}
+function trucoBotChoice(d,seat){
+ const hand=d.hands[seat];
+ const ranked=hand.map((c,i)=>({i,p:trucoPower(c,d.manilha)})).sort((a,b)=>b.p-a.p);
+ if(seat===2&&d.plays.length){
+  // Parceiro tenta guardar cartas fortes se a dupla já estiver ganhando.
+  const own=d.plays.find(p=>p.seat===0)?.card;
+  if(own&&trucoPower(own,d.manilha)>ranked[0].p&&ranked.length>1)return ranked.at(-1).i;
+ }
+ return Math.random()<.7?ranked[0].i:ranked.at(-1).i;
+}
+function askTrucoSix(d,probability=.52){
+ if(d.tier===3&&!d.sixAsked&&Math.random()<probability){d.sixAsked=true;d.pendingSix=true;d.trickMessage="Bots pediram seis!";return true;}
+ return false;
+}
+function raiseTruco(action){
+ if(state.phase!=="playing"||state.mode!=="truco")return;
+ const d=state.data;
+ if(d.busy)return;
+ if(action==="truco-raise"&&d.tier===0){d.tier=3;d.trickMessage="Você pediu truco!";askTrucoSix(d);render();}
+ else if(action==="truco-six"&&d.pendingSix){d.tier=6;d.pendingSix=false;d.trickMessage="Você aceitou seis. Escolha sua carta.";render();}
+ else if(action==="truco-nine"&&d.sixAsked&&(d.pendingSix||d.tier===6)){
+  d.tier=9;d.pendingSix=false;d.trickMessage="Você pediu nove! Escolha sua carta.";render();
+ }
+}
+function playTruco(index){
+ if(state.phase!=="playing"||state.mode!=="truco")return;
+ const d=state.data;
+ if(d.busy||d.pendingSix||!Number.isInteger(index)||index<0||index>=d.hands[0].length)return;
+ const [card]=d.hands[0].splice(index,1);
+ d.plays=[{seat:0,card}];d.busy=true;d.trickMessage="Os outros estão escolhendo as cartas...";
+ render();
+ const token=state.token;
+ const follow=step=>{
+  if(state.token!==token||state.phase!=="playing"||state.mode!=="truco")return;
+  if(step===3){settleTrucoTrick(token);return;}
+  const seat=step+1,idx=trucoBotChoice(d,seat);
+  d.plays.push({seat,card:d.hands[seat].splice(idx,1)[0]});
+  render();setTimeout(()=>follow(step+1),330);
+ };
+ setTimeout(()=>follow(0),290);
+}
+function settleTrucoTrick(token){
+ const d=state.data;
+ const high=Math.max(...d.plays.map(p=>trucoPower(p.card,d.manilha)));
+ const strongest=d.plays.filter(p=>trucoPower(p.card,d.manilha)===high);
+ const teams=new Set(strongest.map(p=>p.seat%2));
+ const winner=teams.size===1?[...teams][0]:null;
+ d.tricks.push({winner,plays:d.plays.slice()});
+ const won=d.tricks.filter(t=>t.winner===0).length;
+ const lost=d.tricks.filter(t=>t.winner===1).length;
+ const done=won===2||lost===2||d.tricks.length===3;
+ d.trickMessage=winner===null?"Vaza empatada":winner===0?"Vaza para sua dupla!":"Vaza para os adversários";
+ render();
+ setTimeout(()=>{
+  if(state.token!==token||state.phase!=="playing"||state.mode!=="truco")return;
+  if(done){
+   let outcome=won>lost?"win":won<lost?"lose":"tie";
+   if(won===lost&&won>0){const first=d.tricks.find(t=>t.winner!==null);outcome=first.winner===0?"win":"lose";}
+   finishTruco(outcome);return;
+  }
+  d.busy=false;d.plays=[];d.trickMessage="Nova vaza: escolha uma carta.";
+  if(d.tier===3&&!d.sixAsked)askTrucoSix(d,.38);
+  render();
+ },680);
+}
+function trucoDetails(){
+ const d=state.data;
+ const vals=d.tricks.map((t,i)=>`<span>Vaza ${i+1}: ${t.winner===null?'Empate':t.winner===0?'Sua dupla':'Adversários'}</span>`).join('');
+ return `<div class="truco-recap"><span>Vira: ${d.vira.rank}${d.vira.suit}</span><span>Manilha: ${d.manilha}</span><span>Pedido: ${trucoTierLabel(d.tier)}</span></div><div class="truco-recap">${vals}</div>`;
+}
+function finishTruco(outcome){
+ const tier=state.data.tier,bet=state.bet,details=trucoDetails();
+ if(outcome==="tie"){
+  finish("tie",0,"As três vazas terminaram sem uma dupla vencedora. Sua aposta foi devolvida.",details);return;
+ }
+ if(outcome==="win"){
+  finish("win",TRUCO_WIN_BONUS[tier],"Sua dupla venceu a mão de Truco!",details);return;
+ }
+ if(tier===9){
+  finish("lose",0,"Os adversários venceram após seu pedido de nove. Há uma perda adicional de até uma aposta.",details,{fixedPayout:0,extraDebit:bet});
+ }else{
+  finish("lose",0,"A dupla adversária venceu. A devolução segue o nível do pedido.",details,{fixedPayout:Math.round(bet*TRUCO_REFUND[tier])});
+ }
+}
+function runTruco(){
+ if(state.phase!=="playing"||state.mode!=="truco"||state.data.busy)return;
+ finish("tie",0,"Você correu antes de jogar sua carta e recuperou o valor apostado.",trucoDetails());
+}
+
 function renderPlaying(){
   if(state.animation && state.mode!=="plinko"){
     const c=state.mode==="coin";
     return `${gameToolbar()}<section class="panel result-panel"><div class="status-label">SORTEANDO RESULTADO</div><h1>${c?"Lançando a moeda...":"Lançando dois dados..."}</h1>${c?'<div class="bigcoin spinning"><span>★</span><strong>GS</strong></div>':`<div class="dice-field">${dieSvg(3)}${dieSvg(5)}</div>`}<p>Calculando o resultado da rodada.</p></section>`;
   }
+  if(state.mode==="truco")return renderTruco();
   if(state.mode==="texas"){
     const d=state.data,stage=d.revealed;
     const stepLabel=stage===0?"Revelar flop (3 cartas)":stage===3?"Revelar turn (4ª carta)":stage===4?"Revelar river (5ª carta)":"Comparar mãos";
@@ -1251,9 +1492,9 @@ function renderResult(){
   const titles={win:"Você venceu!",lose:"Não foi dessa vez",tie:"Empate!"};
   const symbols={win:"✓",lose:"×",tie:"="};
   const amount=(r.delta>0?"+":"")+money(r.delta);
-  const resultHeading=r.fixedPayout!==null&&r.fixedPayout!==undefined?(r.outcome==="win"?"Você teve menos cartas!":"O bot teve menos cartas!"):titles[r.outcome];
+  const resultHeading=state.mode==="blackjack"&&r.fixedPayout!==null&&r.fixedPayout!==undefined?(r.outcome==="win"?"Você teve menos cartas!":"O bot teve menos cartas!"):titles[r.outcome];
   const payoutExplanation=r.fixedPayout!==null&&r.fixedPayout!==undefined
-    ? `Recebimento parcial pela regra de desempate: ${money(r.payout)} de ${money(state.bet)} apostados.`
+    ? state.mode==="truco"?`Devolução da tabela: ${money(r.payout)}. ${r.extraDebit?"Perda adicional: "+money(r.extraDebit)+".":""}`:`Recebimento parcial pela regra de desempate: ${money(r.payout)} de ${money(state.bet)} apostados.`
     : r.outcome==="win"?`Aposta devolvida + ${percent(r.bonus)} de bônus.`:r.outcome==="tie"?"Sua aposta foi devolvida.":r.payout>0?`${money(r.payout)} da aposta recuperados.`:"A aposta da rodada foi perdida.";
   return `${gameToolbar()}<section class="panel result-panel ${r.outcome}">
     <div class="result-mark">${symbols[r.outcome]}</div><span class="eyebrow">${mode().title.toUpperCase()} • RESULTADO</span><h1>${resultHeading}</h1><p>${r.description}</p>
@@ -1374,6 +1615,8 @@ function beginBet(){
     const deck=makeDeck();const player=[drawLucky21(deck,[])],bot=[deck.pop()];player.push(drawLucky21(deck,player));bot.push(deck.pop());
     state.data={deck,player,bot,naturalReady: blackjackValue(player)===21 || blackjackValue(bot)===21};
     render();
+  }else if(state.mode==="truco"){
+    state.data=drawTruco();render();
   }else if(state.mode==="texas"){
     state.data={...drawTexas(),redeals:0};render();
   }else if(state.mode==="plinko"){
@@ -1391,7 +1634,9 @@ function finish(outcome,baseBonus,description,details,options={}){
     // A regra especial do 21 define um valor recebido exato: sem bônus ou Escudo.
     payout=Math.min(state.bet,options.fixedPayout);
     bonus=0;
-    note='<div class="upgrade-result"><strong>Desempate por quantidade de cartas</strong><div>Devolução parcial calculada pela fórmula do 21, sem bônus adicionais da loja.</div></div>';
+    note=state.mode==="truco"
+      ? '<div class="upgrade-result"><strong>Regra de derrota do Truco</strong><div>Devolução calculada diretamente pela tabela do modo, sem alterar o valor pelos aprimoramentos.</div></div>'
+      : '<div class="upgrade-result"><strong>Desempate por quantidade de cartas</strong><div>Devolução parcial calculada pela fórmula do 21, sem bônus adicionais da loja.</div></div>';
     if(outcome==="win"){
       const key=currentEventKey();
       saved.shop.events[key]=(saved.shop.events[key]||0)+1;
@@ -1416,15 +1661,20 @@ function finish(outcome,baseBonus,description,details,options={}){
     if(payout>0)note=`<div class="upgrade-result"><strong>Recuperação</strong><div>${percent(finalRefund*100)} da aposta devolvida: ${money(payout)}${shield>guaranteed?' (Escudo aplicado)':''}</div></div>`;
     saved.shop.streak=0;
   }
+  const extraDebit=outcome==="lose"?Math.min(saved.balance,Math.max(0,Math.floor(options.extraDebit||0))):0;
+  if(extraDebit){
+    saved.balance-=extraDebit;
+    note+=`<div class="upgrade-result"><strong>Ônus adicional por nove</strong><div>−${money(extraDebit)} do saldo disponível, além da aposta original.</div></div>`;
+  }
   saved.shop.lastMode=state.mode;
   saved.balance+=payout;
   saved.stats.rounds++;
-  trackRound(outcome,payout);
+  trackRound(outcome,payout,extraDebit);
   if(outcome==="win")saved.stats.wins++;
   else if(outcome==="lose")saved.stats.losses++;
   else saved.stats.ties++;
   save();state.phase="result";state.animation=false;
-  state.result={outcome,bonus,description,details,payout,upgradeNote:note,delta:payout-state.bet,fixedPayout:options.fixedPayout??null};render();
+  state.result={outcome,bonus,description,details,payout,upgradeNote:note,delta:payout-state.bet-extraDebit,extraDebit,fixedPayout:options.fixedPayout??null};render();
 }
 
 function yatzyRoll(){
@@ -1549,6 +1799,7 @@ document.addEventListener("click",event=>{
     const index=Number(holdButton.dataset.hold);state.data.held[index]=!state.data.held[index];render();return;
   }
   const cardButton=event.target.closest("[data-card]");
+  if(cardButton&&state.phase==="playing"&&state.mode==="truco"){playTruco(Number(cardButton.dataset.card));return;}
   if(cardButton&&state.phase==="playing"&&state.mode==="poker"&&state.data.swaps<2){
     const index=Number(cardButton.dataset.card);state.data.selected[index]=!state.data.selected[index];render();return;
   }
@@ -1571,6 +1822,8 @@ document.addEventListener("click",event=>{
   else if(action==="swap"&&state.phase==="playing"&&state.mode==="poker")swapPoker();
   else if(action==="stand-poker"&&state.phase==="playing"&&state.mode==="poker")settlePoker();
   else if(action==="fold"&&state.phase==="playing"&&state.mode==="poker")settlePoker(true);
+  else if(["truco-raise","truco-six","truco-nine"].includes(action)&&state.phase==="playing"&&state.mode==="truco")raiseTruco(action);
+  else if(action==="truco-run"&&state.phase==="playing"&&state.mode==="truco")runTruco();
   else if(action==="redeal-texas"&&state.phase==="playing"&&state.mode==="texas")texasRedeal();
   else if(action==="reveal-texas"&&state.phase==="playing"&&state.mode==="texas")texasReveal();
   else if(action==="end-texas"&&state.phase==="playing"&&state.mode==="texas")settleTexas();
