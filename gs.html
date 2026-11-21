@@ -728,20 +728,20 @@ const MODES = [
 ];
 
 const SHOP_ITEMS=[
- {id:"luck",name:"Sorte",symbol:"✦",type:"chance",cost:130,growth:1.75,
+ {id:"luck",name:"Sorte",symbol:"✦",type:"chance",cost:1300,growth:2.45,
   desc:"Quanto maior a aposta em relação ao saldo, maior a chance de um resultado favorável.",formula:"S (p.p.) = nível × aposta ÷ saldo antes da aposta"},
- {id:"exponent",name:"Exponente estatístico",symbol:"∑",type:"reward",cost:170,growth:1.85,
+ {id:"familiarity",name:"Familiaridade",symbol:"◉",type:"chance",cost:1600,growth:2.55,
+  desc:"Cada partida concluída em um modo aumenta sua chance de resultados favoráveis naquele mesmo jogo. O histórico é independente para cada modo.",formula:"Chance extra (p.p.) = 0,1 × nível × partidas concluídas neste modo"},
+ {id:"exponent",name:"Exponente estatístico",symbol:"∑",type:"reward",cost:1700,growth:2.65,
   desc:"Acertos acumulados aumentam o bônus, sem zerar nas derrotas. Cara e coroa contam juntas.",formula:"Extra (p.p.) = nível × acertos acumulados (cara + coroa, no jogo da moeda)"},
- {id:"current",name:"Correnteza",symbol:"↝",type:"reward",cost:210,growth:1.9,
-  desc:"Bônus de vitórias consecutivas crescem geometricamente; qualquer derrota zera a sequência.",formula:"Multiplicador = (1 + 0,10 × nível) ^ vitórias seguidas"},
- {id:"impulse",name:"Impulso",symbol:"＋",type:"reward",cost:85,growth:1.6,
+ {id:"current",name:"Correnteza",symbol:"↝",type:"reward",cost:2100,growth:2.8,
+  desc:"Vitórias consecutivas de QUALQUER jogo aumentam o multiplicador do bônus; uma derrota em qualquer jogo zera a sequência. Empates não zeram.",formula:"Multiplicador = (1 + 0,01 × nível) ^ vitórias consecutivas em todos os jogos"},
+ {id:"impulse",name:"Impulso",symbol:"＋",type:"reward",cost:850,growth:2.35,
   desc:"Adiciona bônus fixo a toda vitória, independentemente do jogo.",formula:"Bônus extra = 5 × nível pontos percentuais"},
- {id:"relic",name:"Relíquia",symbol:"◆",type:"reward",cost:180,growth:1.75,
-  desc:"Recompensa conquistas raras: igualdade nos dados, combinações altas, 21 natural e mãos fortes.",formula:"Extra raro = 20 × nível pontos percentuais"},
- {id:"shield",name:"Escudo",symbol:"◈",type:"reward",cost:140,growth:1.7,
-  desc:"Quando perde, recupera parte da aposta. O limite total de recuperação é 80%.",formula:"Devolução na derrota = aposta × mín(80%; 5% × nível)"},
- {id:"affinity",name:"Afinidade",symbol:"◎",type:"reward",cost:120,growth:1.7,
-  desc:"Repetir o mesmo modo da última rodada acrescenta bônus quando você vence.",formula:"Extra ao repetir modo = 5 × nível pontos percentuais"}
+ {id:"shield",name:"Escudo",symbol:"◈",type:"reward",cost:1400,growth:2.5,
+  desc:"Quando perde, recupera 5% da aposta por nível. Sem limite de 80%: níveis altos podem devolver mais do que a aposta.",formula:"Devolução na derrota = aposta × (5% × nível)"},
+ {id:"affinity",name:"Afinidade",symbol:"◎",type:"reward",cost:1200,growth:2.5,
+  desc:"A cada partida consecutiva no mesmo modo, seu próximo bônus nesse modo aumenta 1 ponto percentual por nível. Trocar de modo reinicia só a Afinidade.",formula:"Extra (p.p.) = 1 × nível × partidas anteriores consecutivas neste modo"}
 ];
 function prepareShop(){
   if(!saved.shop||typeof saved.shop!=="object")saved.shop={};
@@ -760,19 +760,29 @@ function prepareShop(){
   }
   if(!Number.isSafeInteger(shop.streak)||shop.streak<0)shop.streak=0;
   if(![null,...MODES.map(m=>m.id)].includes(shop.lastMode))shop.lastMode=null;
+  // Salva a sequência de partidas do mesmo modo para a Afinidade.
+  // Usuários antigos conservam a última partida conhecida.
+  if(!Number.isSafeInteger(shop.sameModeRounds)||shop.sameModeRounds<0)
+    shop.sameModeRounds=shop.lastMode?1:0;
 }
 function level(id){return saved.shop.levels[id]||0;}
 function upgradePrice(item){const v=Math.ceil(item.cost*Math.pow(item.growth,level(item.id)));return Number.isSafeInteger(v)?v:Infinity;}
 function chanceLuck(stake,originalBalance){return Math.min(100,level("luck")*stake/Math.max(1,originalBalance));}
-function isRareOutcome(){
- if(state.mode==="dice")return countSums(state.data.target,state.choice)<=6;
- if(state.mode==="yatzy")return scoreYatzy(state.data.values).bonus>=25;
- if(state.mode==="blackjack")return blackjackValue(state.data.player)===21&&state.data.player.length===2;
- if(state.mode==="poker")return rankPoker(state.data.player).rank>=5;
- if(state.mode==="texas")return bestTexas([...state.data.player,...state.data.board]).score.rank>=5;
- if(state.mode==="plinko")return state.data.slot<=1||state.data.slot>=9;
- if(state.mode==="truco")return state.data.tier>=6;
- return false;
+function familiarityRounds(modeId=state.mode){
+  return Math.max(0,saved.detail?.byMode?.[modeId]?.rounds||0);
+}
+function chanceFamiliarity(modeId=state.mode){
+  // Todos os modos possuem um histórico de partidas próprio.
+  return Math.min(100,0.1*level("familiarity")*familiarityRounds(modeId));
+}
+function totalChanceExtra(stake,originalBalance){
+  // Cada sorteio recebe um único incremento, compartilhado por Sorte e Familiaridade.
+  return Math.min(100,chanceLuck(stake,originalBalance)+chanceFamiliarity());
+}
+function recordModePlayed(){
+  const shop=saved.shop;
+  shop.sameModeRounds=shop.lastMode===state.mode?shop.sameModeRounds+1:1;
+  shop.lastMode=state.mode;
 }
 function currentEventKey(){
  // Cara e coroa usam o MESMO histórico para o Exponente estatístico.
@@ -793,16 +803,16 @@ function victoryUpgrades(baseBonus){
  const key=currentEventKey(),previous=saved.shop.events[key]||0;
  const exp=level("exponent")*previous;
  const impulse=5*level("impulse");
- const rare=isRareOutcome()?20*level("relic"):0;
- const affinity=state.mode===saved.shop.lastMode?5*level("affinity"):0;
- const multiplier=Math.pow(1+.10*level("current"),Math.min(100,saved.shop.streak));
- const bonus=Math.min(1000000,(baseBonus+exp+impulse+rare+affinity)*multiplier);
+ const repeated=state.mode===saved.shop.lastMode?saved.shop.sameModeRounds:0;
+ const affinity=level("affinity")*repeated;
+ // Correnteza usa o contador GLOBAL, independente de qual jogo gerou a vitória.
+ const multiplier=Math.pow(1+.01*level("current"),Math.min(100,saved.shop.streak));
+ const bonus=Math.min(1000000,(baseBonus+exp+impulse+affinity)*multiplier);
  const lines=[];
  if(exp)lines.push(`Exponente: +${percent(exp)} (${previous} acertos anteriores)`);
  if(impulse)lines.push(`Impulso: +${percent(impulse)}`);
- if(rare)lines.push(`Relíquia: +${percent(rare)}`);
- if(affinity)lines.push(`Afinidade: +${percent(affinity)}`);
- if(multiplier!==1)lines.push(`Correnteza: ×${multiplier.toLocaleString("pt-BR",{maximumFractionDigits:3})} (${saved.shop.streak} vitórias anteriores)`);
+ if(affinity)lines.push(`Afinidade: +${percent(affinity)} (${repeated} partidas anteriores seguidas neste modo)`);
+ if(multiplier!==1)lines.push(`Correnteza global: ×${multiplier.toLocaleString("pt-BR",{maximumFractionDigits:4})} (${saved.shop.streak} vitórias consecutivas em qualquer jogo)`);
  return {bonus,key,lines};
 }
 function drawLucky21(deck,hand){
@@ -824,7 +834,7 @@ function renderShop(){
  ${[["Probabilidades","chance"],["Bônus e proteção","reward"]].map(([name,group])=>`<h3 class="shop-category">${name}<small>${group==="chance"?"Alteram os sorteios":"Alteram créditos recebidos"}</small></h3>
  <div class="shop-grid">${SHOP_ITEMS.filter(i=>i.type===group).map(item=>{const n=level(item.id),price=upgradePrice(item),disabled=state.phase==="playing"||!Number.isFinite(price)||saved.balance<price;
  return `<article class="shop-card" data-shop-card="${item.id}"><div class="shop-card-top"><span class="shop-symbol" aria-hidden="true">${item.symbol}</span><div class="shop-card-title"><strong>${item.name}</strong><span>Nível ${n} → ${n+1}</span></div></div><p>${item.desc}</p><div class="shop-formula">${item.formula}</div><div class="shop-card-bottom"><span class="shop-level">Nível <b>${n}</b></span><button type="button" class="shop-buy" data-buy="${item.id}" ${disabled?"disabled":""}>${!Number.isFinite(price)?"Limite atingido":state.phase==="playing"?"Rodada em curso":saved.balance<price?`Faltam ${money(price-saved.balance)}`:`Comprar · ${money(price)}`}</button></div></article>`;}).join("")}</div>`).join("")}
- <p class="shop-extra">Sorte usa a aposta e o saldo antes do desconto. O Exponente acumula acertos e nunca zera ao errar; no jogo da moeda, cara e coroa contam juntas. Já a Correnteza zera nas derrotas, mas não nos empates. Compras e níveis ficam salvos neste navegador. Créditos não têm valor real.</p>`;
+ <p class="shop-extra">Sorte e Familiaridade se somam nas chances favoráveis; cada modo acumula seu próprio histórico. Exponente nunca zera ao errar e, na moeda, cara e coroa contam juntas. Correnteza conta vitórias entre todos os jogos e só zera nas derrotas. Afinidade acumula ao repetir o mesmo modo. Créditos fictícios, sem valor real.</p>`;
 }
 function buyUpgrade(id){
  const item=SHOP_ITEMS.find(x=>x.id===id);
@@ -853,13 +863,14 @@ function updateLuckPreview(){
  if(!el||!input)return;
  const amount=Math.min(saved.balance,Math.max(0,Number(input.value)||0));
  const luck=chanceLuck(amount,saved.balance);
- let text=`Sorte nível ${level("luck")}: +${percent(luck)} na chance de um evento favorável`;
- if(state.mode==="coin")text+=` · sua chance: ${percent(Math.min(100,50+luck))}`;
- if(state.mode==="dice")text+=` · sua chance: ${percent(Math.min(100,100*countSums(state.data.target,state.choice)/36+luck))}`;
- if(state.mode==="plinko")text+=` · chance de cair numa cesta premiada: ${percent(Math.min(100,34.375+luck))}`;
+ const familiarity=chanceFamiliarity();
+ const extra=Math.min(100,luck+familiarity);
+ let text=`Sorte: +${percent(luck)} · Familiaridade: +${percent(familiarity)} (${familiarityRounds()} partidas deste modo) · Total: +${percent(extra)} de chance favorável`;
+ if(state.mode==="coin")text+=` · sua chance: ${percent(Math.min(100,50+extra))}`;
+ if(state.mode==="dice")text+=` · sua chance: ${percent(Math.min(100,100*countSums(state.data.target,state.choice)/36+extra))}`;
+ if(state.mode==="plinko")text+=` · chance de cesta premiada: ${percent(Math.min(100,34.375+extra))}`;
  el.textContent=text+".";
 }
-
 const PIP_POS = {
   1:[[36,36]],2:[[19,19],[53,53]],3:[[19,19],[36,36],[53,53]],
   4:[[19,19],[53,19],[19,53],[53,53]],
@@ -1663,7 +1674,7 @@ function beginBet(){
   if(raw===""||!Number.isSafeInteger(stake)||stake<1){toast("Digite uma aposta inteira maior que zero.");return;}
   if(stake>saved.balance){toast("Você não tem créditos suficientes.");return;}
   if(state.mode==="dice"&&!countSums(state.data.target,state.choice)){toast("Esta opção não é possível para o alvo atual.");return;}
-  state.luckExtra=chanceLuck(stake,saved.balance);
+  state.luckExtra=totalChanceExtra(stake,saved.balance);
   saved.balance-=stake;save();state.bet=stake;state.phase="playing";state.result=null;state.token++;
   if(state.mode==="coin" || state.mode==="dice"){
     state.animation=true;render();const token=state.token;
@@ -1736,10 +1747,10 @@ function finish(outcome,baseBonus,description,details,options={}){
   }else if(outcome==="tie"){
     payout=state.bet;
   }else{
-    const shield=Math.min(.8,.05*level("shield"));
+    const shield=.05*level("shield");
     const guaranteed=Math.max(0,Math.min(1,options.minimumRefundRatio||0));
     const finalRefund=Math.max(shield,guaranteed);
-    payout=Math.round(state.bet*finalRefund);
+    payout=Math.min(Math.max(0,Number.MAX_SAFE_INTEGER-saved.balance),Math.round(state.bet*finalRefund));
     if(payout>0)note=`<div class="upgrade-result"><strong>Recuperação</strong><div>${percent(finalRefund*100)} da aposta devolvida: ${money(payout)}${shield>guaranteed?' (Escudo aplicado)':''}</div></div>`;
     saved.shop.streak=0;
   }
@@ -1748,7 +1759,7 @@ function finish(outcome,baseBonus,description,details,options={}){
     saved.balance-=extraDebit;
     note+=`<div class="upgrade-result"><strong>Ônus adicional por nove</strong><div>−${money(extraDebit)} do saldo disponível, além da aposta original.</div></div>`;
   }
-  saved.shop.lastMode=state.mode;
+  recordModePlayed();
   saved.balance+=payout;
   saved.stats.rounds++;
   trackRound(outcome,payout,extraDebit);
@@ -1847,7 +1858,7 @@ function settlePoker(fold=false){
 function abandonAndBack(){
   if(state.phase==="playing"){
     if(!window.confirm("Rodada em andamento. Sair agora perde os créditos apostados. Deseja sair?"))return;
-    saved.stats.rounds++;saved.stats.losses++;trackRound("lose",0);saved.shop.streak=0;saved.shop.lastMode=state.mode;save();
+    saved.stats.rounds++;saved.stats.losses++;trackRound("lose",0);saved.shop.streak=0;recordModePlayed();save();
   }
   state.token++;state.mode=null;state.phase="lobby";state.data=null;state.result=null;closeOverlay();render();
 }
